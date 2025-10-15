@@ -39,7 +39,23 @@ const Property = sequelize.define('Property', {
     type: DataTypes.DECIMAL(11, 8),
     allowNull: true
   },
-  privileged_user_id: {
+  floors_from: {
+    type: DataTypes.SMALLINT,
+    allowNull: true,
+    validate: {
+      min: -20,
+      max: 200
+    }
+  },
+  floors_to: {
+    type: DataTypes.SMALLINT,
+    allowNull: true,
+    validate: {
+      min: -20,
+      max: 200
+    }
+  },
+  property_manager_user_id: {
     type: DataTypes.INTEGER,
     allowNull: true,
     references: {
@@ -47,7 +63,8 @@ const Property = sequelize.define('Property', {
       key: 'id'
     },
     onUpdate: 'CASCADE',
-    onDelete: 'SET NULL'
+    onDelete: 'SET NULL',
+    comment: 'DEPRECATED: Use property_managers junction table instead'
   },
   created_at: {
     type: DataTypes.DATE,

@@ -49,12 +49,23 @@ exports.isAdmin = (req, res, next) => {
   next();
 };
 
-// Check if user is privileged or admin
-exports.isPrivilegedOrAdmin = (req, res, next) => {
-  if (req.user.role !== 'privileged' && req.user.role !== 'admin') {
+// Check if user is admin or property_manager
+exports.isAdminOrPropertyManager = (req, res, next) => {
+  if (req.user.role !== 'admin' && req.user.role !== 'property_manager') {
     return res.status(403).json({
       success: false,
-      message: 'Access denied. Privileged or admin privileges required.'
+      message: 'Access denied. Admin or Property Manager privileges required.'
+    });
+  }
+  next();
+};
+
+// Check if user is property_manager or admin
+exports.isPrivilegedOrAdmin = (req, res, next) => {
+  if (req.user.role !== 'property_manager' && req.user.role !== 'admin') {
+    return res.status(403).json({
+      success: false,
+      message: 'Access denied. Property manager or admin privileges required.'
     });
   }
   next();

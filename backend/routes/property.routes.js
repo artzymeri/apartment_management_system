@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const propertyController = require('../controllers/property.controller');
-const { verifyToken, isAdmin } = require('../middleware/auth.middleware');
+const { verifyToken, isAdmin, isAdminOrPropertyManager } = require('../middleware/auth.middleware');
 
 // All routes require authentication
 router.use(verifyToken);
@@ -15,8 +15,8 @@ router.get('/', propertyController.getAllProperties);
 // Get single property by ID
 router.get('/:id', propertyController.getPropertyById);
 
-// Create property (admin only)
-router.post('/', isAdmin, propertyController.createProperty);
+// Create property (admin or property_manager can create)
+router.post('/', isAdminOrPropertyManager, propertyController.createProperty);
 
 // Update property (admin only)
 router.put('/:id', isAdmin, propertyController.updateProperty);

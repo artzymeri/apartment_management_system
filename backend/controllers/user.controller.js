@@ -2,6 +2,103 @@ const db = require('../models');
 const bcrypt = require('bcrypt');
 const { Op } = require('sequelize');
 
+// Create user directly (for admin/property_manager)
+exports.createUser = async (req, res) => {
+  try {
+    const { name, surname, email, password, number, role, property_ids, expiry_date, floor_assigned } = req.body;
+
+    // Validate required fields
+    if (!name || !surname || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name, surname, email, and password are required'
+      });
+    }
+
+    // Check if email already exists in users
+    const existingUser = await db.User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email is already used'
+      });
+    }
+
+    // Check if email already exists in register_requests
+    const existingRequest = await db.RegisterRequest.findOne({ where: { email } });
+    if (existingRequest) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email is already used'
+      });
+    }
+
+    // Check if phone number already exists (if provided)
+    if (number) {
+      const existingUserByPhone = await db.User.findOne({ where: { number } });
+      if (existingUserByPhone) {
+        return res.status(400).json({
+          success: false,
+          message: 'Phone number is already used'
+        });
+      }
+
+      const existingRequestByPhone = await db.RegisterRequest.findOne({ where: { number } });
+      if (existingRequestByPhone) {
+        return res.status(400).json({
+          success: false,
+          message: 'Phone number is already used'
+        });
+      }
+    }
+
+    // Hash password
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    // Prepare user data
+    const userData = {
+      name,
+      surname,
+      email,
+      password: hashedPassword,
+      number: number || null,
+      role: role || 'tenant',
+      property_ids: property_ids || []
+    };
+
+    // Add expiry_date for property_manager
+    if (userData.role === 'property_manager') {
+      userData.expiry_date = expiry_date || null;
+    }
+
+    // Add floor_assigned for tenant
+    if (userData.role === 'tenant') {
+      userData.floor_assigned = floor_assigned || null;
+    }
+
+    // Create user
+    const user = await db.User.create(userData);
+
+    // Return user without password
+    const userResponse = user.toJSON();
+    delete userResponse.password;
+
+    res.status(201).json({
+      success: true,
+      message: 'User created successfully',
+      data: userResponse
+    });
+  } catch (error) {
+    console.error('Create user error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error creating user',
+      error: error.message
+    });
+  }
+};
+
 // Get all users with filtering
 exports.getAllUsers = async (req, res) => {
   try {
@@ -90,7 +187,7 @@ exports.getUserById = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, surname, email, password, number, role, property_ids, expiry_date } = req.body;
+    const { name, surname, email, password, number, role, property_ids, expiry_date, floor_assigned } = req.body;
 
     const user = await db.User.findByPk(id);
 
@@ -159,6 +256,14 @@ exports.updateUser = async (req, res) => {
     } else {
       // Clear expiry_date if user is not property_manager
       updateData.expiry_date = null;
+    }
+
+    // Handle floor_assigned - only for tenant users
+    if (role === 'tenant' || (user.role === 'tenant' && !role)) {
+      updateData.floor_assigned = floor_assigned !== undefined ? floor_assigned : user.floor_assigned;
+    } else {
+      // Clear floor_assigned if user is not tenant
+      updateData.floor_assigned = null;
     }
 
     // Hash password if provided
@@ -334,6 +439,329 @@ exports.updateOwnProfile = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error updating profile',
+      error: error.message
+    });
+  }
+};
+
+// Get tenants for property manager (filtered by their managed properties)
+exports.getTenantsForPropertyManager = async (req, res) => {
+  try {
+    const propertyManagerId = req.user.id;
+    const { search, page = 1, limit = 10 } = req.query;
+
+    // Check if user is property manager
+    const propertyManager = await db.User.findByPk(propertyManagerId);
+
+    if (!propertyManager || propertyManager.role !== 'property_manager') {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied. Property Manager privileges required.'
+      });
+    }
+
+    // Get the property IDs from the property_managers junction table
+    const managedProperties = await db.PropertyManager.findAll({
+      where: { user_id: propertyManagerId },
+      attributes: ['property_id']
+    });
+
+    const managedPropertyIds = managedProperties.map(pm => pm.property_id);
+
+    console.log('Property Manager ID:', propertyManagerId);
+    console.log('Managed Property IDs:', managedPropertyIds);
+
+    if (managedPropertyIds.length === 0) {
+      console.log('No properties found for this property manager');
+      return res.status(200).json({
+        success: true,
+        data: [],
+        pagination: {
+          total: 0,
+          page: parseInt(page),
+          limit: parseInt(limit),
+          totalPages: 0
+        }
+      });
+    }
+
+    // Build where clause using raw SQL for JSON_CONTAINS (MySQL compatible)
+    // We need to use Sequelize.literal for proper JSON querying in MySQL
+    const jsonContainsConditions = managedPropertyIds.map(propId =>
+      db.sequelize.literal(`JSON_CONTAINS(property_ids, '${propId}', '$')`)
+    );
+
+    const where = {
+      role: 'tenant',
+      [Op.or]: jsonContainsConditions
+    };
+
+    // Search filter (name, surname, or email)
+    if (search) {
+      where[Op.and] = [
+        {
+          [Op.or]: [
+            { name: { [Op.like]: `%${search}%` } },
+            { surname: { [Op.like]: `%${search}%` } },
+            { email: { [Op.like]: `%${search}%` } }
+          ]
+        }
+      ];
+    }
+
+    const offset = (page - 1) * limit;
+
+    console.log('Querying tenants for properties:', managedPropertyIds);
+
+    const { count, rows } = await db.User.findAndCountAll({
+      where,
+      attributes: { exclude: ['password'] },
+      limit: parseInt(limit),
+      offset: parseInt(offset),
+      order: [['created_at', 'DESC']]
+    });
+
+    console.log('Found tenants count:', count);
+    console.log('Tenants:', rows.map(r => `${r.name} ${r.surname} (${r.email})`));
+
+    res.status(200).json({
+      success: true,
+      data: rows,
+      pagination: {
+        total: count,
+        page: parseInt(page),
+        limit: parseInt(limit),
+        totalPages: Math.ceil(count / limit)
+      }
+    });
+  } catch (error) {
+    console.error('Get tenants for property manager error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching tenants',
+      error: error.message
+    });
+  }
+};
+
+// Get single tenant by ID for property manager (must be linked to their properties)
+exports.getTenantByIdForPropertyManager = async (req, res) => {
+  try {
+    const propertyManagerId = req.user.id;
+    const tenantId = parseInt(req.params.id);
+
+    // Check if user is property manager
+    const propertyManager = await db.User.findByPk(propertyManagerId);
+
+    if (!propertyManager || propertyManager.role !== 'property_manager') {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied. Property Manager privileges required.'
+      });
+    }
+
+    // Get the property IDs from the property_managers junction table
+    const managedProperties = await db.PropertyManager.findAll({
+      where: { user_id: propertyManagerId },
+      attributes: ['property_id']
+    });
+
+    const managedPropertyIds = managedProperties.map(pm => pm.property_id);
+
+    if (managedPropertyIds.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Tenant not found or invalid tenant ID.'
+      });
+    }
+
+    // Find the tenant
+    const tenant = await db.User.findOne({
+      where: {
+        id: tenantId,
+        role: 'tenant'
+      },
+      attributes: { exclude: ['password'] }
+    });
+
+    if (!tenant) {
+      return res.status(404).json({
+        success: false,
+        message: 'Tenant not found or invalid tenant ID.'
+      });
+    }
+
+    // Check if tenant is assigned to any of the manager's properties
+    const tenantPropertyIds = tenant.property_ids || [];
+    const hasAccessToTenant = tenantPropertyIds.some(propId =>
+      managedPropertyIds.includes(propId)
+    );
+
+    if (!hasAccessToTenant) {
+      return res.status(404).json({
+        success: false,
+        message: 'Tenant not found or invalid tenant ID.'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: tenant
+    });
+  } catch (error) {
+    console.error('Get tenant by ID for property manager error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching tenant',
+      error: error.message
+    });
+  }
+};
+
+// Update tenant for property manager (must be linked to their properties)
+exports.updateTenantForPropertyManager = async (req, res) => {
+  try {
+    const propertyManagerId = req.user.id;
+    const tenantId = parseInt(req.params.id);
+    const { name, surname, email, password, number, property_ids, floor_assigned } = req.body;
+
+    // Check if user is property manager
+    const propertyManager = await db.User.findByPk(propertyManagerId);
+
+    if (!propertyManager || propertyManager.role !== 'property_manager') {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied. Property Manager privileges required.'
+      });
+    }
+
+    // Get the property IDs from the property_managers junction table
+    const managedProperties = await db.PropertyManager.findAll({
+      where: { user_id: propertyManagerId },
+      attributes: ['property_id']
+    });
+
+    const managedPropertyIds = managedProperties.map(pm => pm.property_id);
+
+    if (managedPropertyIds.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Tenant not found or invalid tenant ID.'
+      });
+    }
+
+    // Find the tenant
+    const tenant = await db.User.findOne({
+      where: {
+        id: tenantId,
+        role: 'tenant'
+      }
+    });
+
+    if (!tenant) {
+      return res.status(404).json({
+        success: false,
+        message: 'Tenant not found or invalid tenant ID.'
+      });
+    }
+
+    // Check if tenant is currently assigned to any of the manager's properties
+    const tenantPropertyIds = tenant.property_ids || [];
+    const hasAccessToTenant = tenantPropertyIds.some(propId =>
+      managedPropertyIds.includes(propId)
+    );
+
+    if (!hasAccessToTenant) {
+      return res.status(404).json({
+        success: false,
+        message: 'Tenant not found or invalid tenant ID.'
+      });
+    }
+
+    // Validate new property assignment - must be one of manager's properties
+    if (property_ids && property_ids.length > 0) {
+      const allPropertiesManaged = property_ids.every(propId =>
+        managedPropertyIds.includes(propId)
+      );
+
+      if (!allPropertiesManaged) {
+        return res.status(403).json({
+          success: false,
+          message: 'You can only assign tenants to properties you manage.'
+        });
+      }
+    }
+
+    // Check if email is being changed and if it already exists
+    if (email && email !== tenant.email) {
+      const existingUser = await db.User.findOne({ where: { email } });
+      if (existingUser) {
+        return res.status(400).json({
+          success: false,
+          message: 'Email is already used'
+        });
+      }
+
+      const existingRequest = await db.RegisterRequest.findOne({ where: { email } });
+      if (existingRequest) {
+        return res.status(400).json({
+          success: false,
+          message: 'Email is already used'
+        });
+      }
+    }
+
+    // Check if phone number is being changed and if it already exists
+    if (number && number !== tenant.number) {
+      const existingUserByPhone = await db.User.findOne({ where: { number } });
+      if (existingUserByPhone) {
+        return res.status(400).json({
+          success: false,
+          message: 'Phone number is already used'
+        });
+      }
+
+      const existingRequestByPhone = await db.RegisterRequest.findOne({ where: { number } });
+      if (existingRequestByPhone) {
+        return res.status(400).json({
+          success: false,
+          message: 'Phone number is already used'
+        });
+      }
+    }
+
+    // Prepare update data
+    const updateData = {
+      name: name || tenant.name,
+      surname: surname || tenant.surname,
+      email: email || tenant.email,
+      number: number !== undefined ? number : tenant.number,
+      property_ids: property_ids !== undefined ? property_ids : tenant.property_ids,
+      floor_assigned: floor_assigned !== undefined ? floor_assigned : tenant.floor_assigned
+    };
+
+    // Hash password if provided
+    if (password) {
+      const saltRounds = 10;
+      updateData.password = await bcrypt.hash(password, saltRounds);
+    }
+
+    await tenant.update(updateData);
+
+    // Return tenant without password
+    const tenantData = tenant.toJSON();
+    delete tenantData.password;
+
+    res.status(200).json({
+      success: true,
+      message: 'Tenant updated successfully',
+      data: tenantData
+    });
+  } catch (error) {
+    console.error('Update tenant for property manager error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error updating tenant',
       error: error.message
     });
   }

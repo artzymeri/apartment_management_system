@@ -46,7 +46,7 @@ const User = sequelize.define('User', {
     }
   },
   role: {
-    type: DataTypes.ENUM('admin', 'privileged', 'tenant'),
+    type: DataTypes.ENUM('admin', 'property_manager', 'tenant'),
     allowNull: false,
     defaultValue: 'tenant'
   },
@@ -54,6 +54,15 @@ const User = sequelize.define('User', {
     type: DataTypes.JSON,
     allowNull: true,
     defaultValue: []
+  },
+  floor_assigned: {
+    type: DataTypes.SMALLINT,
+    allowNull: true,
+    field: 'floor_assigned',
+    validate: {
+      min: -20,
+      max: 200
+    }
   },
   expiry_date: {
     type: DataTypes.DATEONLY,

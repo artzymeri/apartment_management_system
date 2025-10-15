@@ -15,15 +15,15 @@ db.PropertyManager = PropertyManager;
 db.City = City;
 
 // Define relationships
-// Property belongs to User (privileged user) - DEPRECATED, kept for backward compatibility
+// Property belongs to User (property manager) - DEPRECATED, kept for backward compatibility
 Property.belongsTo(User, {
-  foreignKey: 'privileged_user_id',
+  foreignKey: 'property_manager_user_id',
   as: 'manager'
 });
 
 // User has many Properties - DEPRECATED
 User.hasMany(Property, {
-  foreignKey: 'privileged_user_id',
+  foreignKey: 'property_manager_user_id',
   as: 'managedProperties'
 });
 

@@ -134,7 +134,7 @@ exports.getPropertyById = async (req, res) => {
 // Create new property
 exports.createProperty = async (req, res) => {
   try {
-    const { name, address, city_id, latitude, longitude, manager_ids } = req.body;
+    const { name, address, city_id, latitude, longitude, floors_from, floors_to, manager_ids } = req.body;
 
     // Validate required fields
     if (!name || !address || !city_id) {
@@ -142,6 +142,38 @@ exports.createProperty = async (req, res) => {
         success: false,
         message: 'Name, address, and city are required'
       });
+    }
+
+    // Validate floors_from if provided
+    if (floors_from !== undefined && floors_from !== null) {
+      const floorsFromNum = parseInt(floors_from);
+      if (isNaN(floorsFromNum) || floorsFromNum < -20 || floorsFromNum > 200) {
+        return res.status(400).json({
+          success: false,
+          message: 'Floors from must be a number between -20 and 200'
+        });
+      }
+    }
+
+    // Validate floors_to if provided
+    if (floors_to !== undefined && floors_to !== null) {
+      const floorsToNum = parseInt(floors_to);
+      if (isNaN(floorsToNum) || floorsToNum < -20 || floorsToNum > 200) {
+        return res.status(400).json({
+          success: false,
+          message: 'Floors to must be a number between -20 and 200'
+        });
+      }
+    }
+
+    // Validate floor range logic
+    if (floors_from !== undefined && floors_from !== null && floors_to !== undefined && floors_to !== null) {
+      if (parseInt(floors_from) > parseInt(floors_to)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Floors from cannot be greater than floors to'
+        });
+      }
     }
 
     // Verify city exists
@@ -153,8 +185,17 @@ exports.createProperty = async (req, res) => {
       });
     }
 
-    // Verify managers exist and have correct roles if provided
+    // Prepare manager IDs list
+    let finalManagerIds = [];
+
+    // If user is a property_manager, automatically add them to the list
+    if (req.user.role === 'property_manager') {
+      finalManagerIds.push(req.user.id);
+    }
+
+    // Add any additional manager_ids provided (admin can assign multiple managers)
     if (manager_ids && Array.isArray(manager_ids) && manager_ids.length > 0) {
+      // Verify managers exist and have correct roles
       const managers = await db.User.findAll({
         where: {
           id: { [Op.in]: manager_ids },
@@ -168,6 +209,9 @@ exports.createProperty = async (req, res) => {
           message: 'One or more manager IDs are invalid or users do not have property_manager role'
         });
       }
+
+      // Merge with existing manager IDs (avoid duplicates)
+      finalManagerIds = [...new Set([...finalManagerIds, ...manager_ids])];
     }
 
     // Create property
@@ -177,12 +221,14 @@ exports.createProperty = async (req, res) => {
       city_id,
       latitude: latitude || null,
       longitude: longitude || null,
-      privileged_user_id: null // Deprecated field, kept for backward compatibility
+      floors_from: floors_from !== undefined && floors_from !== null ? parseInt(floors_from) : null,
+      floors_to: floors_to !== undefined && floors_to !== null ? parseInt(floors_to) : null,
+      property_manager_user_id: null // Deprecated field, kept for backward compatibility
     });
 
     // Assign managers through junction table
-    if (manager_ids && Array.isArray(manager_ids) && manager_ids.length > 0) {
-      await property.setManagers(manager_ids);
+    if (finalManagerIds.length > 0) {
+      await property.setManagers(finalManagerIds);
     }
 
     // Fetch the created property with manager details
@@ -221,7 +267,7 @@ exports.createProperty = async (req, res) => {
 exports.updateProperty = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, address, city_id, latitude, longitude, manager_ids } = req.body;
+    const { name, address, city_id, latitude, longitude, floors_from, floors_to, manager_ids } = req.body;
 
     const property = await db.Property.findByPk(id);
 
@@ -230,6 +276,38 @@ exports.updateProperty = async (req, res) => {
         success: false,
         message: 'Property not found'
       });
+    }
+
+    // Validate floors_from if provided
+    if (floors_from !== undefined && floors_from !== null) {
+      const floorsFromNum = parseInt(floors_from);
+      if (isNaN(floorsFromNum) || floorsFromNum < -20 || floorsFromNum > 200) {
+        return res.status(400).json({
+          success: false,
+          message: 'Floors from must be a number between -20 and 200'
+        });
+      }
+    }
+
+    // Validate floors_to if provided
+    if (floors_to !== undefined && floors_to !== null) {
+      const floorsToNum = parseInt(floors_to);
+      if (isNaN(floorsToNum) || floorsToNum < -20 || floorsToNum > 200) {
+        return res.status(400).json({
+          success: false,
+          message: 'Floors to must be a number between -20 and 200'
+        });
+      }
+    }
+
+    // Validate floor range logic
+    if (floors_from !== undefined && floors_from !== null && floors_to !== undefined && floors_to !== null) {
+      if (parseInt(floors_from) > parseInt(floors_to)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Floors from cannot be greater than floors to'
+        });
+      }
     }
 
     // Verify city exists if provided
@@ -268,7 +346,9 @@ exports.updateProperty = async (req, res) => {
       address: address || property.address,
       city_id: city_id !== undefined ? city_id : property.city_id,
       latitude: latitude !== undefined ? latitude : property.latitude,
-      longitude: longitude !== undefined ? longitude : property.longitude
+      longitude: longitude !== undefined ? longitude : property.longitude,
+      floors_from: floors_from !== undefined ? (floors_from !== null ? parseInt(floors_from) : null) : property.floors_from,
+      floors_to: floors_to !== undefined ? (floors_to !== null ? parseInt(floors_to) : null) : property.floors_to
     });
 
     // Update managers through junction table if provided
