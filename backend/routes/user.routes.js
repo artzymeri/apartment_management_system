@@ -6,6 +6,9 @@ const { verifyToken, isAdmin } = require('../middleware/auth.middleware');
 // All routes require authentication
 router.use(verifyToken);
 
+// Update own profile (any authenticated user)
+router.put('/profile/me', userController.updateOwnProfile);
+
 // Get all users (admin only)
 router.get('/', isAdmin, userController.getAllUsers);
 

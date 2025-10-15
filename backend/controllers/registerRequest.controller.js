@@ -89,7 +89,7 @@ exports.approveRegisterRequest = async (req, res) => {
 
   try {
     const { id } = req.params;
-    const { role = 'tenant', property_ids = [] } = req.body;
+    const { role = 'tenant', property_ids = [], expiry_date } = req.body;
 
     const request = await db.RegisterRequest.findByPk(id);
 
@@ -131,8 +131,8 @@ exports.approveRegisterRequest = async (req, res) => {
       }
     }
 
-    // Create new user with the register request data
-    const newUser = await db.User.create({
+    // Prepare user data
+    const userData = {
       name: request.name,
       surname: request.surname,
       email: request.email,
@@ -140,7 +140,15 @@ exports.approveRegisterRequest = async (req, res) => {
       number: request.number,
       role: role,
       property_ids: property_ids
-    }, { transaction });
+    };
+
+    // Add expiry_date only for privileged users
+    if (role === 'privileged') {
+      userData.expiry_date = expiry_date || null;
+    }
+
+    // Create new user with the register request data
+    const newUser = await db.User.create(userData, { transaction });
 
     // Delete the request from register_requests table
     await request.destroy({ transaction });

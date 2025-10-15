@@ -131,6 +131,21 @@ exports.login = async (req, res) => {
       });
     }
 
+    // Check if privileged user account has expired
+    if (user.role === 'privileged' && user.expiry_date) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const expiryDate = new Date(user.expiry_date);
+      expiryDate.setHours(0, 0, 0, 0);
+
+      if (expiryDate < today) {
+        return res.status(403).json({
+          success: false,
+          message: 'Your account has expired. Please contact an administrator.'
+        });
+      }
+    }
+
     // Compare password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {

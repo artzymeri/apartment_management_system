@@ -27,7 +27,9 @@ const initializeDatabase = async () => {
   await connectDB();
 
   // Sync all models with database
-  await db.sequelize.sync({ alter: true });
+  // Changed from { alter: true } to { alter: false } to prevent index duplication
+  // Use migrations for schema changes in production
+  await db.sequelize.sync({ alter: false });
   console.log('Database synced successfully');
 };
 

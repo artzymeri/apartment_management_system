@@ -90,7 +90,7 @@ exports.getUserById = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, surname, email, password, number, role, property_ids } = req.body;
+    const { name, surname, email, password, number, role, property_ids, expiry_date } = req.body;
 
     const user = await db.User.findByPk(id);
 
@@ -153,6 +153,14 @@ exports.updateUser = async (req, res) => {
       property_ids: property_ids !== undefined ? property_ids : user.property_ids
     };
 
+    // Handle expiry_date - only for privileged users
+    if (role === 'privileged' || (user.role === 'privileged' && !role)) {
+      updateData.expiry_date = expiry_date !== undefined ? expiry_date : user.expiry_date;
+    } else {
+      // Clear expiry_date if user is not privileged
+      updateData.expiry_date = null;
+    }
+
     // Hash password if provided
     if (password) {
       const saltRounds = 10;
@@ -213,6 +221,119 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error deleting user',
+      error: error.message
+    });
+  }
+};
+
+// Update own profile (for authenticated users)
+exports.updateOwnProfile = async (req, res) => {
+  try {
+    const userId = req.user.id; // Get user ID from authenticated token
+    const { name, surname, email, password, number, currentPassword } = req.body;
+
+    const user = await db.User.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // If changing password, verify current password
+    if (password) {
+      if (!currentPassword) {
+        return res.status(400).json({
+          success: false,
+          message: 'Current password is required to change password'
+        });
+      }
+
+      const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+      if (!isPasswordValid) {
+        return res.status(400).json({
+          success: false,
+          message: 'Current password is incorrect'
+        });
+      }
+
+      if (password.length < 6) {
+        return res.status(400).json({
+          success: false,
+          message: 'New password must be at least 6 characters'
+        });
+      }
+    }
+
+    // Check if email is being changed and if it already exists
+    if (email && email !== user.email) {
+      const existingUser = await db.User.findOne({ where: { email } });
+      if (existingUser) {
+        return res.status(400).json({
+          success: false,
+          message: 'Email is already in use'
+        });
+      }
+
+      const existingRequest = await db.RegisterRequest.findOne({ where: { email } });
+      if (existingRequest) {
+        return res.status(400).json({
+          success: false,
+          message: 'Email is already in use'
+        });
+      }
+    }
+
+    // Check if phone number is being changed and if it already exists
+    if (number && number !== user.number) {
+      const existingUserByPhone = await db.User.findOne({ where: { number } });
+      if (existingUserByPhone) {
+        return res.status(400).json({
+          success: false,
+          message: 'Phone number is already in use'
+        });
+      }
+
+      const existingRequestByPhone = await db.RegisterRequest.findOne({ where: { number } });
+      if (existingRequestByPhone) {
+        return res.status(400).json({
+          success: false,
+          message: 'Phone number is already in use'
+        });
+      }
+    }
+
+    // Prepare update data
+    const updateData = {
+      name: name || user.name,
+      surname: surname || user.surname,
+      email: email || user.email,
+      number: number !== undefined ? number : user.number
+    };
+
+    // Hash password if provided
+    if (password) {
+      const saltRounds = 10;
+      updateData.password = await bcrypt.hash(password, saltRounds);
+    }
+
+    await user.update(updateData);
+
+    // Return user without password
+    const userData = user.toJSON();
+    delete userData.password;
+
+    res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+      data: userData
+    });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error updating profile',
       error: error.message
     });
   }

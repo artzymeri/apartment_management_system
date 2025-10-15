@@ -55,6 +55,11 @@ const User = sequelize.define('User', {
     allowNull: true,
     defaultValue: []
   },
+  expiry_date: {
+    type: DataTypes.DATEONLY,
+    allowNull: true,
+    field: 'expiry_date'
+  },
   created_at: {
     type: DataTypes.DATE,
     allowNull: false,
