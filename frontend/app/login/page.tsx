@@ -165,7 +165,7 @@ export default function LoginPage() {
                   id="password"
                   name="password"
                   type="password"
-                  placeholder="••••••••aa"
+                  placeholder="••••••••"
                   value={formData.password}
                   onChange={handleChange}
                   required
