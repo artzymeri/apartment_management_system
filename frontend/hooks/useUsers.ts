@@ -43,7 +43,7 @@ export function useUpdateUser() {
         email?: string;
         password?: string;
         number?: string | null;
-        role?: 'admin' | 'privileged' | 'tenant';
+        role?: 'admin' | 'property_manager' | 'tenant';
         property_ids?: number[];
       };
     }) => userAPI.updateUser(id, data),
@@ -62,6 +62,26 @@ export function useDeleteUser() {
     mutationFn: (id: number) => userAPI.deleteUser(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
+    },
+  });
+}
+
+// Update own profile mutation
+export function useUpdateOwnProfile() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: {
+      name?: string;
+      surname?: string;
+      email?: string;
+      password?: string;
+      currentPassword?: string;
+      number?: string | null;
+    }) => userAPI.updateOwnProfile(data),
+    onSuccess: () => {
+      // Invalidate auth-related queries to refresh user data
+      queryClient.invalidateQueries({ queryKey: ['auth'] });
     },
   });
 }

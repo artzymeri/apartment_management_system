@@ -14,20 +14,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, Mail, Phone, Lock, Save, Loader2 } from "lucide-react";
+import { User, Mail, Phone, Lock, Save } from "lucide-react";
 import { AdminLayout } from "@/components/layouts/AdminLayout";
-import { PrivilegedLayout } from "@/components/layouts/PrivilegedLayout";
+import { PropertyManagerLayout } from "@/components/layouts/PropertyManagerLayout";
 import { TenantLayout } from "@/components/layouts/TenantLayout";
+import { toast } from "sonner";
+import { useUpdateOwnProfile } from "@/hooks/useUsers";
 
 export default function SettingsPage() {
   const { user, updateProfile } = useAuth();
   const router = useRouter();
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [message, setMessage] = React.useState<{
-    type: "success" | "error";
-    text: string;
-  } | null>(null);
+  const updateProfileMutation = useUpdateOwnProfile();
 
   const [formData, setFormData] = React.useState({
     name: user?.name || "",
@@ -54,134 +51,74 @@ export default function SettingsPage() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    setMessage(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    setMessage(null);
 
-    try {
-      // Validate password fields if changing password
-      if (formData.newPassword || formData.confirmPassword) {
-        if (!formData.currentPassword) {
-          setMessage({
-            type: "error",
-            text: "Current password is required to change password",
-          });
-          setIsLoading(false);
-          return;
-        }
-        if (formData.newPassword !== formData.confirmPassword) {
-          setMessage({
-            type: "error",
-            text: "New passwords do not match",
-          });
-          setIsLoading(false);
-          return;
-        }
-        if (formData.newPassword.length < 6) {
-          setMessage({
-            type: "error",
-            text: "New password must be at least 6 characters",
-          });
-          setIsLoading(false);
-          return;
-        }
-      }
-
-      // Prepare update data
-      const updateData: any = {
-        name: formData.name,
-        surname: formData.surname,
-        email: formData.email,
-        number: formData.number,
-      };
-
-      // Add password if changing
-      if (formData.newPassword) {
-        updateData.password = formData.newPassword;
-      }
-
-      // Call API to update user
-      const response = await fetch(`http://localhost:3001/api/users/${user?.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(updateData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setMessage({
-          type: "error",
-          text: data.message || "Failed to update profile",
-        });
-        setIsLoading(false);
+    // Validate password fields if changing password
+    if (formData.newPassword || formData.confirmPassword) {
+      if (!formData.currentPassword) {
+        toast.error("Current password is required to change password");
         return;
       }
-
-      setMessage({
-        type: "success",
-        text: "Profile updated successfully",
-      });
-
-      // Clear password fields
-      setFormData((prev) => ({
-        ...prev,
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      }));
-
-      // Refresh user data
-      await updateProfile();
-    } catch (error: any) {
-      setMessage({
-        type: "error",
-        text: error.message || "Failed to update profile",
-      });
-    } finally {
-      setIsLoading(false);
+      if (formData.newPassword !== formData.confirmPassword) {
+        toast.error("New passwords do not match");
+        return;
+      }
+      if (formData.newPassword.length < 6) {
+        toast.error("New password must be at least 6 characters");
+        return;
+      }
     }
+
+    // Prepare update data
+    const updateData: {
+      name: string;
+      surname: string;
+      email: string;
+      number: string;
+      password?: string;
+      currentPassword?: string;
+    } = {
+      name: formData.name,
+      surname: formData.surname,
+      email: formData.email,
+      number: formData.number,
+    };
+
+    // Add password fields if changing
+    if (formData.newPassword) {
+      updateData.password = formData.newPassword;
+      updateData.currentPassword = formData.currentPassword;
+    }
+
+    updateProfileMutation.mutate(updateData, {
+      onSuccess: () => {
+        toast.success("Profile updated successfully");
+
+        // Clear password fields
+        setFormData((prev) => ({
+          ...prev,
+          currentPassword: "",
+          newPassword: "",
+          confirmPassword: "",
+        }));
+
+        // Refresh user data
+        updateProfile();
+      },
+      onError: (error: Error) => {
+        toast.error(error.message || "Failed to update profile");
+      },
+    });
   };
 
   const SettingsContent = () => (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-slate-900">Settings</h1>
-        <p className="text-slate-600 mt-2">
-          Manage your account settings and preferences
-        </p>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-3">
-        {/* Profile Picture Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Profile Picture</CardTitle>
-            <CardDescription>Update your avatar</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col items-center gap-4">
-            <Avatar className="h-32 w-32">
-              <AvatarImage src="" />
-              <AvatarFallback className="text-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white">
-                {formData.name?.[0]}
-                {formData.surname?.[0]}
-              </AvatarFallback>
-            </Avatar>
-            <p className="text-sm text-slate-600 text-center">
-              Avatar is generated from your initials
-            </p>
-          </CardContent>
-        </Card>
-
+      <div className="grid gap-6">
         {/* Personal Information Form */}
-        <Card className="md:col-span-2">
+        <Card>
           <CardHeader>
             <CardTitle>Personal Information</CardTitle>
             <CardDescription>
@@ -190,18 +127,6 @@ export default function SettingsPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              {message && (
-                <div
-                  className={`rounded-lg p-4 ${
-                    message.type === "success"
-                      ? "bg-green-50 text-green-800 border border-green-200"
-                      : "bg-red-50 text-red-800 border border-red-200"
-                  }`}
-                >
-                  {message.text}
-                </div>
-              )}
-
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="name">
@@ -215,6 +140,7 @@ export default function SettingsPage() {
                     onChange={handleInputChange}
                     placeholder="Enter your first name"
                     required
+                    disabled={updateProfileMutation.isPending}
                   />
                 </div>
 
@@ -230,6 +156,7 @@ export default function SettingsPage() {
                     onChange={handleInputChange}
                     placeholder="Enter your last name"
                     required
+                    disabled={updateProfileMutation.isPending}
                   />
                 </div>
               </div>
@@ -247,6 +174,7 @@ export default function SettingsPage() {
                   onChange={handleInputChange}
                   placeholder="Enter your email"
                   required
+                  disabled={updateProfileMutation.isPending}
                 />
               </div>
 
@@ -262,6 +190,7 @@ export default function SettingsPage() {
                   value={formData.number}
                   onChange={handleInputChange}
                   placeholder="Enter your phone number"
+                  disabled={updateProfileMutation.isPending}
                 />
               </div>
 
@@ -285,6 +214,7 @@ export default function SettingsPage() {
                     value={formData.currentPassword}
                     onChange={handleInputChange}
                     placeholder="Enter current password"
+                    disabled={updateProfileMutation.isPending}
                   />
                 </div>
 
@@ -298,6 +228,7 @@ export default function SettingsPage() {
                       value={formData.newPassword}
                       onChange={handleInputChange}
                       placeholder="Enter new password"
+                      disabled={updateProfileMutation.isPending}
                     />
                   </div>
 
@@ -310,6 +241,7 @@ export default function SettingsPage() {
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
                       placeholder="Confirm new password"
+                      disabled={updateProfileMutation.isPending}
                     />
                   </div>
                 </div>
@@ -320,12 +252,12 @@ export default function SettingsPage() {
                   type="button"
                   variant="outline"
                   onClick={() => router.back()}
-                  disabled={isLoading}
+                  disabled={updateProfileMutation.isPending}
                 >
                   Cancel
                 </Button>
-                <Button type="submit" isLoading={isLoading}>
-                  <Save className="mr-2 h-4 w-4" />
+                <Button type="submit" isLoading={updateProfileMutation.isPending}>
+                  {!updateProfileMutation.isPending && <Save className="mr-2 h-4 w-4" />}
                   Save Changes
                 </Button>
               </div>
@@ -349,11 +281,11 @@ export default function SettingsPage() {
     );
   }
 
-  if (user.role === "privileged") {
+  if (user.role === "property_manager") {
     return (
-      <PrivilegedLayout>
+      <PropertyManagerLayout>
         <SettingsContent />
-      </PrivilegedLayout>
+      </PropertyManagerLayout>
     );
   }
 

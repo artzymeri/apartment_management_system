@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -16,8 +18,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft, UserCog } from "lucide-react";
+import { ArrowLeft, UserCog, Calendar as CalendarIcon } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 export default function EditUserPage() {
   const router = useRouter();
@@ -34,22 +38,31 @@ export default function EditUserPage() {
     password: "",
     confirmPassword: "",
     number: "",
-    role: "tenant" as "admin" | "privileged" | "tenant",
+    role: "tenant" as "admin" | "property_manager" | "tenant",
   });
+  const [expiryDate, setExpiryDate] = useState<Date | undefined>(undefined);
 
   const [errors, setErrors] = useState<string[]>([]);
 
   useEffect(() => {
     if (userData?.success && userData.data) {
+      const user = userData.data;
       setFormData({
-        name: userData.data.name,
-        surname: userData.data.surname,
-        email: userData.data.email,
+        name: user.name,
+        surname: user.surname,
+        email: user.email,
         password: "",
         confirmPassword: "",
-        number: userData.data.number || "",
-        role: userData.data.role,
+        number: user.number || "",
+        role: user.role,
       });
+
+      // Set expiry date if exists
+      if (user.expiry_date) {
+        setExpiryDate(new Date(user.expiry_date));
+      } else {
+        setExpiryDate(undefined);
+      }
     }
   }, [userData]);
 
@@ -89,6 +102,11 @@ export default function EditUserPage() {
         updateData.password = formData.password;
       }
 
+      // Add expiry_date for property_manager users
+      if (formData.role === 'property_manager') {
+        updateData.expiry_date = expiryDate ? format(expiryDate, 'yyyy-MM-dd') : null;
+      }
+
       const result = await updateMutation.mutateAsync({
         id: userId,
         data: updateData,
@@ -110,7 +128,7 @@ export default function EditUserPage() {
   if (isLoading) {
     return (
       <ProtectedRoute allowedRoles={["admin"]}>
-        <AdminLayout>
+        <AdminLayout title="Edit User">
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600" />
           </div>
@@ -119,11 +137,10 @@ export default function EditUserPage() {
     );
   }
 
-  if (!userData?.success) {
-    toast.error("User not found");
+  if (!userData?.success || !userData?.data) {
     return (
       <ProtectedRoute allowedRoles={["admin"]}>
-        <AdminLayout>
+        <AdminLayout title="Edit User">
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
               <h2 className="text-2xl font-bold text-slate-900">
@@ -148,26 +165,8 @@ export default function EditUserPage() {
 
   return (
     <ProtectedRoute allowedRoles={["admin"]}>
-      <AdminLayout>
+      <AdminLayout title="Edit User">
         <div className="space-y-6 max-w-2xl">
-          {/* Header */}
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => router.back()}
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <div>
-              <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-                Edit User
-              </h2>
-              <p className="text-slate-600 mt-2">
-                Update user information
-              </p>
-            </div>
-          </div>
 
           {/* Error Alert */}
           {errors.length > 0 && (
@@ -281,21 +280,68 @@ export default function EditUserPage() {
                     Role <span className="text-red-600">*</span>
                   </Label>
                   <Select
+                    key={`role-${formData.role}`}
                     value={formData.role}
                     onValueChange={(value: any) =>
                       setFormData({ ...formData, role: value })
                     }
+                    disabled
                   >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="Select a role" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="tenant">Tenant</SelectItem>
-                      <SelectItem value="privileged">Privileged</SelectItem>
+                      <SelectItem value="property_manager">Property Manager</SelectItem>
                       <SelectItem value="admin">Admin</SelectItem>
                     </SelectContent>
                   </Select>
+                  <p className="text-sm text-slate-500">
+                    Role cannot be changed after user creation
+                  </p>
                 </div>
+
+                {/* Expiry Date for Property Manager Users */}
+                {formData.role === 'property_manager' && (
+                  <div className="space-y-2 border-t pt-4">
+                    <Label htmlFor="expiry-date">Account Expiry Date</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !expiryDate && "text-slate-500"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {expiryDate ? format(expiryDate, "PPP") : "Pick a date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar
+                          mode="single"
+                          selected={expiryDate}
+                          onSelect={setExpiryDate}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <p className="text-sm text-slate-500">
+                      This user will not be able to log in after this date.
+                      {expiryDate && (
+                        <Button
+                          type="button"
+                          variant="link"
+                          className="h-auto p-0 ml-2 text-red-600"
+                          onClick={() => setExpiryDate(undefined)}
+                        >
+                          Clear date
+                        </Button>
+                      )}
+                    </p>
+                  </div>
+                )}
 
                 <div className="border-t pt-4 mt-4">
                   <p className="text-sm text-slate-600 mb-4">

@@ -131,8 +131,8 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Check if privileged user account has expired
-    if (user.role === 'privileged' && user.expiry_date) {
+    // Check if property_manager user account has expired
+    if (user.role === 'property_manager' && user.expiry_date) {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const expiryDate = new Date(user.expiry_date);

@@ -2,14 +2,29 @@ import { authAPI } from './auth-api';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
+// Global handler for API responses
+async function handleApiResponse(response: Response) {
+  // If unauthorized, clear auth and redirect to login
+  if (response.status === 401) {
+    authAPI.removeToken();
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login';
+    }
+    throw new Error('Session expired. Please login again.');
+  }
+
+  return response;
+}
+
 export interface User {
   id: number;
   name: string;
   surname: string;
   email: string;
   number: string | null;
-  role: 'admin' | 'privileged' | 'tenant';
+  role: 'admin' | 'property_manager' | 'tenant';
   property_ids: number[];
+  expiry_date?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -45,6 +60,7 @@ class UserAPI {
         credentials: 'include',
       }
     );
+    await handleApiResponse(response);
     return response.json();
   }
 
@@ -54,6 +70,7 @@ class UserAPI {
       headers: this.getAuthHeaders(),
       credentials: 'include',
     });
+    await handleApiResponse(response);
     return response.json();
   }
 
@@ -63,8 +80,9 @@ class UserAPI {
     email?: string;
     password?: string;
     number?: string | null;
-    role?: 'admin' | 'privileged' | 'tenant';
+    role?: 'admin' | 'property_manager' | 'tenant';
     property_ids?: number[];
+    expiry_date?: string | null;
   }) {
     const response = await fetch(`${API_BASE_URL}/api/users/${id}`, {
       method: 'PUT',
@@ -72,6 +90,7 @@ class UserAPI {
       credentials: 'include',
       body: JSON.stringify(data),
     });
+    await handleApiResponse(response);
     return response.json();
   }
 
@@ -81,6 +100,32 @@ class UserAPI {
       headers: this.getAuthHeaders(),
       credentials: 'include',
     });
+    await handleApiResponse(response);
+    return response.json();
+  }
+
+  async updateOwnProfile(data: {
+    name?: string;
+    surname?: string;
+    email?: string;
+    password?: string;
+    currentPassword?: string;
+    number?: string | null;
+  }) {
+    const response = await fetch(`${API_BASE_URL}/api/users/profile/me`, {
+      method: 'PUT',
+      headers: this.getAuthHeaders(),
+      credentials: 'include',
+      body: JSON.stringify(data),
+    });
+
+    await handleApiResponse(response);
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to update profile');
+    }
+
     return response.json();
   }
 }

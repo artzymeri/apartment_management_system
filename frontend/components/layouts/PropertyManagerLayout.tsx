@@ -33,29 +33,29 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 
-const privilegedNavItems = [
-  { href: "/privileged", icon: ClipboardList, label: "Dashboard" },
-  { href: "/privileged/properties", icon: Building2, label: "Properties" },
-  { href: "/privileged/maintenance", icon: Wrench, label: "Maintenance" },
-  { href: "/privileged/tenants", icon: Users, label: "Tenants" },
-  { href: "/privileged/messages", icon: MessageSquare, label: "Messages" },
+const propertyManagerNavItems = [
+  { href: "/property_manager", icon: ClipboardList, label: "Dashboard" },
+  { href: "/property_manager/properties", icon: Building2, label: "Properties" },
+  { href: "/property_manager/maintenance", icon: Wrench, label: "Maintenance" },
+  { href: "/property_manager/tenants", icon: Users, label: "Tenants" },
+  { href: "/property_manager/messages", icon: MessageSquare, label: "Messages" },
 ];
 
 // Helper function to get page title
 const getPageTitle = (pathname: string) => {
-  const navItem = privilegedNavItems.find((item) => item.href === pathname);
+  const navItem = propertyManagerNavItems.find((item) => item.href === pathname);
   if (navItem) return navItem.label;
 
   // For nested routes
-  if (pathname.startsWith("/privileged/properties")) return "Properties";
-  if (pathname.startsWith("/privileged/maintenance")) return "Maintenance";
-  if (pathname.startsWith("/privileged/tenants")) return "Tenants";
-  if (pathname.startsWith("/privileged/messages")) return "Messages";
+  if (pathname.startsWith("/property_manager/properties")) return "Properties";
+  if (pathname.startsWith("/property_manager/maintenance")) return "Maintenance";
+  if (pathname.startsWith("/property_manager/tenants")) return "Tenants";
+  if (pathname.startsWith("/property_manager/messages")) return "Messages";
 
   return "Manager Dashboard";
 };
 
-export function PrivilegedLayout({ children }: { children: React.ReactNode }) {
+export function PropertyManagerLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const router = useRouter();
@@ -75,7 +75,7 @@ export function PrivilegedLayout({ children }: { children: React.ReactNode }) {
       </div>
       <ScrollArea className="flex-1 px-3 py-4">
         <nav className="space-y-2">
-          {privilegedNavItems.map((item) => {
+          {propertyManagerNavItems.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
             return (
@@ -123,13 +123,9 @@ export function PrivilegedLayout({ children }: { children: React.ReactNode }) {
           <DropdownMenuContent side="top" align="end" className="w-56">
             <DropdownMenuLabel>Manager Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <User className="mr-2 h-4 w-4" />
-              Profile
-            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push('/settings')}>
               <Settings className="mr-2 h-4 w-4" />
-              Settings
+              Profile Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem

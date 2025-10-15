@@ -6,34 +6,37 @@ import { useAuth } from '@/contexts/AuthContext';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  allowedRoles: Array<'admin' | 'privileged' | 'tenant'>;
+  allowedRoles: Array<'admin' | 'property_manager' | 'tenant'>;
 }
 
 export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
-  const { user, isLoading, isAuthenticated, checkAuth } = useAuth();
+  const { user, isLoading, isAuthenticated } = useAuth();
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
     const verifyAccess = async () => {
       // Wait for auth check to complete
       if (isLoading) return;
 
-      // Not authenticated
+      // Not authenticated - redirect to login immediately
       if (!isAuthenticated || !user) {
-        router.push('/login');
+        setIsRedirecting(true);
+        router.replace('/login');
         return;
       }
 
       // Check if user role is allowed
       if (!allowedRoles.includes(user.role)) {
+        setIsRedirecting(true);
         // Redirect to appropriate dashboard based on their role
         const roleRoutes = {
           admin: '/admin',
-          privileged: '/privileged',
+          property_manager: '/property_manager',
           tenant: '/tenant'
         };
-        router.push(roleRoutes[user.role]);
+        router.replace(roleRoutes[user.role]);
         return;
       }
 
@@ -44,20 +47,15 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
     verifyAccess();
   }, [user, isLoading, isAuthenticated, allowedRoles, router]);
 
-  // Show loading state
-  if (isLoading) {
+  // Show loading state while checking auth or redirecting
+  if (isLoading || isRedirecting || !isAuthorized) {
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
         <div className="text-center">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]" />
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-slate-600 border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]" />
         </div>
       </div>
     );
-  }
-
-  // Show nothing while redirecting
-  if (!isAuthorized) {
-    return null;
   }
 
   // Render protected content

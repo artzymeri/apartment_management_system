@@ -4,13 +4,16 @@ import { useState, useCallback, useEffect } from "react";
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { MapPin, Lock, Unlock } from "lucide-react";
 
 interface LocationPickerProps {
   latitude?: number | null;
   longitude?: number | null;
   onLocationChange: (lat: number, lng: number) => void;
   disabled?: boolean;
+  isLocked?: boolean;
+  onToggleLock?: () => void;
 }
 
 const mapContainerStyle = {
@@ -28,6 +31,8 @@ export function LocationPicker({
   longitude,
   onLocationChange,
   disabled = false,
+  isLocked = false,
+  onToggleLock,
 }: LocationPickerProps) {
   const [markerPosition, setMarkerPosition] = useState<{ lat: number; lng: number } | null>(
     latitude && longitude ? { lat: Number(latitude), lng: Number(longitude) } : null
@@ -52,7 +57,7 @@ export function LocationPicker({
 
   const onMapClick = useCallback(
     (e: google.maps.MapMouseEvent) => {
-      if (disabled || !e.latLng) return;
+      if (disabled || isLocked || !e.latLng) return;
 
       const lat = e.latLng.lat();
       const lng = e.latLng.lng();
@@ -60,7 +65,7 @@ export function LocationPicker({
       setMarkerPosition({ lat, lng });
       onLocationChange(lat, lng);
     },
-    [onLocationChange, disabled]
+    [onLocationChange, disabled, isLocked]
   );
 
   if (!apiKey) {
@@ -110,16 +115,43 @@ export function LocationPicker({
   return (
     <Card className="border-red-200">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <MapPin className="h-5 w-5" />
-          Property Location
-        </CardTitle>
-        <CardDescription>
-          {disabled
-            ? "View the property location on the map"
-            : "Click on the map to set the property location"
-          }
-        </CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              <MapPin className="h-5 w-5" />
+              Property Location
+            </CardTitle>
+            <CardDescription>
+              {isLocked
+                ? "Location is locked. Click the button to enable editing."
+                : disabled
+                ? "View the property location on the map"
+                : "Click on the map to set the property location"
+              }
+            </CardDescription>
+          </div>
+          {onToggleLock && markerPosition && (
+            <Button
+              type="button"
+              variant={isLocked ? "outline" : "secondary"}
+              size="sm"
+              onClick={onToggleLock}
+              className="gap-2"
+            >
+              {isLocked ? (
+                <>
+                  <Lock className="h-4 w-4" />
+                  Unlock to Edit
+                </>
+              ) : (
+                <>
+                  <Unlock className="h-4 w-4" />
+                  Lock Location
+                </>
+              )}
+            </Button>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         <GoogleMap
@@ -133,6 +165,7 @@ export function LocationPicker({
             mapTypeControl: false,
             streetViewControl: false,
             fullscreenControl: true,
+            draggableCursor: isLocked ? 'default' : 'crosshair',
           }}
         >
           {markerPosition && <Marker position={markerPosition} />}
@@ -144,6 +177,12 @@ export function LocationPicker({
             <p className="text-xs text-slate-600 mt-1">
               Latitude: {Number(markerPosition.lat).toFixed(6)}, Longitude: {Number(markerPosition.lng).toFixed(6)}
             </p>
+            {isLocked && (
+              <p className="text-xs text-amber-600 mt-2 flex items-center gap-1">
+                <Lock className="h-3 w-3" />
+                Location is locked and cannot be changed
+              </p>
+            )}
           </div>
         )}
       </CardContent>

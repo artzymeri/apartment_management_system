@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { PrivilegedLayout } from "@/components/layouts/PrivilegedLayout";
+import { PropertyManagerLayout } from "@/components/layouts/PropertyManagerLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { useProperties } from "@/hooks/useProperties";
 import { Property } from "@/lib/property-api";
@@ -21,7 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { Building2, Search, ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
-export default function PrivilegedPropertiesPage() {
+export default function PropertyManagerPropertiesPage() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [cityFilter, setCityFilter] = useState("");
@@ -31,7 +31,7 @@ export default function PrivilegedPropertiesPage() {
     city: "",
     page: 1,
     limit: 10,
-    myProperties: true, // Flag to fetch only properties linked to this privileged user
+    myProperties: true, // Flag to fetch only properties linked to this property_manager user
   });
 
   const { data, isLoading, error } = useProperties(appliedFilters);
@@ -70,15 +70,15 @@ export default function PrivilegedPropertiesPage() {
   };
 
   const handleRowClick = (propertyId: number) => {
-    router.push(`/privileged/properties/${propertyId}`);
+    router.push(`/property_manager/properties/${propertyId}`);
   };
 
   const properties = data?.data || [];
   const totalPages = data?.pagination?.totalPages || 1;
 
   return (
-    <ProtectedRoute allowedRoles={["privileged"]}>
-      <PrivilegedLayout>
+    <ProtectedRoute allowedRoles={["property_manager"]}>
+      <PropertyManagerLayout>
         <div className="space-y-6">
           {/* Filters */}
           <Card className="border-indigo-200">
@@ -215,7 +215,7 @@ export default function PrivilegedPropertiesPage() {
             </div>
           )}
         </div>
-      </PrivilegedLayout>
+      </PropertyManagerLayout>
     </ProtectedRoute>
   );
 }

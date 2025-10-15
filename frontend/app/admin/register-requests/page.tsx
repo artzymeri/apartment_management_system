@@ -12,6 +12,8 @@ import { RegisterRequest, RegisterRequestFilters } from "@/lib/registerRequest-a
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Table,
   TableBody,
@@ -50,6 +52,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 export default function RegisterRequestsPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -67,6 +71,7 @@ export default function RegisterRequestsPage() {
     request: RegisterRequest | null;
   }>({ isOpen: false, request: null });
   const [approvalRole, setApprovalRole] = useState("tenant");
+  const [expiryDate, setExpiryDate] = useState<Date | undefined>(undefined);
 
   // Reject confirmation state
   const [requestToReject, setRequestToReject] = useState<RegisterRequest | null>(null);
@@ -110,20 +115,29 @@ export default function RegisterRequestsPage() {
   const openApprovalDialog = (request: RegisterRequest) => {
     setApprovalDialog({ isOpen: true, request });
     setApprovalRole("tenant");
+    setExpiryDate(undefined);
   };
 
   const closeApprovalDialog = () => {
     setApprovalDialog({ isOpen: false, request: null });
     setApprovalRole("tenant");
+    setExpiryDate(undefined);
   };
 
   const handleApprove = async () => {
     if (!approvalDialog.request) return;
 
     try {
+      const approvalData: any = { role: approvalRole };
+
+      // Add expiry_date if role is property_manager
+      if (approvalRole === 'property_manager' && expiryDate) {
+        approvalData.expiry_date = format(expiryDate, 'yyyy-MM-dd');
+      }
+
       await approveMutation.mutateAsync({
         id: approvalDialog.request.id,
-        data: { role: approvalRole },
+        data: approvalData,
       });
       toast.success(`Registration request approved for ${approvalDialog.request.name} ${approvalDialog.request.surname}`);
       closeApprovalDialog();
@@ -243,7 +257,7 @@ export default function RegisterRequestsPage() {
                             <TableCell>{request.number || "N/A"}</TableCell>
                             <TableCell>{getStatusBadge(request.status)}</TableCell>
                             <TableCell>
-                              {new Date(request.created_at).toLocaleDateString()}
+                              {format(new Date(request.created_at), "MMM dd, yyyy")}
                             </TableCell>
                             <TableCell className="text-right">
                               <div className="flex justify-end gap-2">
@@ -330,11 +344,52 @@ export default function RegisterRequestsPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="tenant">Tenant</SelectItem>
-                    <SelectItem value="privileged">Privileged</SelectItem>
+                    <SelectItem value="property_manager">Property Manager</SelectItem>
                     <SelectItem value="admin">Admin</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
+              {approvalRole === 'property_manager' && (
+                <div className="space-y-2">
+                  <Label htmlFor="expiry-date">Expiry Date</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant={expiryDate ? "default" : "outline"}
+                        className="w-full justify-start text-left"
+                        onClick={(e) => e.preventDefault()}
+                      >
+                        {expiryDate ? format(expiryDate, "MMM dd, yyyy") : "Select expiry date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-4">
+                      <Calendar
+                        mode="single"
+                        selected={expiryDate}
+                        onSelect={setExpiryDate}
+                        disabled={(date) => date < new Date()}
+                        footer={
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setExpiryDate(undefined)}
+                            >
+                              Clear
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={() => setExpiryDate(undefined)}
+                            >
+                              Today
+                            </Button>
+                          </div>
+                        }
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              )}
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={closeApprovalDialog}>
@@ -373,10 +428,17 @@ export default function RegisterRequestsPage() {
                     }
                   }
                 }}
-                isLoading={rejectMutation.isPending}
+                disabled={rejectMutation.isPending}
                 className="bg-red-600 hover:bg-red-700"
               >
-                Reject Request
+                {rejectMutation.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Rejecting...
+                  </>
+                ) : (
+                  "Reject Request"
+                )}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

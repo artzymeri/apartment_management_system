@@ -142,8 +142,8 @@ exports.approveRegisterRequest = async (req, res) => {
       property_ids: property_ids
     };
 
-    // Add expiry_date only for privileged users
-    if (role === 'privileged') {
+    // Add expiry_date only for property_manager users
+    if (role === 'property_manager') {
       userData.expiry_date = expiry_date || null;
     }
 

@@ -20,7 +20,7 @@ VALUES (
   NOW()
 );
 
--- Insert Privileged/Manager User
+-- Insert Property Manager User
 INSERT INTO users (name, surname, email, password, number, role, created_at, updated_at)
 VALUES (
   'Manager',
@@ -28,7 +28,7 @@ VALUES (
   'manager@test.com',
   '$2b$10$rKzH.PJJ8OVQPx0QJ7FwM.XkJ4j5K4eZ0pZh0NjW9K6nQqxH3h7Uu',
   '+1 (555) 200-0002',
-  'privileged',
+  'property_manager',
   NOW(),
   NOW()
 );
@@ -53,9 +53,8 @@ WHERE email LIKE '%@test.com'
 ORDER BY role;
 
 -- Expected output:
--- | id | name    | surname | email             | role       | created_at          |
--- |----|---------|---------|-------------------|------------|---------------------|
--- | 1  | Admin   | User    | admin@test.com    | admin      | 2025-10-14 ...      |
--- | 2  | Manager | Smith   | manager@test.com  | privileged | 2025-10-14 ...      |
--- | 3  | John    | Tenant  | tenant@test.com   | tenant     | 2025-10-14 ...      |
-
+-- | id | name    | surname | email             | role             | created_at          |
+-- |----|---------|---------|-------------------|------------------|---------------------|
+-- | 1  | Admin   | User    | admin@test.com    | admin            | 2025-10-14 ...      |
+-- | 2  | Manager | Smith   | manager@test.com  | property_manager | 2025-10-14 ...      |
+-- | 3  | John    | Tenant  | tenant@test.com   | tenant           | 2025-10-14 ...      |

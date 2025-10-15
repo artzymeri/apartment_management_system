@@ -2,6 +2,20 @@ import { authAPI } from './auth-api';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
+// Global handler for API responses
+async function handleApiResponse(response: Response) {
+  // If unauthorized, clear auth and redirect to login
+  if (response.status === 401) {
+    authAPI.removeToken();
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login';
+    }
+    throw new Error('Session expired. Please login again.');
+  }
+
+  return response;
+}
+
 export interface Property {
   id: number;
   name: string;
@@ -65,6 +79,7 @@ class PropertyAPI {
         credentials: 'include',
       }
     );
+    await handleApiResponse(response);
     return response.json();
   }
 
@@ -74,6 +89,7 @@ class PropertyAPI {
       headers: this.getAuthHeaders(),
       credentials: 'include',
     });
+    await handleApiResponse(response);
     return response.json();
   }
 
@@ -91,6 +107,7 @@ class PropertyAPI {
       credentials: 'include',
       body: JSON.stringify(data),
     });
+    await handleApiResponse(response);
     return response.json();
   }
 
@@ -108,6 +125,7 @@ class PropertyAPI {
       credentials: 'include',
       body: JSON.stringify(data),
     });
+    await handleApiResponse(response);
     return response.json();
   }
 
@@ -117,6 +135,7 @@ class PropertyAPI {
       headers: this.getAuthHeaders(),
       credentials: 'include',
     });
+    await handleApiResponse(response);
     return response.json();
   }
 
@@ -126,6 +145,7 @@ class PropertyAPI {
       headers: this.getAuthHeaders(),
       credentials: 'include',
     });
+    await handleApiResponse(response);
     return response.json();
   }
 }

@@ -1,14 +1,14 @@
-import { PrivilegedLayout } from "@/components/layouts/PrivilegedLayout";
+import { PropertyManagerLayout } from "@/components/layouts/PropertyManagerLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Building2, Wrench, Users, MessageSquare } from "lucide-react";
 
-export default function PrivilegedDashboard() {
+export default function PropertyManagerDashboard() {
   return (
-    <ProtectedRoute allowedRoles={['privileged']}>
-      <PrivilegedLayout>
+    <ProtectedRoute allowedRoles={['property_manager']}>
+      <PropertyManagerLayout>
         <div className="space-y-6">
           {/* Stats Grid */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -98,7 +98,7 @@ export default function PrivilegedDashboard() {
             </CardContent>
           </Card>
         </div>
-      </PrivilegedLayout>
+      </PropertyManagerLayout>
     </ProtectedRoute>
   );
 }

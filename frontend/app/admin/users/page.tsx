@@ -107,7 +107,7 @@ export default function UsersPage() {
     switch (role) {
       case "admin":
         return "destructive";
-      case "privileged":
+      case "property_manager":
         return "default";
       case "tenant":
         return "secondary";
@@ -117,6 +117,7 @@ export default function UsersPage() {
   };
 
   const capitalizeRole = (role: string) => {
+    if (role === "property_manager") return "Property Manager";
     return role.charAt(0).toUpperCase() + role.slice(1);
   };
 
@@ -134,6 +135,41 @@ export default function UsersPage() {
     } catch (error) {
       return "N/A";
     }
+  };
+
+  const isExpired = (expiryDate: string | null | undefined) => {
+    if (!expiryDate) return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const expiry = new Date(expiryDate);
+    expiry.setHours(0, 0, 0, 0);
+    return expiry < today;
+  };
+
+  const isExpiringSoon = (expiryDate: string | null | undefined) => {
+    if (!expiryDate) return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const expiry = new Date(expiryDate);
+    expiry.setHours(0, 0, 0, 0);
+
+    // Check if expiry date is within 3 days from now
+    const threeDaysFromNow = new Date(today);
+    threeDaysFromNow.setDate(today.getDate() + 3);
+
+    return expiry >= today && expiry <= threeDaysFromNow;
+  };
+
+  const getRowClassName = (user: User) => {
+    if (user.role !== 'property_manager') return '';
+
+    if (isExpired(user.expiry_date)) {
+      return 'bg-red-50'; // Expired - stronger red
+    } else if (isExpiringSoon(user.expiry_date)) {
+      return 'bg-red-50/30'; // Expiring soon - subtle red
+    }
+
+    return '';
   };
 
   const users = data?.data || [];
@@ -183,15 +219,15 @@ export default function UsersPage() {
                     </div>
                     <div className="flex items-center space-x-2">
                       <Checkbox
-                        id="role-privileged"
-                        checked={selectedRoles.includes("privileged")}
-                        onCheckedChange={() => handleRoleToggle("privileged")}
+                        id="role-property_manager"
+                        checked={selectedRoles.includes("property_manager")}
+                        onCheckedChange={() => handleRoleToggle("property_manager")}
                       />
                       <Label
-                        htmlFor="role-privileged"
+                        htmlFor="role-property_manager"
                         className="text-sm font-normal cursor-pointer"
                       >
-                        Privileged
+                        Property Manager
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -234,13 +270,15 @@ export default function UsersPage() {
                       <TableHead>Email</TableHead>
                       <TableHead>Phone</TableHead>
                       <TableHead>Role</TableHead>
+                      <TableHead>Expiry Date</TableHead>
+                      <TableHead>Status</TableHead>
                       <TableHead>Created</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {users.map((user: User) => (
-                      <TableRow key={user.id}>
+                      <TableRow key={user.id} className={getRowClassName(user)}>
                         <TableCell className="font-medium">
                           {user.name} {user.surname}
                         </TableCell>
@@ -254,6 +292,34 @@ export default function UsersPage() {
                           <Badge variant={getRoleBadgeVariant(user.role) as any}>
                             {capitalizeRole(user.role)}
                           </Badge>
+                        </TableCell>
+                        <TableCell>
+                          {user.role === 'property_manager' && user.expiry_date ? (
+                            <span className="text-sm">{formatDate(user.expiry_date)}</span>
+                          ) : user.role === 'property_manager' ? (
+                            <span className="text-slate-400 text-sm">No expiry set</span>
+                          ) : (
+                            <span className="text-slate-400 text-sm">N/A</span>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {user.role === 'property_manager' && user.expiry_date ? (
+                            isExpired(user.expiry_date) ? (
+                              <Badge variant="destructive" className="w-fit">
+                                Expired
+                              </Badge>
+                            ) : (
+                              <Badge variant="outline" className="w-fit text-green-700 border-green-300">
+                                Active
+                              </Badge>
+                            )
+                          ) : user.role === 'property_manager' ? (
+                            <Badge variant="outline" className="w-fit text-green-700 border-green-300">
+                              Active
+                            </Badge>
+                          ) : (
+                            <span className="text-slate-400 text-sm">N/A</span>
+                          )}
                         </TableCell>
                         <TableCell>
                           {formatDate(user.created_at)}

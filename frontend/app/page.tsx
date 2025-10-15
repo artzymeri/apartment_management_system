@@ -87,7 +87,7 @@ export default function Home() {
                 <li>✓ Tenant communication</li>
                 <li>✓ Property inspections</li>
               </ul>
-              <Link href="/privileged">
+              <Link href="/property_manager">
                 <Button className="w-full bg-indigo-600 hover:bg-indigo-700">
                   Access Manager Portal
                 </Button>

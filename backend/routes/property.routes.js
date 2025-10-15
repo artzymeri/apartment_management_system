@@ -6,7 +6,7 @@ const { verifyToken, isAdmin } = require('../middleware/auth.middleware');
 // All routes require authentication
 router.use(verifyToken);
 
-// Get managers (privileged users) for dropdown - MUST be before /:id route
+// Get managers (property_manager users) for dropdown - MUST be before /:id route
 router.get('/managers/list', isAdmin, propertyController.getManagers);
 
 // Get all properties

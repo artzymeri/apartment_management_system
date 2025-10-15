@@ -32,6 +32,7 @@ export default function EditPropertyPage() {
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [isMapLocked, setIsMapLocked] = useState(false);
 
   const { data: propertyData, isLoading } = useProperty(propertyId);
   const { data: managersData } = useManagers();
@@ -49,6 +50,8 @@ export default function EditPropertyPage() {
   useEffect(() => {
     if (propertyData?.success && propertyData.data) {
       const property = propertyData.data;
+      const hasCoordinates = property.latitude !== null && property.longitude !== null;
+
       setFormData({
         name: property.name,
         address: property.address,
@@ -57,6 +60,9 @@ export default function EditPropertyPage() {
         longitude: property.longitude,
         manager_ids: property.managers?.map((m: { id: number }) => m.id) || [],
       });
+
+      // Lock the map if coordinates already exist
+      setIsMapLocked(hasCoordinates);
     }
   }, [propertyData]);
 
@@ -118,7 +124,7 @@ export default function EditPropertyPage() {
   if (isLoading) {
     return (
       <ProtectedRoute allowedRoles={["admin"]}>
-        <AdminLayout>
+        <AdminLayout title="Edit Property">
           <div className="flex items-center justify-center h-96">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600" />
           </div>
@@ -129,27 +135,8 @@ export default function EditPropertyPage() {
 
   return (
     <ProtectedRoute allowedRoles={["admin"]}>
-      <AdminLayout>
+      <AdminLayout title="Edit Property">
         <div className="max-w-4xl space-y-6">
-          {/* Header */}
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => router.push("/admin/properties")}
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <div>
-              <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-                Edit Property
-              </h2>
-              <p className="text-slate-600 mt-2">
-                Update property information and location
-              </p>
-            </div>
-          </div>
-
           {/* Success Alert */}
           {success && (
             <Alert className="border-green-200 bg-green-50">
@@ -237,7 +224,7 @@ export default function EditPropertyPage() {
                       disabled={updateMutation.isPending}
                     />
                     <p className="text-xs text-slate-600">
-                      Assign privileged users to manage this property
+                      Assign property managers to manage this property
                     </p>
                   </div>
                 </CardContent>
@@ -248,7 +235,9 @@ export default function EditPropertyPage() {
                 latitude={formData.latitude}
                 longitude={formData.longitude}
                 onLocationChange={handleLocationChange}
-                disabled={updateMutation.isPending}
+                disabled={updateMutation.isPending || isMapLocked}
+                isLocked={isMapLocked}
+                onToggleLock={() => setIsMapLocked(!isMapLocked)}
               />
 
               {/* Action Buttons */}

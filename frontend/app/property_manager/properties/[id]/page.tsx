@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { PrivilegedLayout } from "@/components/layouts/PrivilegedLayout";
+import { PropertyManagerLayout } from "@/components/layouts/PropertyManagerLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { useQuery } from "@tanstack/react-query";
 import { propertyAPI, Property } from "@/lib/property-api";
@@ -41,8 +41,8 @@ export default function PropertyDetailsPage() {
 
   if (isLoading) {
     return (
-      <ProtectedRoute allowedRoles={["privileged"]}>
-        <PrivilegedLayout>
+      <ProtectedRoute allowedRoles={["property_manager"]}>
+        <PropertyManagerLayout>
           <div className="space-y-6">
             <Button
               variant="ghost"
@@ -67,15 +67,15 @@ export default function PropertyDetailsPage() {
               </Card>
             </div>
           </div>
-        </PrivilegedLayout>
+        </PropertyManagerLayout>
       </ProtectedRoute>
     );
   }
 
   if (error || !property) {
     return (
-      <ProtectedRoute allowedRoles={["privileged"]}>
-        <PrivilegedLayout>
+      <ProtectedRoute allowedRoles={["property_manager"]}>
+        <PropertyManagerLayout>
           <div className="space-y-6">
             <Button
               variant="ghost"
@@ -93,7 +93,7 @@ export default function PropertyDetailsPage() {
               </AlertDescription>
             </Alert>
           </div>
-        </PrivilegedLayout>
+        </PropertyManagerLayout>
       </ProtectedRoute>
     );
   }
@@ -101,8 +101,8 @@ export default function PropertyDetailsPage() {
   const managers = property.managers || [];
 
   return (
-    <ProtectedRoute allowedRoles={["privileged"]}>
-      <PrivilegedLayout>
+    <ProtectedRoute allowedRoles={["property_manager"]}>
+      <PropertyManagerLayout>
         <div className="space-y-6">
           {/* Back Button */}
           <Button
@@ -294,7 +294,7 @@ export default function PropertyDetailsPage() {
             </Card>
           )}
         </div>
-      </PrivilegedLayout>
+      </PropertyManagerLayout>
     </ProtectedRoute>
   );
 }

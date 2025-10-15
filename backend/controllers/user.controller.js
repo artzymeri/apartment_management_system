@@ -153,11 +153,11 @@ exports.updateUser = async (req, res) => {
       property_ids: property_ids !== undefined ? property_ids : user.property_ids
     };
 
-    // Handle expiry_date - only for privileged users
-    if (role === 'privileged' || (user.role === 'privileged' && !role)) {
+    // Handle expiry_date - only for property_manager users
+    if (role === 'property_manager' || (user.role === 'property_manager' && !role)) {
       updateData.expiry_date = expiry_date !== undefined ? expiry_date : user.expiry_date;
     } else {
-      // Clear expiry_date if user is not privileged
+      // Clear expiry_date if user is not property_manager
       updateData.expiry_date = null;
     }
 

@@ -34,7 +34,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
-import { Building2, Search, Plus, Pencil, Trash2, ChevronLeft, ChevronRight, Users, Loader2 } from "lucide-react";
+import { Building2, Search, Plus, Pencil, Trash2, ChevronLeft, ChevronRight, Users } from "lucide-react";
 import { toast } from "sonner";
 
 export default function PropertiesPage() {
@@ -88,22 +88,6 @@ export default function PropertiesPage() {
     setAppliedFilters((prev) => ({ ...prev, page: newPage }));
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this property?")) return;
-
-    try {
-      const result = await deleteMutation.mutateAsync(id);
-      if (result.success) {
-        toast.success("Property deleted successfully");
-      } else {
-        toast.error(result.message || "Failed to delete property");
-      }
-    } catch (err) {
-      toast.error("Failed to delete property");
-      console.error("Delete error:", err);
-    }
-  };
-
   const handleViewManagers = (managers: any[]) => {
     setSelectedPropertyManagers(managers);
     setIsManagerDialogOpen(true);
@@ -116,27 +100,27 @@ export default function PropertiesPage() {
     <ProtectedRoute allowedRoles={["admin"]}>
       <AdminLayout>
         <div className="space-y-6">
-          {/* Header Actions */}
-          <div className="flex items-center justify-end">
-            <Button
-              onClick={() => router.push("/admin/properties/create")}
-              className="bg-red-600 hover:bg-red-700 gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              Create Property
-            </Button>
-          </div>
-
           {/* Filters */}
           <Card className="border-red-200">
             <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Search className="h-5 w-5" />
-                Filter Properties
-              </CardTitle>
-              <CardDescription>
-                Search by name, address, or filter by city
-              </CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Search className="h-5 w-5" />
+                    Filter Properties
+                  </CardTitle>
+                  <CardDescription>
+                    Search by name, address, or filter by city
+                  </CardDescription>
+                </div>
+                <Button
+                  onClick={() => router.push("/admin/properties/create")}
+                  className="bg-red-600 hover:bg-red-700 gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  Create Property
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="flex gap-4">
@@ -362,7 +346,6 @@ export default function PropertiesPage() {
                       }
                     }
                   }}
-                  isLoading={deleteMutation.isPending}
                   className="bg-red-600 text-white hover:bg-red-700"
                 >
                   Delete Property

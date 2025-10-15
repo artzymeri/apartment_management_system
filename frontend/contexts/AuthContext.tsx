@@ -10,7 +10,7 @@ interface User {
   surname: string;
   email: string;
   number?: string;
-  role: 'admin' | 'privileged' | 'tenant';
+  role: 'admin' | 'property_manager' | 'tenant';
 }
 
 interface AuthContextType {
@@ -50,12 +50,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
+      // Token invalid or no user - clear everything and redirect
       setUser(null);
+      authAPI.removeToken();
       setIsLoading(false);
       return false;
     } catch (error) {
       console.error('Auth check error:', error);
       setUser(null);
+      authAPI.removeToken();
       setIsLoading(false);
       return false;
     }
@@ -75,7 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Redirect based on role
         const roleRoutes = {
           admin: '/admin',
-          privileged: '/privileged',
+          property_manager: '/property_manager',
           tenant: '/tenant'
         };
 

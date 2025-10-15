@@ -42,7 +42,7 @@ const adminNavItems = [
   { href: "/admin/configurations", icon: Cog, label: "Configurations" }
 ];
 
-export function AdminLayout({ children }: { children: React.ReactNode }) {
+export function AdminLayout({ children, title }: { children: React.ReactNode; title?: string }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const router = useRouter();
@@ -53,6 +53,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
 
   // Get current page title based on pathname
   const getPageTitle = () => {
+    if (title) return title;
     const currentItem = adminNavItems.find((item) => item.href === pathname);
     return currentItem ? currentItem.label : "Admin Dashboard";
   };
@@ -116,13 +117,9 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           <DropdownMenuContent side="top" align="end" className="w-56">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <User className="mr-2 h-4 w-4" />
-              Profile
-            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push('/settings')}>
               <Settings className="mr-2 h-4 w-4" />
-              Settings
+              Profile Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem

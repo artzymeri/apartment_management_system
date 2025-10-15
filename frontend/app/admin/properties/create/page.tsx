@@ -200,7 +200,7 @@ export default function CreatePropertyPage() {
                     disabled={createMutation.isPending}
                   />
                   <p className="text-xs text-slate-600">
-                    Assign privileged users to manage this property
+                    Assign property managers to manage this property
                   </p>
                 </div>
               </CardContent>

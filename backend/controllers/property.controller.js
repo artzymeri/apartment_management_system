@@ -50,8 +50,8 @@ exports.getAllProperties = async (req, res) => {
       includeOptions[2].where = { id: managerId };
     }
 
-    // If myProperties is true, filter by current user's properties (privileged users only)
-    if (myProperties === 'true' && req.user.role === 'privileged') {
+    // If myProperties is true, filter by current user's properties (property_manager users only)
+    if (myProperties === 'true' && req.user.role === 'property_manager') {
       includeOptions[2].where = { id: req.user.id };
     }
 
@@ -158,14 +158,14 @@ exports.createProperty = async (req, res) => {
       const managers = await db.User.findAll({
         where: {
           id: { [Op.in]: manager_ids },
-          role: 'privileged'
+          role: 'property_manager'
         }
       });
 
       if (managers.length !== manager_ids.length) {
         return res.status(400).json({
           success: false,
-          message: 'One or more manager IDs are invalid or users do not have privileged role'
+          message: 'One or more manager IDs are invalid or users do not have property_manager role'
         });
       }
     }
@@ -249,14 +249,14 @@ exports.updateProperty = async (req, res) => {
         const managers = await db.User.findAll({
           where: {
             id: { [Op.in]: manager_ids },
-            role: 'privileged'
+            role: 'property_manager'
           }
         });
 
         if (managers.length !== manager_ids.length) {
           return res.status(400).json({
             success: false,
-            message: 'One or more manager IDs are invalid or users do not have privileged role'
+            message: 'One or more manager IDs are invalid or users do not have property_manager role'
           });
         }
       }
@@ -333,12 +333,12 @@ exports.deleteProperty = async (req, res) => {
   }
 };
 
-// Get all managers (privileged users) for dropdown
+// Get all managers (property_manager users) for dropdown
 exports.getManagers = async (req, res) => {
   try {
     const managers = await db.User.findAll({
       where: {
-        role: 'privileged'
+        role: 'property_manager'
       },
       attributes: ['id', 'name', 'surname', 'email'],
       order: [['name', 'ASC']]

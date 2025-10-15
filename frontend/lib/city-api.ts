@@ -1,4 +1,20 @@
+import { authAPI } from './auth-api';
+
 const API_URL = 'http://localhost:5000/api';
+
+// Global handler for API responses
+async function handleApiResponse(response: Response) {
+  // If unauthorized, clear auth and redirect to login
+  if (response.status === 401) {
+    authAPI.removeToken();
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login';
+    }
+    throw new Error('Session expired. Please login again.');
+  }
+
+  return response;
+}
 
 export interface City {
   id: number;
@@ -13,6 +29,7 @@ export const cityApi = {
     const response = await fetch(`${API_URL}/cities`, {
       credentials: 'include',
     });
+    await handleApiResponse(response);
     return response.json();
   },
 
@@ -26,6 +43,7 @@ export const cityApi = {
       credentials: 'include',
       body: JSON.stringify({ name }),
     });
+    await handleApiResponse(response);
     return response.json();
   },
 
@@ -35,6 +53,7 @@ export const cityApi = {
       method: 'DELETE',
       credentials: 'include',
     });
+    await handleApiResponse(response);
     return response.json();
   },
 
@@ -48,6 +67,7 @@ export const cityApi = {
       credentials: 'include',
       body: JSON.stringify({ name }),
     });
+    await handleApiResponse(response);
     return response.json();
   },
 };
