@@ -1,0 +1,78 @@
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../config/database');
+
+const User = sequelize.define('User', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  name: {
+    type: DataTypes.STRING(100),
+    allowNull: false,
+    validate: {
+      notEmpty: true
+    }
+  },
+  surname: {
+    type: DataTypes.STRING(100),
+    allowNull: false,
+    validate: {
+      notEmpty: true
+    }
+  },
+  email: {
+    type: DataTypes.STRING(255),
+    allowNull: false,
+    unique: true,
+    validate: {
+      isEmail: true,
+      notEmpty: true
+    }
+  },
+  password: {
+    type: DataTypes.STRING(255),
+    allowNull: false,
+    validate: {
+      notEmpty: true,
+      len: [6, 255]
+    }
+  },
+  number: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
+    validate: {
+      is: /^[0-9+\-\s()]*$/i
+    }
+  },
+  role: {
+    type: DataTypes.ENUM('admin', 'privileged', 'tenant'),
+    allowNull: false,
+    defaultValue: 'tenant'
+  },
+  property_ids: {
+    type: DataTypes.JSON,
+    allowNull: true,
+    defaultValue: []
+  },
+  created_at: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW,
+    field: 'created_at'
+  },
+  updated_at: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW,
+    field: 'updated_at'
+  }
+}, {
+  tableName: 'users',
+  timestamps: true,
+  underscored: true,
+  createdAt: 'created_at',
+  updatedAt: 'updated_at'
+});
+
+module.exports = User;

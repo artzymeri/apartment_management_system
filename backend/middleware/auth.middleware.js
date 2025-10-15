@@ -1,0 +1,74 @@
+const jwt = require('jsonwebtoken');
+const db = require('../models');
+
+// Verify JWT token from cookies
+exports.verifyToken = async (req, res, next) => {
+  try {
+    const token = req.cookies.token;
+
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: 'Access denied. No token provided.'
+      });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Get user from database
+    const user = await db.User.findByPk(decoded.id, {
+      attributes: { exclude: ['password'] }
+    });
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid token. User not found.'
+      });
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    console.error('Token verification error:', error);
+    return res.status(401).json({
+      success: false,
+      message: 'Invalid token.'
+    });
+  }
+};
+
+// Check if user is admin
+exports.isAdmin = (req, res, next) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({
+      success: false,
+      message: 'Access denied. Admin privileges required.'
+    });
+  }
+  next();
+};
+
+// Check if user is privileged or admin
+exports.isPrivilegedOrAdmin = (req, res, next) => {
+  if (req.user.role !== 'privileged' && req.user.role !== 'admin') {
+    return res.status(403).json({
+      success: false,
+      message: 'Access denied. Privileged or admin privileges required.'
+    });
+  }
+  next();
+};
+
+// Check if user is the owner or admin
+exports.isOwnerOrAdmin = (req, res, next) => {
+  const userId = parseInt(req.params.id);
+
+  if (req.user.id !== userId && req.user.role !== 'admin') {
+    return res.status(403).json({
+      success: false,
+      message: 'Access denied. You can only access your own data.'
+    });
+  }
+  next();
+};
