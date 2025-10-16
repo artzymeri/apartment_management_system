@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const reportController = require('../controllers/report.controller');
+const complaintController = require('../controllers/complaint.controller');
 const { authenticateToken, authorizeRoles } = require('../middleware/auth.middleware');
 
 // Tenant routes
@@ -8,21 +8,21 @@ router.post(
   '/',
   authenticateToken,
   authorizeRoles('tenant'),
-  reportController.createReport
+  complaintController.createComplaint
 );
 
 router.get(
-  '/my-reports',
+  '/my-complaints',
   authenticateToken,
   authorizeRoles('tenant'),
-  reportController.getTenantReports
+  complaintController.getTenantComplaints
 );
 
 router.get(
-  '/problem-options',
+  '/properties',
   authenticateToken,
   authorizeRoles('tenant'),
-  reportController.getTenantProblemOptions
+  complaintController.getTenantProperties
 );
 
 // Property Manager routes
@@ -30,14 +30,15 @@ router.get(
   '/manager',
   authenticateToken,
   authorizeRoles('property_manager'),
-  reportController.getPropertyManagerReports
+  complaintController.getPropertyManagerComplaints
 );
 
 router.patch(
   '/:id/status',
   authenticateToken,
   authorizeRoles('property_manager'),
-  reportController.updateReportStatus
+  complaintController.updateComplaintStatus
 );
 
 module.exports = router;
+

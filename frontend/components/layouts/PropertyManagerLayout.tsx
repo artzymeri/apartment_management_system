@@ -54,7 +54,7 @@ const getPageTitle = (pathname: string) => {
   return "Manager Dashboard";
 };
 
-export function PropertyManagerLayout({ children }: { children: React.ReactNode }) {
+export function PropertyManagerLayout({ children, title }: { children: React.ReactNode; title?: string }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const router = useRouter();
@@ -140,7 +140,7 @@ export function PropertyManagerLayout({ children }: { children: React.ReactNode 
     </div>
   );
 
-  const pageTitle = getPageTitle(pathname);
+  const pageTitle = title || getPageTitle(pathname);
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50">

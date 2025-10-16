@@ -4,6 +4,11 @@ const RegisterRequest = require('./registerRequest.model');
 const Property = require('./property.model');
 const PropertyManager = require('./propertyManager.model');
 const City = require('./city.model');
+const ProblemOption = require('./problemOption.model');
+const PropertyProblemOption = require('./propertyProblemOption.model');
+const Report = require('./report.model');
+const Complaint = require('./complaint.model');
+const Suggestion = require('./suggestion.model');
 
 const db = {};
 
@@ -13,6 +18,11 @@ db.RegisterRequest = RegisterRequest;
 db.Property = Property;
 db.PropertyManager = PropertyManager;
 db.City = City;
+db.ProblemOption = ProblemOption;
+db.PropertyProblemOption = PropertyProblemOption;
+db.Report = Report;
+db.Complaint = Complaint;
+db.Suggestion = Suggestion;
 
 // Define relationships
 // Property belongs to User (property manager) - DEPRECATED, kept for backward compatibility
@@ -52,6 +62,106 @@ Property.belongsTo(City, {
 City.hasMany(Property, {
   foreignKey: 'city_id',
   as: 'properties'
+});
+
+// ProblemOption belongs to User (creator)
+ProblemOption.belongsTo(User, {
+  foreignKey: 'created_by_user_id',
+  as: 'creator'
+});
+
+User.hasMany(ProblemOption, {
+  foreignKey: 'created_by_user_id',
+  as: 'createdProblemOptions'
+});
+
+// Many-to-Many: Property has many ProblemOptions through PropertyProblemOption
+Property.belongsToMany(ProblemOption, {
+  through: PropertyProblemOption,
+  foreignKey: 'property_id',
+  otherKey: 'problem_option_id',
+  as: 'problemOptions'
+});
+
+// Many-to-Many: ProblemOption belongs to many Properties through PropertyProblemOption
+ProblemOption.belongsToMany(Property, {
+  through: PropertyProblemOption,
+  foreignKey: 'problem_option_id',
+  otherKey: 'property_id',
+  as: 'properties'
+});
+
+// Report relationships
+Report.belongsTo(User, {
+  foreignKey: 'tenant_user_id',
+  as: 'tenant'
+});
+
+Report.belongsTo(Property, {
+  foreignKey: 'property_id',
+  as: 'property'
+});
+
+Report.belongsTo(ProblemOption, {
+  foreignKey: 'problem_option_id',
+  as: 'problemOption'
+});
+
+User.hasMany(Report, {
+  foreignKey: 'tenant_user_id',
+  as: 'reports'
+});
+
+Property.hasMany(Report, {
+  foreignKey: 'property_id',
+  as: 'reports'
+});
+
+ProblemOption.hasMany(Report, {
+  foreignKey: 'problem_option_id',
+  as: 'reports'
+});
+
+// Complaint relationships
+Complaint.belongsTo(User, {
+  foreignKey: 'tenant_user_id',
+  as: 'tenant'
+});
+
+Complaint.belongsTo(Property, {
+  foreignKey: 'property_id',
+  as: 'property'
+});
+
+User.hasMany(Complaint, {
+  foreignKey: 'tenant_user_id',
+  as: 'complaints'
+});
+
+Property.hasMany(Complaint, {
+  foreignKey: 'property_id',
+  as: 'complaints'
+});
+
+// Suggestion relationships
+Suggestion.belongsTo(User, {
+  foreignKey: 'tenant_user_id',
+  as: 'tenant'
+});
+
+Suggestion.belongsTo(Property, {
+  foreignKey: 'property_id',
+  as: 'property'
+});
+
+User.hasMany(Suggestion, {
+  foreignKey: 'tenant_user_id',
+  as: 'suggestions'
+});
+
+Property.hasMany(Suggestion, {
+  foreignKey: 'property_id',
+  as: 'suggestions'
 });
 
 module.exports = db;

@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { PropertyManagerLayout } from "@/components/layouts/PropertyManagerLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { useAuth } from "@/contexts/AuthContext";
-import { useCreateUser } from "@/hooks/useUsers";
+import { useCreateUser, CreateUserData } from "@/hooks/useUsers";
 import { useProperties } from "@/hooks/useProperties";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,12 +12,11 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Save, Building2 } from "lucide-react";
+import { ArrowLeft, Save } from "lucide-react";
 import { toast } from "sonner";
 
 export default function CreateTenantPage() {
   const router = useRouter();
-  const { user } = useAuth();
   const createMutation = useCreateUser();
 
   // Fetch properties managed by this property manager
@@ -34,6 +32,7 @@ export default function CreateTenantPage() {
     number: "",
     property_id: "",
     floor_assigned: "" as string,
+    monthly_rate: "" as string,
   });
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,6 +43,30 @@ export default function CreateTenantPage() {
     return propertiesData.data;
   }, [propertiesData]);
 
+  // Get available floors from selected property
+  const availableFloors = useMemo(() => {
+    if (!formData.property_id || !propertiesData?.data) return [];
+
+    // Find the selected property
+    const property = propertiesData.data.find((p: any) => p.id === parseInt(formData.property_id));
+
+    if (!property) return [];
+
+    const floorsFrom = property.floors_from ?? null;
+    const floorsTo = property.floors_to ?? null;
+
+    // If no floor range is defined, return empty array
+    if (floorsFrom === null || floorsTo === null) return [];
+
+    // Generate floor range from floors_from to floors_to
+    const floors = [];
+    for (let i = floorsFrom; i <= floorsTo; i++) {
+      floors.push(i);
+    }
+
+    return floors;
+  }, [propertiesData, formData.property_id]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -53,20 +76,26 @@ export default function CreateTenantPage() {
     if (!formData.property_id) {
       setError("Please select a property for this tenant");
       toast.error("Please select a property for this tenant");
+      setIsSubmitting(false);
       return;
     }
 
     try {
-      const result = await createMutation.mutateAsync({
+      // @ts-expect-error - monthly_rate is properly typed in CreateUserData but TS cache may not reflect it
+      const userData = {
         name: formData.name,
         surname: formData.surname,
         email: formData.email,
         password: formData.password,
         number: formData.number || null,
-        role: "tenant",
+        role: "tenant" as const,
         property_ids: [parseInt(formData.property_id)],
         floor_assigned: formData.floor_assigned ? parseInt(formData.floor_assigned) : null,
-      });
+        expiry_date: null,
+        monthly_rate: formData.monthly_rate ? parseFloat(formData.monthly_rate) : null,
+      } as CreateUserData;
+
+      const result = await createMutation.mutateAsync(userData);
 
       if (result.success) {
         toast.success("Tenant created successfully! Redirecting...");
@@ -199,7 +228,6 @@ export default function CreateTenantPage() {
                 <div className="space-y-2">
                   <Label htmlFor="property_id">Select Property *</Label>
                   <Select
-                    id="property_id"
                     value={formData.property_id}
                     onValueChange={(value) =>
                       setFormData((prev) => ({ ...prev, property_id: value }))
@@ -213,7 +241,7 @@ export default function CreateTenantPage() {
                       {propertiesLoading ? (
                         <SelectItem value="">Loading properties...</SelectItem>
                       ) : (
-                        managedProperties.map((property) => (
+                        managedProperties.map((property: any) => (
                           <SelectItem key={property.id} value={property.id.toString()}>
                             {property.name}
                           </SelectItem>
@@ -225,19 +253,58 @@ export default function CreateTenantPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="floor_assigned">Floor Number</Label>
-                  <Input
+                  <select
                     id="floor_assigned"
-                    type="number"
                     value={formData.floor_assigned}
                     onChange={(e) =>
                       setFormData((prev) => ({ ...prev, floor_assigned: e.target.value }))
                     }
-                    placeholder="e.g., 1, 2, 3..."
-                    min="-20"
-                    max="200"
-                  />
+                    disabled={!formData.property_id || availableFloors.length === 0}
+                    className={`w-full h-10 px-3 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent ${
+                      !formData.property_id || availableFloors.length === 0
+                        ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                        : "bg-white"
+                    }`}
+                  >
+                    <option value="">
+                      {!formData.property_id
+                        ? "Select a property first"
+                        : availableFloors.length === 0
+                        ? "No floors available"
+                        : "Select a floor (optional)"}
+                    </option>
+                    {availableFloors.map((floor) => (
+                      <option key={floor} value={floor.toString()}>
+                        Floor {floor}
+                      </option>
+                    ))}
+                  </select>
                   <p className="text-sm text-slate-500">
                     Assign the tenant to a specific floor (optional)
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="monthly_rate">Monthly Rate</Label>
+                  <div className="relative">
+                    <Input
+                      id="monthly_rate"
+                      type="number"
+                      value={formData.monthly_rate}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, monthly_rate: e.target.value }))
+                      }
+                      placeholder="e.g., 500, 1000, 1500..."
+                      min="0"
+                      step="0.01"
+                      className="pr-8"
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-medium">
+                      €
+                    </span>
+                  </div>
+                  <p className="text-sm text-slate-500">
+                    Set the monthly rent for the tenant (optional)
                   </p>
                 </div>
 

@@ -1,11 +1,21 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 
-const PropertyProblemOption = sequelize.define('PropertyProblemOption', {
+const Complaint = sequelize.define('Complaint', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
+  },
+  tenant_user_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'users',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE'
   },
   property_id: {
     type: DataTypes.INTEGER,
@@ -17,29 +27,41 @@ const PropertyProblemOption = sequelize.define('PropertyProblemOption', {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
   },
-  problem_option_id: {
-    type: DataTypes.INTEGER,
+  title: {
+    type: DataTypes.STRING(255),
     allowNull: false,
-    references: {
-      model: 'problem_options',
-      key: 'id'
-    },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE'
+    validate: {
+      notEmpty: true
+    }
+  },
+  description: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  status: {
+    type: DataTypes.ENUM('pending', 'in_progress', 'resolved', 'rejected'),
+    allowNull: false,
+    defaultValue: 'pending'
   },
   created_at: {
     type: DataTypes.DATE,
     allowNull: false,
     defaultValue: DataTypes.NOW,
     field: 'created_at'
+  },
+  updated_at: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW,
+    field: 'updated_at'
   }
 }, {
-  tableName: 'property_problem_options',
+  tableName: 'complaints',
   timestamps: true,
   underscored: true,
   createdAt: 'created_at',
-  updatedAt: false
+  updatedAt: 'updated_at'
 });
 
-module.exports = PropertyProblemOption;
+module.exports = Complaint;
 

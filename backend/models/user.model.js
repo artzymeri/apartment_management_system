@@ -69,6 +69,14 @@ const User = sequelize.define('User', {
     allowNull: true,
     field: 'expiry_date'
   },
+  monthly_rate: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: true,
+    field: 'monthly_rate',
+    validate: {
+      min: 0
+    }
+  },
   created_at: {
     type: DataTypes.DATE,
     allowNull: false,

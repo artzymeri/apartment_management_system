@@ -214,7 +214,7 @@ export default function ReportProblemPage() {
   if (fetchingData) {
     return (
       <ProtectedRoute allowedRoles={["tenant"]}>
-        <TenantLayout>
+        <TenantLayout title="Report a Problem">
           <div className="flex items-center justify-center h-64">
             <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
           </div>
@@ -225,17 +225,8 @@ export default function ReportProblemPage() {
 
   return (
     <ProtectedRoute allowedRoles={["tenant"]}>
-      <TenantLayout>
+      <TenantLayout title="Report a Problem">
         <div className="space-y-6">
-          <div>
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-              Report a Problem
-            </h2>
-            <p className="text-slate-600 mt-2">
-              Submit maintenance requests and issues for your property
-            </p>
-          </div>
-
           <div className="grid gap-6 md:grid-cols-2">
             {/* Report Form */}
             <Card>

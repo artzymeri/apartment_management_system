@@ -41,7 +41,7 @@ const tenantNavItems = [
   { href: "/tenant/messages", icon: MessageSquare, label: "Messages" },
 ];
 
-export function TenantLayout({ children }: { children: React.ReactNode }) {
+export function TenantLayout({ children, title = "My Apartment" }: { children: React.ReactNode; title?: string }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const router = useRouter();
@@ -151,7 +151,7 @@ export function TenantLayout({ children }: { children: React.ReactNode }) {
 
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-slate-900">
-              My Apartment
+              {title}
             </h1>
           </div>
 

@@ -26,6 +26,7 @@ export interface User {
   property_ids: number[];
   floor_assigned?: number | null;
   expiry_date?: string | null;
+  monthly_rate?: number | null;
   created_at: string;
   updated_at: string;
 }
@@ -85,6 +86,7 @@ class UserAPI {
     property_ids?: number[];
     floor_assigned?: number | null;
     expiry_date?: string | null;
+    monthly_rate?: number | null;
   }) {
     const response = await fetch(`${API_BASE_URL}/api/users/${id}`, {
       method: 'PUT',
@@ -141,6 +143,7 @@ class UserAPI {
     property_ids?: number[];
     floor_assigned?: number | null;
     expiry_date?: string | null;
+    monthly_rate?: number | null;
   }) {
     const response = await fetch(`${API_BASE_URL}/api/users`, {
       method: 'POST',
@@ -188,6 +191,7 @@ class UserAPI {
     number?: string | null;
     property_ids?: number[];
     floor_assigned?: number | null;
+    monthly_rate?: number | null;
   }) {
     const response = await fetch(`${API_BASE_URL}/api/users/tenants/${id}`, {
       method: 'PUT',

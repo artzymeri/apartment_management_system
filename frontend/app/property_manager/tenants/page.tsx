@@ -4,7 +4,6 @@ import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { PropertyManagerLayout } from "@/components/layouts/PropertyManagerLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { useAuth } from "@/contexts/AuthContext";
 import { useTenants, useDeleteUser } from "@/hooks/useUsers";
 import { useProperties } from "@/hooks/useProperties";
 import { User } from "@/lib/user-api";
@@ -42,9 +41,10 @@ import { toast } from "sonner";
 
 export default function PropertyManagerTenantsPage() {
   const router = useRouter();
-  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedProperty, setSelectedProperty] = useState<string>("all");
+  const [selectedFloor, setSelectedFloor] = useState<string>("all");
+  const [monthlyRateFilter, setMonthlyRateFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [tenantToDelete, setTenantToDelete] = useState<{ id: number; name: string } | null>(null);
   const [appliedFilters, setAppliedFilters] = useState({
@@ -60,7 +60,7 @@ export default function PropertyManagerTenantsPage() {
   // Create a properties map for quick lookup
   const propertiesMap = useMemo(() => {
     if (!propertiesData?.data) return new Map();
-    return new Map(propertiesData.data.map(p => [p.id, p]));
+    return new Map(propertiesData.data.map((p: any) => [p.id, p]));
   }, [propertiesData]);
 
   // Get list of managed properties for the filter dropdown
@@ -69,15 +69,67 @@ export default function PropertyManagerTenantsPage() {
     return propertiesData.data;
   }, [propertiesData]);
 
-  // Filter tenants by selected property (client-side filter)
+  // Get available floors from selected property
+  const availableFloors = useMemo(() => {
+    // If no specific property is selected, return empty array (floor filter will be disabled)
+    if (selectedProperty === "all" || !propertiesData?.data) return [];
+
+    // Find the selected property
+    const property = propertiesData.data.find((p: any) => p.id === parseInt(selectedProperty));
+
+    if (!property) return [];
+
+    const floorsFrom = property.floors_from ?? null;
+    const floorsTo = property.floors_to ?? null;
+
+    // If no floor range is defined, return empty array
+    if (floorsFrom === null || floorsTo === null) return [];
+
+    // Generate floor range from floors_from to floors_to
+    const floors = [];
+    for (let i = floorsFrom; i <= floorsTo; i++) {
+      floors.push(i);
+    }
+
+    return floors;
+  }, [propertiesData, selectedProperty]);
+
+  // Filter tenants by all criteria (client-side filter)
   const filteredTenants = useMemo(() => {
     if (!data?.data) return [];
-    if (selectedProperty === "all") return data.data;
 
     return data.data.filter((tenant: User) => {
-      return tenant.property_ids && tenant.property_ids.includes(parseInt(selectedProperty));
+      // Filter by property
+      if (selectedProperty !== "all") {
+        const hasProperty = tenant.property_ids && tenant.property_ids.includes(parseInt(selectedProperty));
+        if (!hasProperty) return false;
+      }
+
+      // Filter by floor
+      if (selectedFloor !== "all") {
+        if (tenant.floor_assigned !== parseInt(selectedFloor)) return false;
+      }
+
+      // Filter by monthly rate
+      if (monthlyRateFilter) {
+        const filterRate = parseFloat(monthlyRateFilter);
+        if (!tenant.monthly_rate || Number(tenant.monthly_rate) !== filterRate) return false;
+      }
+
+      // Filter by search term (name, surname, email, or phone number)
+      if (searchTerm) {
+        const search = searchTerm.toLowerCase();
+        const matchesName = tenant.name.toLowerCase().includes(search);
+        const matchesSurname = tenant.surname.toLowerCase().includes(search);
+        const matchesEmail = tenant.email.toLowerCase().includes(search);
+        const matchesNumber = tenant.number?.toLowerCase().includes(search) || false;
+
+        if (!matchesName && !matchesSurname && !matchesEmail && !matchesNumber) return false;
+      }
+
+      return true;
     });
-  }, [data?.data, selectedProperty]);
+  }, [data?.data, selectedProperty, selectedFloor, monthlyRateFilter, searchTerm]);
 
   // Helper function to get property name by ID
   const getPropertyName = (propertyIds: number[] | undefined) => {
@@ -100,10 +152,17 @@ export default function PropertyManagerTenantsPage() {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  // Reset to page 1 when property filter changes
+  // Reset to page 1 when any filter changes
   useEffect(() => {
     setCurrentPage(1);
     setAppliedFilters((prev) => ({ ...prev, page: 1 }));
+  }, [selectedProperty, selectedFloor, monthlyRateFilter]);
+
+  // Reset floor filter when property changes
+  useEffect(() => {
+    if (selectedProperty === "all") {
+      setSelectedFloor("all");
+    }
   }, [selectedProperty]);
 
   const handlePageChange = (newPage: number) => {
@@ -143,41 +202,113 @@ export default function PropertyManagerTenantsPage() {
                     Filter Tenants
                   </CardTitle>
                   <CardDescription>
-                    Search by name, email, or filter by property
+                    Search by name, email, phone number or filter by property, floor, and monthly rate
                   </CardDescription>
                 </div>
-                <Button
-                  onClick={() => router.push("/property_manager/tenants/create")}
-                  className="bg-indigo-600 hover:bg-indigo-700 gap-2"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add Tenant
-                </Button>
+                <div className="flex items-center gap-2">
+                  {(selectedProperty !== "all" || selectedFloor !== "all" || monthlyRateFilter || searchTerm) && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setSearchTerm("");
+                        setSelectedProperty("all");
+                        setSelectedFloor("all");
+                        setMonthlyRateFilter("");
+                      }}
+                      className="text-slate-600"
+                    >
+                      Clear All Filters
+                    </Button>
+                  )}
+                  <Button
+                    onClick={() => router.push("/property_manager/tenants/create")}
+                    className="bg-indigo-600 hover:bg-indigo-700 gap-2"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add Tenant
+                  </Button>
+                </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <Input
-                    placeholder="Search by name or email..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full"
-                  />
+              <div className="space-y-4">
+                {/* Search Input */}
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <Input
+                      placeholder="Search by name, email, or phone number..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full"
+                    />
+                  </div>
                 </div>
-                <div className="w-64">
-                  <select
-                    value={selectedProperty}
-                    onChange={(e) => setSelectedProperty(e.target.value)}
-                    className="w-full h-10 px-3 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white"
-                  >
-                    <option value="all">All Properties</option>
-                    {managedProperties.map((property) => (
-                      <option key={property.id} value={property.id.toString()}>
-                        {property.name}
+
+                {/* Filter Dropdowns and Input */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="text-sm font-medium text-slate-700 mb-1 block">
+                      Property
+                    </label>
+                    <select
+                      value={selectedProperty}
+                      onChange={(e) => setSelectedProperty(e.target.value)}
+                      className="w-full h-10 px-3 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white"
+                    >
+                      <option value="all">All Properties</option>
+                      {managedProperties.map((property: any) => (
+                        <option key={property.id} value={property.id.toString()}>
+                          {property.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium text-slate-700 mb-1 block">
+                      Floor
+                    </label>
+                    <select
+                      value={selectedFloor}
+                      onChange={(e) => setSelectedFloor(e.target.value)}
+                      disabled={selectedProperty === "all"}
+                      className={`w-full h-10 px-3 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent ${
+                        selectedProperty === "all" 
+                          ? "bg-slate-100 text-slate-400 cursor-not-allowed" 
+                          : "bg-white"
+                      }`}
+                    >
+                      <option value="all">
+                        {selectedProperty === "all" ? "Select a property first" : "All Floors"}
                       </option>
-                    ))}
-                  </select>
+                      {availableFloors.map((floor) => (
+                        <option key={floor} value={floor.toString()}>
+                          Floor {floor}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium text-slate-700 mb-1 block">
+                      Monthly Rate
+                    </label>
+                    <div className="relative">
+                      <Input
+                        type="number"
+                        placeholder="Filter by rate..."
+                        value={monthlyRateFilter}
+                        onChange={(e) => setMonthlyRateFilter(e.target.value)}
+                        className="w-full pr-8"
+                        min="0"
+                        step="0.01"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-medium text-sm">
+                        €
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -191,7 +322,7 @@ export default function PropertyManagerTenantsPage() {
                 Tenants List
               </CardTitle>
               <CardDescription>
-                {tenants.length} {selectedProperty !== "all" ? "filtered" : "total"} tenants
+                {tenants.length} {(selectedProperty !== "all" || selectedFloor !== "all" || monthlyRateFilter || searchTerm) ? "filtered" : "total"} tenants
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -209,8 +340,8 @@ export default function PropertyManagerTenantsPage() {
                 </div>
               ) : tenants.length === 0 ? (
                 <div className="text-center py-8 text-slate-500">
-                  {selectedProperty !== "all"
-                    ? "No tenants found for the selected property."
+                  {(selectedProperty !== "all" || selectedFloor !== "all" || monthlyRateFilter || searchTerm)
+                    ? "No tenants found matching the selected filters."
                     : "No tenants found."}
                 </div>
               ) : (
@@ -223,6 +354,7 @@ export default function PropertyManagerTenantsPage() {
                         <TableHead>Phone</TableHead>
                         <TableHead>Floor</TableHead>
                         <TableHead>Property</TableHead>
+                        <TableHead>Monthly Rate</TableHead>
                         <TableHead className="text-right">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -246,6 +378,13 @@ export default function PropertyManagerTenantsPage() {
                           </TableCell>
                           <TableCell>
                             {getPropertyName(tenant.property_ids)}
+                          </TableCell>
+                          <TableCell>
+                            {tenant.monthly_rate !== null && tenant.monthly_rate !== undefined ? (
+                              <span className="font-medium">€{Number(tenant.monthly_rate).toFixed(2)}</span>
+                            ) : (
+                              <span className="text-slate-400">N/A</span>
+                            )}
                           </TableCell>
                           <TableCell className="text-right">
                             <div className="flex justify-end gap-2">

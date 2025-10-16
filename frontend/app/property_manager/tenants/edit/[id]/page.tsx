@@ -23,10 +23,12 @@ export default function EditTenantPage() {
   const { data: tenantData, isLoading } = useTenant(tenantId);
   const updateMutation = useUpdateTenant();
 
-  // Fetch properties managed by this property manager
-  const { data: propertiesData, isLoading: propertiesLoading } = useProperties({
-    myProperties: true,
-  });
+  // Fetch properties managed by this property manager - refetch on mount to ensure fresh data
+  const { data: propertiesData, isLoading: propertiesLoading, refetch: refetchProperties } = useProperties(
+    {
+      myProperties: true,
+    }
+  );
 
   const [formData, setFormData] = useState({
     name: "",
@@ -36,8 +38,19 @@ export default function EditTenantPage() {
     number: "",
     property_id: "",
     floor_assigned: "" as string,
+    monthly_rate: "" as string,
   });
   const [error, setError] = useState("");
+  const [isRefetching, setIsRefetching] = useState(true);
+
+  // Refetch properties when component mounts to avoid stale cache from tenants list
+  useEffect(() => {
+    const doRefetch = async () => {
+      await refetchProperties();
+      setIsRefetching(false);
+    };
+    doRefetch();
+  }, [refetchProperties]);
 
   // Get managed properties
   const managedProperties = useMemo(() => {
@@ -45,8 +58,33 @@ export default function EditTenantPage() {
     return propertiesData.data;
   }, [propertiesData]);
 
+  // Get available floors from selected property
+  const availableFloors = useMemo(() => {
+    if (!formData.property_id || !propertiesData?.data) return [];
+
+    // Find the selected property
+    const property = propertiesData.data.find((p: any) => p.id === parseInt(formData.property_id));
+
+    if (!property) return [];
+
+    const floorsFrom = property.floors_from ?? null;
+    const floorsTo = property.floors_to ?? null;
+
+    // If no floor range is defined, return empty array
+    if (floorsFrom === null || floorsTo === null) return [];
+
+    // Generate floor range from floors_from to floors_to
+    const floors = [];
+    for (let i = floorsFrom; i <= floorsTo; i++) {
+      floors.push(i);
+    }
+
+    return floors;
+  }, [propertiesData, formData.property_id]);
+
   useEffect(() => {
-    if (tenantData?.data) {
+    // Only set form data when both tenant data AND properties data are available
+    if (tenantData?.data && propertiesData?.data && !isRefetching) {
       const tenant = tenantData.data;
       setFormData({
         name: tenant.name,
@@ -60,9 +98,12 @@ export default function EditTenantPage() {
         floor_assigned: tenant.floor_assigned !== null && tenant.floor_assigned !== undefined
           ? tenant.floor_assigned.toString()
           : "",
+        monthly_rate: tenant.monthly_rate !== null && tenant.monthly_rate !== undefined
+          ? tenant.monthly_rate.toString()
+          : "",
       });
     }
-  }, [tenantData]);
+  }, [tenantData, propertiesData, isRefetching]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,6 +124,7 @@ export default function EditTenantPage() {
         number: formData.number || null,
         property_ids: [parseInt(formData.property_id)],
         floor_assigned: formData.floor_assigned ? parseInt(formData.floor_assigned) : null,
+        monthly_rate: formData.monthly_rate ? parseFloat(formData.monthly_rate) : null,
       };
 
       // Only include password if it's been changed
@@ -107,7 +149,7 @@ export default function EditTenantPage() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || propertiesLoading || isRefetching) {
     return (
       <ProtectedRoute allowedRoles={["property_manager"]}>
         <PropertyManagerLayout>
@@ -135,9 +177,9 @@ export default function EditTenantPage() {
 
   return (
     <ProtectedRoute allowedRoles={["property_manager"]}>
-      <PropertyManagerLayout>
+      <PropertyManagerLayout title="Edit Tenant">
         <div className="max-w-2xl space-y-6">
-          {/* Header */}
+          {/* Back button */}
           <div className="flex items-center gap-4">
             <Button
               variant="outline"
@@ -146,14 +188,6 @@ export default function EditTenantPage() {
             >
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <div>
-              <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-                Edit Tenant
-              </h2>
-              <p className="text-slate-600 mt-2">
-                Update tenant information
-              </p>
-            </div>
           </div>
 
           {/* Form */}
@@ -247,7 +281,7 @@ export default function EditTenantPage() {
                 <div className="space-y-2">
                   <Label htmlFor="property_id">Select Property</Label>
                   <Select
-                    id="property_id"
+                    key={formData.property_id || 'no-selection'}
                     value={formData.property_id}
                     onValueChange={(value) =>
                       setFormData((prev) => ({ ...prev, property_id: value }))
@@ -259,11 +293,11 @@ export default function EditTenantPage() {
                     </SelectTrigger>
                     <SelectContent>
                       {managedProperties.length === 0 && (
-                        <SelectItem value="">
+                        <SelectItem value="no-properties" disabled>
                           No properties found
                         </SelectItem>
                       )}
-                      {managedProperties.map((property) => (
+                      {managedProperties.map((property: any) => (
                         <SelectItem key={property.id} value={property.id.toString()}>
                           {property.name} - {property.location}
                         </SelectItem>
@@ -277,19 +311,58 @@ export default function EditTenantPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="floor_assigned">Floor Number</Label>
-                  <Input
+                  <select
                     id="floor_assigned"
-                    type="number"
                     value={formData.floor_assigned}
                     onChange={(e) =>
                       setFormData((prev) => ({ ...prev, floor_assigned: e.target.value }))
                     }
-                    placeholder="e.g., 1, 2, 3..."
-                    min="-20"
-                    max="200"
-                  />
+                    disabled={!formData.property_id || availableFloors.length === 0}
+                    className={`w-full h-10 px-3 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent ${
+                      !formData.property_id || availableFloors.length === 0
+                        ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                        : "bg-white"
+                    }`}
+                  >
+                    <option value="">
+                      {!formData.property_id
+                        ? "Select a property first"
+                        : availableFloors.length === 0
+                        ? "No floors available"
+                        : "Select a floor (optional)"}
+                    </option>
+                    {availableFloors.map((floor) => (
+                      <option key={floor} value={floor.toString()}>
+                        Floor {floor}
+                      </option>
+                    ))}
+                  </select>
                   <p className="text-sm text-slate-500">
-                    Assign the tenant to a specific floor (leave blank to unassign)
+                    Assign the tenant to a specific floor (optional)
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="monthly_rate">Monthly Rate</Label>
+                  <div className="relative">
+                    <Input
+                      id="monthly_rate"
+                      type="number"
+                      value={formData.monthly_rate}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, monthly_rate: e.target.value }))
+                      }
+                      placeholder="e.g., 500, 1000, 1500..."
+                      min="0"
+                      step="0.01"
+                      className="pr-8"
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-medium">
+                      €
+                    </span>
+                  </div>
+                  <p className="text-sm text-slate-500">
+                    Set the monthly rent for the tenant
                   </p>
                 </div>
 

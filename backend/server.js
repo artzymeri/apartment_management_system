@@ -8,6 +8,10 @@ const propertyRoutes = require('./routes/property.routes');
 const userRoutes = require('./routes/user.routes');
 const registerRequestRoutes = require('./routes/registerRequest.routes');
 const cityRoutes = require('./routes/city.routes');
+const problemOptionRoutes = require('./routes/problemOption.routes');
+const reportRoutes = require('./routes/report.routes');
+const complaintRoutes = require('./routes/complaint.routes');
+const suggestionRoutes = require('./routes/suggestion.routes');
 require('dotenv').config();
 
 const app = express();
@@ -41,6 +45,10 @@ app.use('/api/properties', propertyRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/register-requests', registerRequestRoutes);
 app.use('/api/cities', cityRoutes);
+app.use('/api/problem-options', problemOptionRoutes);
+app.use('/api/reports', reportRoutes);
+app.use('/api/complaints', complaintRoutes);
+app.use('/api/suggestions', suggestionRoutes);
 
 // Test route
 app.get('/', (req, res) => {

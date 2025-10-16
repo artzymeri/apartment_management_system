@@ -9,17 +9,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 export default function TenantDashboard() {
   return (
     <ProtectedRoute allowedRoles={['tenant']}>
-      <TenantLayout>
+      <TenantLayout title="Dashboard">
         <div className="space-y-6">
-          <div>
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-              Welcome Home
-            </h2>
-            <p className="text-slate-600 mt-2">
-              Apartment 304 - Greenwood Complex
-            </p>
-          </div>
-
           {/* Alert for upcoming payment */}
           <Alert className="border-emerald-200 bg-emerald-50">
             <AlertCircle className="h-4 w-4 text-emerald-600" />

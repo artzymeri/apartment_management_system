@@ -12,6 +12,34 @@ export const userKeys = {
   tenantsList: (filters: Omit<UserFilters, 'role'>) => [...userKeys.tenants(), filters] as const,
 };
 
+// Type for creating a user
+export type CreateUserData = {
+  name: string;
+  surname: string;
+  email: string;
+  password: string;
+  number?: string | null;
+  role?: 'admin' | 'property_manager' | 'tenant';
+  property_ids?: number[];
+  floor_assigned?: number | null;
+  expiry_date?: string | null;
+  monthly_rate?: number | null;
+};
+
+// Type for updating a user
+export type UpdateUserData = {
+  name?: string;
+  surname?: string;
+  email?: string;
+  password?: string;
+  number?: string | null;
+  role?: 'admin' | 'property_manager' | 'tenant';
+  property_ids?: number[];
+  floor_assigned?: number | null;
+  expiry_date?: string | null;
+  monthly_rate?: number | null;
+};
+
 // Get all users with filters (admin only)
 export function useUsers(filters?: UserFilters) {
   return useQuery({
@@ -51,17 +79,7 @@ export function useCreateUser() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: {
-      name: string;
-      surname: string;
-      email: string;
-      password: string;
-      number?: string | null;
-      role?: 'admin' | 'property_manager' | 'tenant';
-      property_ids?: number[];
-      floor_assigned?: number | null;
-      expiry_date?: string | null;
-    }) => userAPI.createUser(data),
+    mutationFn: (data: CreateUserData) => userAPI.createUser(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
       queryClient.invalidateQueries({ queryKey: userKeys.tenants() });
@@ -79,17 +97,7 @@ export function useUpdateUser() {
       data,
     }: {
       id: number;
-      data: {
-        name?: string;
-        surname?: string;
-        email?: string;
-        password?: string;
-        number?: string | null;
-        role?: 'admin' | 'property_manager' | 'tenant';
-        property_ids?: number[];
-        floor_assigned?: number | null;
-        expiry_date?: string | null;
-      };
+      data: UpdateUserData;
     }) => userAPI.updateUser(id, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
@@ -117,6 +125,7 @@ export function useUpdateTenant() {
         number?: string | null;
         property_ids?: number[];
         floor_assigned?: number | null;
+        monthly_rate?: number | null;
       };
     }) => userAPI.updateTenant(id, data),
     onSuccess: (_, variables) => {
