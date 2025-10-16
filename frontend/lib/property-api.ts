@@ -27,7 +27,9 @@ export interface Property {
   };
   latitude: number | null;
   longitude: number | null;
-  privileged_user_id: number | null;
+  floors_from: number | null;
+  floors_to: number | null;
+  property_manager_user_id: number | null;
   manager?: {
     id: number;
     name: string;
@@ -83,6 +85,12 @@ class PropertyAPI {
     return response.json();
   }
 
+  // Get all properties (simple list without pagination)
+  async getProperties(filters?: PropertyFilters): Promise<Property[]> {
+    const result = await this.getAllProperties({ ...filters, limit: 1000 });
+    return result.data || [];
+  }
+
   async getPropertyById(id: number) {
     const response = await fetch(`${API_BASE_URL}/api/properties/${id}`, {
       method: 'GET',
@@ -99,6 +107,8 @@ class PropertyAPI {
     city_id: number;
     latitude?: number | null;
     longitude?: number | null;
+    floors_from?: number | null;
+    floors_to?: number | null;
     manager_ids?: number[];
   }) {
     const response = await fetch(`${API_BASE_URL}/api/properties`, {
@@ -117,6 +127,8 @@ class PropertyAPI {
     city_id?: number;
     latitude?: number | null;
     longitude?: number | null;
+    floors_from?: number | null;
+    floors_to?: number | null;
     manager_ids?: number[];
   }) {
     const response = await fetch(`${API_BASE_URL}/api/properties/${id}`, {

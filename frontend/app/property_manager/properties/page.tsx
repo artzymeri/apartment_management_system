@@ -4,11 +4,17 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { PropertyManagerLayout } from "@/components/layouts/PropertyManagerLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { useProperties } from "@/hooks/useProperties";
+import { useProperties, useDeleteProperty } from "@/hooks/useProperties";
 import { Property } from "@/lib/property-api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -17,15 +23,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
-import { Building2, Search, ChevronLeft, ChevronRight, MapPin } from "lucide-react";
+import { Building2, Search, ChevronLeft, ChevronRight, MapPin, Plus, Pencil, Trash2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { toast } from "sonner";
 
 export default function PropertyManagerPropertiesPage() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [cityFilter, setCityFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [propertyToDelete, setPropertyToDelete] = useState<{ id: number; name: string } | null>(null);
   const [appliedFilters, setAppliedFilters] = useState({
     search: "",
     city: "",
@@ -35,6 +53,7 @@ export default function PropertyManagerPropertiesPage() {
   });
 
   const { data, isLoading, error } = useProperties(appliedFilters);
+  const deleteMutation = useDeleteProperty();
 
   // Debounce search term
   useEffect(() => {
@@ -69,8 +88,31 @@ export default function PropertyManagerPropertiesPage() {
     setAppliedFilters((prev) => ({ ...prev, page: newPage }));
   };
 
+  // Helper function to calculate the number of floors
+  const calculateFloorsCount = (floorsFrom: number | null, floorsTo: number | null): number | null => {
+    if (floorsFrom === null || floorsTo === null) {
+      return null;
+    }
+    // Count includes both endpoints, so add 1
+    return floorsTo - floorsFrom + 1;
+  };
+
   const handleRowClick = (propertyId: number) => {
     router.push(`/property_manager/properties/${propertyId}`);
+  };
+
+  const handleDeleteProperty = (propertyId: number) => {
+    deleteMutation.mutate(propertyId, {
+      onSuccess: () => {
+        toast.success("Property deleted successfully");
+        // Refetch properties after deletion
+        setAppliedFilters((prev) => ({ ...prev, page: 1 }));
+        setCurrentPage(1);
+      },
+      onError: () => {
+        toast.error("Failed to delete property");
+      },
+    });
   };
 
   const properties = data?.data || [];
@@ -83,13 +125,24 @@ export default function PropertyManagerPropertiesPage() {
           {/* Filters */}
           <Card className="border-indigo-200">
             <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Search className="h-5 w-5" />
-                Filter Properties
-              </CardTitle>
-              <CardDescription>
-                Search by name, address, or filter by city
-              </CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Search className="h-5 w-5" />
+                    Filter Properties
+                  </CardTitle>
+                  <CardDescription>
+                    Search by name, address, or filter by city
+                  </CardDescription>
+                </div>
+                <Button
+                  onClick={() => router.push("/property_manager/properties/create")}
+                  className="bg-indigo-600 hover:bg-indigo-700 gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  Create Property
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="flex gap-4">
@@ -138,46 +191,94 @@ export default function PropertyManagerPropertiesPage() {
                       <TableHead>Property Name</TableHead>
                       <TableHead>Address</TableHead>
                       <TableHead>City</TableHead>
+                      <TableHead>Floors</TableHead>
                       <TableHead>Location</TableHead>
                       <TableHead>Created</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {properties.map((property: Property) => (
-                      <TableRow
-                        key={property.id}
-                        onClick={() => handleRowClick(property.id)}
-                        className="cursor-pointer hover:bg-indigo-50/50 transition-colors"
-                      >
-                        <TableCell className="font-medium">
-                          <div className="flex items-center gap-2">
-                            <Building2 className="h-4 w-4 text-indigo-600" />
-                            {property.name}
-                          </div>
-                        </TableCell>
-                        <TableCell>{property.address}</TableCell>
-                        <TableCell>
-                          <Badge variant="secondary" className="bg-indigo-100 text-indigo-700">
-                            {property.cityDetails?.name || 'Unknown'}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          {property.latitude && property.longitude ? (
-                            <div className="flex items-center gap-1 text-sm text-slate-600">
-                              <MapPin className="h-3 w-3" />
-                              <span>
-                                {Number(property.latitude).toFixed(4)}, {Number(property.longitude).toFixed(4)}
-                              </span>
+                    {properties.map((property: Property) => {
+                      const floorsCount = calculateFloorsCount(property.floors_from, property.floors_to);
+
+                      return (
+                        <TableRow key={property.id} className="hover:bg-indigo-50/50 transition-colors">
+                          <TableCell
+                            className="font-medium cursor-pointer"
+                            onClick={() => handleRowClick(property.id)}
+                          >
+                            <div className="flex items-center gap-2">
+                              <Building2 className="h-4 w-4 text-indigo-600" />
+                              {property.name}
                             </div>
-                          ) : (
-                            <span className="text-slate-400 text-sm">Not set</span>
-                          )}
-                        </TableCell>
-                        <TableCell className="text-sm text-slate-600">
-                          {new Date(property.created_at).toLocaleDateString()}
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                          </TableCell>
+                          <TableCell onClick={() => handleRowClick(property.id)} className="cursor-pointer">
+                            {property.address}
+                          </TableCell>
+                          <TableCell onClick={() => handleRowClick(property.id)} className="cursor-pointer">
+                            <Badge variant="secondary" className="bg-indigo-100 text-indigo-700">
+                              {property.cityDetails?.name || 'Unknown'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell onClick={() => handleRowClick(property.id)} className="cursor-pointer">
+                            {floorsCount !== null ? (
+                              <div className="text-sm">
+                                <span className="font-medium text-slate-900">{floorsCount}</span>
+                                <span className="text-slate-500 text-xs ml-1">
+                                  {floorsCount === 1 ? 'floor' : 'floors'}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="text-slate-400 text-sm">Not specified</span>
+                            )}
+                          </TableCell>
+                          <TableCell onClick={() => handleRowClick(property.id)} className="cursor-pointer">
+                            {property.latitude && property.longitude ? (
+                              <div className="flex items-center gap-1 text-sm text-slate-600">
+                                <MapPin className="h-3 w-3" />
+                                <span>
+                                  {Number(property.latitude).toFixed(4)}, {Number(property.longitude).toFixed(4)}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="text-slate-400 text-sm">Not set</span>
+                            )}
+                          </TableCell>
+                          <TableCell onClick={() => handleRowClick(property.id)} className="cursor-pointer text-sm text-slate-600">
+                            {new Date(property.created_at).toLocaleDateString()}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  router.push(`/property_manager/properties/edit/${property.id}`);
+                                }}
+                                className="gap-2"
+                              >
+                                <Pencil className="h-3 w-3" />
+                                Edit
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setPropertyToDelete({ id: property.id, name: property.name });
+                                }}
+                                disabled={deleteMutation.isPending}
+                                className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                                Delete
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                 </Table>
               )}
@@ -214,6 +315,38 @@ export default function PropertyManagerPropertiesPage() {
               </div>
             </div>
           )}
+
+          {/* Delete Property Confirmation */}
+          <AlertDialog open={!!propertyToDelete} onOpenChange={(open) => { if (!open) setPropertyToDelete(null); }}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to delete the property{" "}
+                  <span className="font-medium">{propertyToDelete?.name}</span>? This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel
+                  onClick={() => setPropertyToDelete(null)}
+                  className="hover:bg-slate-100"
+                >
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => {
+                    if (propertyToDelete) {
+                      handleDeleteProperty(propertyToDelete.id);
+                      setPropertyToDelete(null);
+                    }
+                  }}
+                  className="bg-red-600 text-white hover:bg-red-700"
+                >
+                  Delete Property
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </PropertyManagerLayout>
     </ProtectedRoute>

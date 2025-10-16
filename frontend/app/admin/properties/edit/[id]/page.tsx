@@ -28,6 +28,8 @@ export default function EditPropertyPage() {
     city_id: 0,
     latitude: null as number | null,
     longitude: null as number | null,
+    floors_from: null as number | null,
+    floors_to: null as number | null,
     manager_ids: [] as number[],
   });
   const [error, setError] = useState("");
@@ -58,6 +60,8 @@ export default function EditPropertyPage() {
         city_id: property.city_id,
         latitude: property.latitude,
         longitude: property.longitude,
+        floors_from: property.floors_from,
+        floors_to: property.floors_to,
         manager_ids: property.managers?.map((m: { id: number }) => m.id) || [],
       });
 
@@ -100,6 +104,8 @@ export default function EditPropertyPage() {
           city_id: formData.city_id,
           latitude: formData.latitude,
           longitude: formData.longitude,
+          floors_from: formData.floors_from,
+          floors_to: formData.floors_to,
           manager_ids: formData.manager_ids,
         },
       });
@@ -212,6 +218,59 @@ export default function EditPropertyPage() {
                         ))}
                       </SelectContent>
                     </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Floor Range (Optional)</Label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="floors_from" className="text-sm text-slate-600">From</Label>
+                        <Select
+                          value={formData.floors_from !== null ? formData.floors_from.toString() : "none"}
+                          onValueChange={(value) =>
+                            setFormData({ ...formData, floors_from: value === "none" ? null : parseInt(value) })
+                          }
+                          disabled={updateMutation.isPending}
+                        >
+                          <SelectTrigger id="floors_from">
+                            <SelectValue placeholder="Starting floor" />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-[300px]">
+                            <SelectItem value="none">Not specified</SelectItem>
+                            {Array.from({ length: 221 }, (_, i) => i - 20).map((floor) => (
+                              <SelectItem key={floor} value={floor.toString()}>
+                                {floor === 0 ? "Ground Level" : floor < 0 ? `B${Math.abs(floor)}` : `Floor ${floor}`}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="floors_to" className="text-sm text-slate-600">To</Label>
+                        <Select
+                          value={formData.floors_to !== null ? formData.floors_to.toString() : "none"}
+                          onValueChange={(value) =>
+                            setFormData({ ...formData, floors_to: value === "none" ? null : parseInt(value) })
+                          }
+                          disabled={updateMutation.isPending}
+                        >
+                          <SelectTrigger id="floors_to">
+                            <SelectValue placeholder="Ending floor" />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-[300px]">
+                            <SelectItem value="none">Not specified</SelectItem>
+                            {Array.from({ length: 221 }, (_, i) => i - 20).map((floor) => (
+                              <SelectItem key={floor} value={floor.toString()}>
+                                {floor === 0 ? "Ground Level" : floor < 0 ? `B${Math.abs(floor)}` : `Floor ${floor}`}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <p className="text-xs text-slate-600">
+                      Specify the floor range for this property (from -20 underground to 200 above ground)
+                    </p>
                   </div>
 
                   <div className="space-y-2">

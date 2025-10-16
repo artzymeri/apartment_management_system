@@ -10,12 +10,12 @@ import {
   Wrench,
   FileText,
   MessageSquare,
-  User,
   Bell,
   LogOut,
   Menu,
   Settings,
   ChevronUp,
+  AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -34,6 +34,7 @@ import { Separator } from "@/components/ui/separator";
 
 const tenantNavItems = [
   { href: "/tenant", icon: Home, label: "Dashboard" },
+  { href: "/tenant/report-problem", icon: AlertTriangle, label: "Report Problem" },
   { href: "/tenant/payments", icon: CreditCard, label: "Payments" },
   { href: "/tenant/maintenance", icon: Wrench, label: "Maintenance" },
   { href: "/tenant/documents", icon: FileText, label: "Documents" },

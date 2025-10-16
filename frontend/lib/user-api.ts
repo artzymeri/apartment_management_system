@@ -24,6 +24,7 @@ export interface User {
   number: string | null;
   role: 'admin' | 'property_manager' | 'tenant';
   property_ids: number[];
+  floor_assigned?: number | null;
   expiry_date?: string | null;
   created_at: string;
   updated_at: string;
@@ -82,6 +83,7 @@ class UserAPI {
     number?: string | null;
     role?: 'admin' | 'property_manager' | 'tenant';
     property_ids?: number[];
+    floor_assigned?: number | null;
     expiry_date?: string | null;
   }) {
     const response = await fetch(`${API_BASE_URL}/api/users/${id}`, {
@@ -126,6 +128,74 @@ class UserAPI {
       throw new Error(error.message || 'Failed to update profile');
     }
 
+    return response.json();
+  }
+
+  async createUser(data: {
+    name: string;
+    surname: string;
+    email: string;
+    password: string;
+    number?: string | null;
+    role?: 'admin' | 'property_manager' | 'tenant';
+    property_ids?: number[];
+    floor_assigned?: number | null;
+    expiry_date?: string | null;
+  }) {
+    const response = await fetch(`${API_BASE_URL}/api/users`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      credentials: 'include',
+      body: JSON.stringify(data),
+    });
+    await handleApiResponse(response);
+    return response.json();
+  }
+
+  async getTenantsForPropertyManager(filters?: Omit<UserFilters, 'role'>) {
+    const queryParams = new URLSearchParams();
+    if (filters?.search) queryParams.append('search', filters.search);
+    if (filters?.page) queryParams.append('page', filters.page.toString());
+    if (filters?.limit) queryParams.append('limit', filters.limit.toString());
+
+    const response = await fetch(
+      `${API_BASE_URL}/api/users/tenants?${queryParams.toString()}`,
+      {
+        method: 'GET',
+        headers: this.getAuthHeaders(),
+        credentials: 'include',
+      }
+    );
+    await handleApiResponse(response);
+    return response.json();
+  }
+
+  async getTenantById(id: number) {
+    const response = await fetch(`${API_BASE_URL}/api/users/tenants/${id}`, {
+      method: 'GET',
+      headers: this.getAuthHeaders(),
+      credentials: 'include',
+    });
+    await handleApiResponse(response);
+    return response.json();
+  }
+
+  async updateTenant(id: number, data: {
+    name?: string;
+    surname?: string;
+    email?: string;
+    password?: string;
+    number?: string | null;
+    property_ids?: number[];
+    floor_assigned?: number | null;
+  }) {
+    const response = await fetch(`${API_BASE_URL}/api/users/tenants/${id}`, {
+      method: 'PUT',
+      headers: this.getAuthHeaders(),
+      credentials: 'include',
+      body: JSON.stringify(data),
+    });
+    await handleApiResponse(response);
     return response.json();
   }
 }

@@ -20,6 +20,12 @@ export default function AdminDashboard() {
   const { data: pendingRequests, isLoading: requestsLoading } = useRegisterRequests({ status: 'pending' });
   const { data: citiesData, isLoading: citiesLoading } = useCities();
 
+  // Helper function to format role names
+  const formatRole = (role: string) => {
+    if (role === 'property_manager') return 'Property Manager';
+    return role.charAt(0).toUpperCase() + role.slice(1);
+  };
+
   // Calculate statistics
   const stats = useMemo(() => {
     const totalUsers = usersData?.data?.length || 0;
@@ -202,7 +208,7 @@ export default function AdminDashboard() {
                                 : 'border-green-200 text-green-700'
                             }
                           >
-                            {user.role}
+                            {formatRole(user.role)}
                           </Badge>
                         </div>
                       </div>

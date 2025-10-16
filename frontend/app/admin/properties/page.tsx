@@ -83,6 +83,15 @@ export default function PropertiesPage() {
     return () => clearTimeout(timer);
   }, [cityFilter]);
 
+  // Helper function to calculate the number of floors
+  const calculateFloorsCount = (floorsFrom: number | null, floorsTo: number | null): number | null => {
+    if (floorsFrom === null || floorsTo === null) {
+      return null;
+    }
+    // Count includes both endpoints, so add 1
+    return floorsTo - floorsFrom + 1;
+  };
+
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
     setAppliedFilters((prev) => ({ ...prev, page: newPage }));
@@ -162,6 +171,7 @@ export default function PropertiesPage() {
                       <TableHead>Property Name</TableHead>
                       <TableHead>Address</TableHead>
                       <TableHead>City</TableHead>
+                      <TableHead>Floors</TableHead>
                       <TableHead>Managers</TableHead>
                       <TableHead>Created</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
@@ -171,6 +181,7 @@ export default function PropertiesPage() {
                     {properties.map((property: any) => {
                       const managers = property.managers || [];
                       const managerCount = managers.length;
+                      const floorsCount = calculateFloorsCount(property.floors_from, property.floors_to);
 
                       return (
                         <TableRow key={property.id}>
@@ -182,6 +193,18 @@ export default function PropertiesPage() {
                             <Badge variant="secondary">
                               {property.cityDetails?.name || 'Unknown'}
                             </Badge>
+                          </TableCell>
+                          <TableCell>
+                            {floorsCount !== null ? (
+                              <div className="text-sm">
+                                <span className="font-medium text-slate-900">{floorsCount}</span>
+                                <span className="text-slate-500 text-xs ml-1">
+                                  {floorsCount === 1 ? 'floor' : 'floors'}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="text-slate-400 text-sm">Not specified</span>
+                            )}
                           </TableCell>
                           <TableCell>
                             {managerCount === 0 ? (

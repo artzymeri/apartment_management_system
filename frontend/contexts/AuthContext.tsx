@@ -11,6 +11,7 @@ interface User {
   email: string;
   number?: string;
   role: 'admin' | 'property_manager' | 'tenant';
+  property_ids?: number[];
 }
 
 interface AuthContextType {

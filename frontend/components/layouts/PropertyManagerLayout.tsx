@@ -7,16 +7,15 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
   Building2,
   Users,
-  Wrench,
   ClipboardList,
-  MessageSquare,
   Star,
   Bell,
   LogOut,
   Menu,
-  User,
   Settings,
   ChevronUp,
+  Settings as SettingsIcon,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -36,9 +35,9 @@ import { Separator } from "@/components/ui/separator";
 const propertyManagerNavItems = [
   { href: "/property_manager", icon: ClipboardList, label: "Dashboard" },
   { href: "/property_manager/properties", icon: Building2, label: "Properties" },
-  { href: "/property_manager/maintenance", icon: Wrench, label: "Maintenance" },
   { href: "/property_manager/tenants", icon: Users, label: "Tenants" },
-  { href: "/property_manager/messages", icon: MessageSquare, label: "Messages" },
+  { href: "/property_manager/reports", icon: FileText, label: "Reports" },
+  { href: "/property_manager/configurations", icon: SettingsIcon, label: "Configurations" },
 ];
 
 // Helper function to get page title
@@ -48,9 +47,9 @@ const getPageTitle = (pathname: string) => {
 
   // For nested routes
   if (pathname.startsWith("/property_manager/properties")) return "Properties";
-  if (pathname.startsWith("/property_manager/maintenance")) return "Maintenance";
   if (pathname.startsWith("/property_manager/tenants")) return "Tenants";
-  if (pathname.startsWith("/property_manager/messages")) return "Messages";
+  if (pathname.startsWith("/property_manager/reports")) return "Reports";
+  if (pathname.startsWith("/property_manager/configurations")) return "Configurations";
 
   return "Manager Dashboard";
 };

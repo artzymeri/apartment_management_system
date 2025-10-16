@@ -8,9 +8,11 @@ export const userKeys = {
   list: (filters: UserFilters) => [...userKeys.lists(), filters] as const,
   details: () => [...userKeys.all, "detail"] as const,
   detail: (id: number) => [...userKeys.details(), id] as const,
+  tenants: () => [...userKeys.all, "tenants"] as const,
+  tenantsList: (filters: Omit<UserFilters, 'role'>) => [...userKeys.tenants(), filters] as const,
 };
 
-// Get all users with filters
+// Get all users with filters (admin only)
 export function useUsers(filters?: UserFilters) {
   return useQuery({
     queryKey: userKeys.list(filters || {}),
@@ -18,12 +20,52 @@ export function useUsers(filters?: UserFilters) {
   });
 }
 
-// Get single user by ID
+// Get tenants for property manager (filtered by managed properties)
+export function useTenants(filters?: Omit<UserFilters, 'role'>) {
+  return useQuery({
+    queryKey: userKeys.tenantsList(filters || {}),
+    queryFn: () => userAPI.getTenantsForPropertyManager(filters),
+  });
+}
+
+// Get single tenant by ID (for property managers)
+export function useTenant(id: number) {
+  return useQuery({
+    queryKey: userKeys.detail(id),
+    queryFn: () => userAPI.getTenantById(id),
+    enabled: !!id,
+  });
+}
+
+// Get single user by ID (admin only)
 export function useUser(id: number) {
   return useQuery({
     queryKey: userKeys.detail(id),
     queryFn: () => userAPI.getUserById(id),
     enabled: !!id,
+  });
+}
+
+// Create user mutation
+export function useCreateUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: {
+      name: string;
+      surname: string;
+      email: string;
+      password: string;
+      number?: string | null;
+      role?: 'admin' | 'property_manager' | 'tenant';
+      property_ids?: number[];
+      floor_assigned?: number | null;
+      expiry_date?: string | null;
+    }) => userAPI.createUser(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: userKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: userKeys.tenants() });
+    },
   });
 }
 
@@ -45,10 +87,41 @@ export function useUpdateUser() {
         number?: string | null;
         role?: 'admin' | 'property_manager' | 'tenant';
         property_ids?: number[];
+        floor_assigned?: number | null;
+        expiry_date?: string | null;
       };
     }) => userAPI.updateUser(id, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: userKeys.tenants() });
+      queryClient.invalidateQueries({ queryKey: userKeys.detail(variables.id) });
+    },
+  });
+}
+
+// Update tenant mutation (for property managers)
+export function useUpdateTenant() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: number;
+      data: {
+        name?: string;
+        surname?: string;
+        email?: string;
+        password?: string;
+        number?: string | null;
+        property_ids?: number[];
+        floor_assigned?: number | null;
+      };
+    }) => userAPI.updateTenant(id, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: userKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: userKeys.tenants() });
       queryClient.invalidateQueries({ queryKey: userKeys.detail(variables.id) });
     },
   });
@@ -62,6 +135,7 @@ export function useDeleteUser() {
     mutationFn: (id: number) => userAPI.deleteUser(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: userKeys.tenants() });
     },
   });
 }
