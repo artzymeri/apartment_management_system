@@ -34,6 +34,71 @@ export interface Suggestion {
   };
 }
 
+export interface TenantDashboardData {
+  complaints: Complaint[];
+  suggestions: Suggestion[];
+  payments: any[];
+  reports: any[];
+  monthlyReports: any[];
+  stats: {
+    complaints: {
+      total: number;
+      pending: number;
+      inProgress: number;
+      resolved: number;
+      rejected: number;
+    };
+    suggestions: {
+      total: number;
+      pending: number;
+      underReview: number;
+      approved: number;
+      rejected: number;
+    };
+    payments: {
+      total: number;
+      paid: number;
+      pending: number;
+      overdue: number;
+      totalPaid: number;
+    };
+    reports: {
+      total: number;
+      pending: number;
+      inProgress: number;
+      resolved: number;
+    };
+  };
+  tenant: {
+    id: number;
+    name: string;
+    surname: string;
+    email: string;
+    property_ids: number[];
+  };
+}
+
+// Get all tenant dashboard data in one API call
+export async function getTenantDashboardData(params?: { year?: number; month?: number }): Promise<TenantDashboardData> {
+  const queryParams = new URLSearchParams();
+  if (params?.year) queryParams.append('year', params.year.toString());
+  if (params?.month) queryParams.append('month', params.month.toString());
+
+  const url = `${API_BASE_URL}/api/tenant-dashboard${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+
+  const response = await fetch(url, {
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to fetch dashboard data');
+  }
+
+  const result = await response.json();
+  return result.data;
+}
+
 // Get tenant's complaints
 export async function getTenantComplaints(): Promise<Complaint[]> {
   const response = await fetch(`${API_BASE_URL}/api/complaints/tenant`, {
@@ -63,4 +128,3 @@ export async function getTenantSuggestions(): Promise<Suggestion[]> {
   const data = await response.json();
   return data.suggestions;
 }
-

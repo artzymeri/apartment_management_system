@@ -32,9 +32,12 @@ exports.generateMonthlyReport = async (req, res) => {
       return res.status(404).json({ message: 'Property not found or unauthorized' });
     }
 
-    // Create report month date (first day of the month)
-    const reportMonth = new Date(year, month - 1, 1);
-    const reportMonthStr = reportMonth.toISOString().split('T')[0];
+    // Create report month date string directly to avoid timezone issues
+    const monthNumber = parseInt(month);
+    const yearNumber = parseInt(year);
+    const reportMonthStr = `${yearNumber}-${String(monthNumber).padStart(2, '0')}-01`;
+
+    console.log('Generate report - looking for payments with payment_month:', reportMonthStr);
 
     // Get all tenants for this property
     const allTenants = await User.findAll({
@@ -289,9 +292,12 @@ exports.getReportPreview = async (req, res) => {
       return res.status(404).json({ message: 'Property not found or unauthorized' });
     }
 
-    // Create report month date
-    const reportMonth = new Date(year, month - 1, 1);
-    const reportMonthStr = reportMonth.toISOString().split('T')[0];
+    // Create report month date string directly to avoid timezone issues
+    const monthNumber = parseInt(month);
+    const yearNumber = parseInt(year);
+    const reportMonthStr = `${yearNumber}-${String(monthNumber).padStart(2, '0')}-01`;
+
+    console.log('Report preview - looking for payments with payment_month:', reportMonthStr);
 
     // Get all tenants for this property
     const allTenants = await User.findAll({

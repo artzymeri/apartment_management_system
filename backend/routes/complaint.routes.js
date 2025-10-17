@@ -12,6 +12,13 @@ router.post(
 );
 
 router.get(
+  '/tenant',
+  authenticateToken,
+  authorizeRoles('tenant'),
+  complaintController.getTenantComplaints
+);
+
+router.get(
   '/my-complaints',
   authenticateToken,
   authorizeRoles('tenant'),
@@ -41,4 +48,3 @@ router.patch(
 );
 
 module.exports = router;
-

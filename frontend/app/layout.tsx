@@ -16,8 +16,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Apartment Management System",
+  title: "BllokuSync - Apartment Management System",
   description: "Secure apartment management platform",
+  icons: {
+    icon: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({

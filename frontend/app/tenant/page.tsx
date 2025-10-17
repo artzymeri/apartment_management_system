@@ -19,8 +19,7 @@ import {
 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useAuth } from "@/contexts/AuthContext";
-import { useTenantPayments, useTenantReports, useTenantComplaints, useTenantSuggestions } from "@/hooks/useTenant";
-import { useTenantPropertyReports } from "@/hooks/useMonthlyReports";
+import { useTenantDashboard } from "@/hooks/useTenant";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
@@ -31,50 +30,43 @@ export default function TenantDashboard() {
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth() + 1;
 
-  // Fetch all tenant data
-  const { data: payments, isLoading: paymentsLoading } = useTenantPayments(user?.id || 0, {
-    year: currentYear,
-  });
-  const { data: reports, isLoading: reportsLoading } = useTenantReports();
-  const { data: complaintsData, isLoading: complaintsLoading } = useTenantComplaints();
-  const { data: suggestionsData, isLoading: suggestionsLoading } = useTenantSuggestions();
-  const { data: monthlyReportsData } = useTenantPropertyReports({ year: currentYear });
+  // Fetch all tenant data with single API call
+  const { data: dashboardData, isLoading } = useTenantDashboard({ year: currentYear });
 
-  const complaints = complaintsData || [];
-  const suggestions = suggestionsData || [];
-  const monthlyReports = monthlyReportsData?.reports || [];
+  // Extract data from unified response
+  const payments = dashboardData?.payments || [];
+  const reports = dashboardData?.reports || [];
+  const complaints = dashboardData?.complaints || [];
+  const suggestions = dashboardData?.suggestions || [];
+  const monthlyReports = dashboardData?.monthlyReports || [];
+  const stats = dashboardData?.stats;
 
   // Calculate payment statistics
   const paymentStats = useMemo(() => {
-    if (!payments) return null;
+    if (!payments || payments.length === 0) return null;
 
     const currentMonthPayment = payments.find(p => {
       const paymentDate = new Date(p.payment_month);
       return paymentDate.getMonth() + 1 === currentMonth && paymentDate.getFullYear() === currentYear;
     });
 
-    const paidCount = payments.filter(p => p.status === 'paid').length;
-    const pendingCount = payments.filter(p => p.status === 'pending').length;
-    const overdueCount = payments.filter(p => p.status === 'overdue').length;
-
     return {
       currentMonthPayment,
-      paidCount,
-      pendingCount,
-      overdueCount,
-      totalPaid: payments.filter(p => p.status === 'paid').reduce((sum, p) => sum + parseFloat(p.amount), 0),
+      paidCount: stats?.payments.paid || 0,
+      pendingCount: stats?.payments.pending || 0,
+      overdueCount: stats?.payments.overdue || 0,
+      totalPaid: stats?.payments.totalPaid || 0,
     };
-  }, [payments, currentMonth, currentYear]);
+  }, [payments, stats, currentMonth, currentYear]);
 
   // Calculate report statistics
   const reportStats = useMemo(() => {
-    if (!reports) return { pending: 0, inProgress: 0, resolved: 0 };
     return {
-      pending: reports.filter((r: any) => r.status === 'pending').length,
-      inProgress: reports.filter((r: any) => r.status === 'in_progress').length,
-      resolved: reports.filter((r: any) => r.status === 'resolved').length,
+      pending: stats?.reports.pending || 0,
+      inProgress: stats?.reports.inProgress || 0,
+      resolved: stats?.reports.resolved || 0,
     };
-  }, [reports]);
+  }, [stats]);
 
   // Format currency
   const formatCurrency = (amount: string | number) => {
@@ -105,8 +97,6 @@ export default function TenantDashboard() {
     const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
     return today.getDate() >= daysInMonth - 7;
   }, [paymentStats, currentMonth, currentYear]);
-
-  const isLoading = paymentsLoading || reportsLoading || complaintsLoading || suggestionsLoading;
 
   if (isLoading) {
     return (

@@ -31,6 +31,7 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import Image from "next/image";
 
 const tenantNavItems = [
   { href: "/tenant", icon: Home, label: "Dashboard" },
@@ -52,9 +53,11 @@ export function TenantLayout({ children, title = "My Apartment" }: { children: R
 
   const Sidebar = () => (
     <div className="flex h-full flex-col bg-gradient-to-b from-emerald-700 to-emerald-600 text-slate-50">
-      <div className="flex h-16 items-center gap-2 border-b border-emerald-600 px-6">
-        <Home className="h-6 w-6 text-emerald-100" />
-        <span className="text-xl font-bold">Tenant Portal</span>
+      <div className="flex h-16 items-center gap-3 border-b border-emerald-600 px-4">
+        <div className="flex items-center gap-2">
+          <Image src="/favicon.svg" alt="BllokuSync" width={140} height={35} className="h-8 w-auto brightness-200" style={{filter: 'brightness(1000%)'}} priority />
+          <h3>BllokuSync</h3>
+        </div>
         <Badge variant="secondary" className="ml-auto bg-emerald-100 text-emerald-800">
           Tenant
         </Badge>

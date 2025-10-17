@@ -354,7 +354,10 @@ export default function PaymentsPage() {
   };
 
   const formatMonth = (dateString: string) => {
-    const date = new Date(dateString);
+    // Parse the date string as YYYY-MM-DD and extract year and month
+    // This avoids timezone conversion issues
+    const [year, month] = dateString.split('-').map(Number);
+    const date = new Date(year, month - 1, 1); // month is 0-indexed in JS Date
     return date.toLocaleDateString("en-US", { year: "numeric", month: "long" });
   };
 
@@ -379,9 +382,11 @@ export default function PaymentsPage() {
 
     // Group payments by month
     payments.forEach((payment) => {
-      const date = new Date(payment.payment_month);
-      const month = date.getMonth(); // 0-11
-      grouped[month].push(payment);
+      // Parse the date string as YYYY-MM-DD and extract month
+      // This avoids timezone conversion issues
+      const [year, month] = payment.payment_month.split('-').map(Number);
+      const monthIndex = month - 1; // Convert to 0-indexed (0-11)
+      grouped[monthIndex].push(payment);
     });
 
     return grouped;

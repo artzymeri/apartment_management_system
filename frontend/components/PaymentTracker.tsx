@@ -144,7 +144,10 @@ export default function PaymentTracker({
   };
 
   const formatMonth = (dateString: string) => {
-    const date = new Date(dateString);
+    // Parse the date string as YYYY-MM-DD and extract year and month
+    // This avoids timezone conversion issues
+    const [year, month] = dateString.split('-').map(Number);
+    const date = new Date(year, month - 1, 1); // month is 0-indexed in JS Date
     return date.toLocaleDateString("en-US", { year: "numeric", month: "long" });
   };
 
@@ -421,4 +424,3 @@ export default function PaymentTracker({
     </div>
   );
 }
-

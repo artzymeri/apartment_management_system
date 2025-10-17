@@ -1,6 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
-import { getTenantComplaints, getTenantSuggestions } from '@/lib/tenant-api';
+import { getTenantComplaints, getTenantSuggestions, getTenantDashboardData } from '@/lib/tenant-api';
 import { getTenantPayments } from '@/lib/tenant-payment-api';
+
+// Hook to get all tenant dashboard data in one call
+export function useTenantDashboard(params?: { year?: number; month?: number }) {
+  return useQuery({
+    queryKey: ['tenant-dashboard', params],
+    queryFn: () => getTenantDashboardData(params),
+  });
+}
 
 // Hook to get tenant complaints
 export function useTenantComplaints() {

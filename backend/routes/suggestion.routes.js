@@ -12,6 +12,13 @@ router.post(
 );
 
 router.get(
+  '/tenant',
+  authenticateToken,
+  authorizeRoles('tenant'),
+  suggestionController.getTenantSuggestions
+);
+
+router.get(
   '/my-suggestions',
   authenticateToken,
   authorizeRoles('tenant'),
@@ -41,4 +48,3 @@ router.patch(
 );
 
 module.exports = router;
-

@@ -35,6 +35,7 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import Image from "next/image";
 
 const propertyManagerNavItems = [
   { href: "/property_manager", icon: ClipboardList, label: "Dashboard" },
@@ -77,9 +78,11 @@ export function PropertyManagerLayout({ children, title }: { children: React.Rea
 
   const Sidebar = () => (
     <div className="flex h-full flex-col bg-gradient-to-b from-indigo-900 to-indigo-800 text-slate-50">
-      <div className="flex h-16 items-center gap-2 border-b border-indigo-700 px-6">
-        <Star className="h-6 w-6 text-amber-400" />
-        <span className="text-xl font-bold">Manager Portal</span>
+      <div className="flex h-16 items-center gap-3 border-b border-indigo-700 px-4">
+        <div className="flex items-center gap-2">
+          <Image src="/favicon.svg" alt="BllokuSync" width={140} height={35} className="h-8 w-auto brightness-200" style={{filter: 'brightness(1000%)'}} priority />
+          <h3>BllokuSync</h3>
+        </div>
         <Badge variant="secondary" className="ml-auto bg-amber-500 text-slate-900">
           Manager
         </Badge>

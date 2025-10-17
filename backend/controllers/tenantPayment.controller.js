@@ -600,10 +600,11 @@ exports.ensurePaymentRecords = async (req, res) => {
     }
 
     // Create payment month date (first day of the month)
-    const paymentMonth = new Date(year, month, 1);
-    const monthStr = paymentMonth.toISOString().split('T')[0];
+    // month is 0-indexed from frontend (0=Jan, 11=Dec), so add 1 for the actual month number
+    const monthNumber = month + 1;
+    const monthStr = `${year}-${String(monthNumber).padStart(2, '0')}-01`;
 
-    console.log('Payment month string:', monthStr);
+    console.log('Payment month string:', monthStr, 'for month index:', month);
 
     const createdPayments = [];
     const errors = [];

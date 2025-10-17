@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import Image from "next/image";
 import {
   Building2,
   Users,
@@ -60,9 +61,11 @@ export function AdminLayout({ children, title }: { children: React.ReactNode; ti
 
   const Sidebar = () => (
     <div className="flex h-full flex-col bg-gradient-to-b from-slate-900 to-slate-800 text-slate-50">
-      <div className="flex h-16 items-center gap-2 border-b border-slate-700 px-6">
-        <Shield className="h-6 w-6 text-red-400" />
-        <span className="text-xl font-bold">Admin Portal</span>
+      <div className="flex h-16 items-center gap-3 border-b border-slate-700 px-4">
+        <div className="flex items-center gap-2">
+        <Image src="/favicon.svg" alt="BllokuSync" width={140} height={35} className="h-8 w-auto brightness-200" style={{filter: 'brightness(1000%)'}} priority />
+          <h3>BllokuSync</h3>
+        </div>
         <Badge variant="destructive" className="ml-auto">
           Admin
         </Badge>

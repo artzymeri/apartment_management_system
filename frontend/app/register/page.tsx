@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Home as HomeIcon } from "lucide-react";
 import { toast } from "sonner";
+import Image from "next/image";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -121,6 +122,18 @@ export default function RegisterPage() {
             <HomeIcon className="h-5 w-5" />
             <span>Back to Home</span>
           </Link>
+          <div className="flex justify-center items-center mb-2 gap-2">
+            <Image
+                src="/favicon.svg"
+                alt="BllokuSync"
+                width={10}
+                height={10}
+                className="h-8 w-auto"
+                priority
+                style={{filter: 'brightness(0%)'}}
+            />
+            <h1 className="font-bold">BllokuSync</h1>
+          </div>
           <h1 className="text-4xl font-bold text-slate-900 mb-2">
             Create Account
           </h1>
