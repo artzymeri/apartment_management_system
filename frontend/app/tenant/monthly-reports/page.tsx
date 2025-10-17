@@ -6,19 +6,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Download, FileText, Calendar, Euro, AlertCircle, TrendingUp } from "lucide-react";
-import { useTenantPropertyReports, useDownloadMonthlyReportPdf } from "@/hooks/useMonthlyReports";
+import { Download, FileText, Calendar, Euro, AlertCircle, TrendingUp, Loader2 } from "lucide-react";
+import { useTenantPropertyReports } from "@/hooks/useMonthlyReports";
+import { generateMonthlyReportPDF } from "@/lib/pdf-generator";
 import { useState, useMemo } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
-import {Separator} from "@/components/ui/separator";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
 
 export default function TenantMonthlyReportsPage() {
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState<number>(currentYear);
+  const [downloadingReportId, setDownloadingReportId] = useState<number | null>(null);
 
   const { data, isLoading, error } = useTenantPropertyReports({ year: selectedYear });
-  const downloadPdfMutation = useDownloadMonthlyReportPdf();
 
   const reports = data?.reports || [];
 
@@ -27,8 +29,21 @@ export default function TenantMonthlyReportsPage() {
     return Array.from({ length: 6 }, (_, i) => currentYear - i);
   }, [currentYear]);
 
-  const handleDownloadReport = (reportId: number) => {
-    downloadPdfMutation.mutate(reportId);
+  const handleDownloadReport = async (report: any) => {
+    try {
+      setDownloadingReportId(report.id);
+      toast.info("Generating PDF...");
+
+      // Generate PDF using the same function as Property Manager
+      await generateMonthlyReportPDF(report);
+
+      toast.success("PDF downloaded successfully!");
+    } catch (error: any) {
+      console.error('PDF generation error:', error);
+      toast.error(error.message || "Failed to generate PDF");
+    } finally {
+      setDownloadingReportId(null);
+    }
   };
 
   const formatMonth = (reportMonth: string) => {
@@ -39,7 +54,7 @@ export default function TenantMonthlyReportsPage() {
   const formatCurrency = (amount: string) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'EUR',
     }).format(parseFloat(amount));
   };
 
@@ -211,12 +226,21 @@ export default function TenantMonthlyReportsPage() {
 
                     {/* Download Button */}
                     <Button
-                      onClick={() => handleDownloadReport(report.id)}
-                      disabled={downloadPdfMutation.isPending}
+                      onClick={() => handleDownloadReport(report)}
+                      disabled={downloadingReportId === report.id}
                       className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
                     >
-                      <Download className="h-4 w-4 mr-2" />
-                      {downloadPdfMutation.isPending ? 'Downloading...' : 'Download Report'}
+                      {downloadingReportId === report.id ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Generating PDF...
+                        </>
+                      ) : (
+                        <>
+                          <Download className="h-4 w-4 mr-2" />
+                          Download Report
+                        </>
+                      )}
                     </Button>
                   </CardContent>
                 </Card>

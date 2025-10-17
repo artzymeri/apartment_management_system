@@ -236,28 +236,3 @@ export const getTenantPropertyReports = async (params?: {
 
   return response.json();
 };
-
-// Download monthly report as PDF
-export const downloadMonthlyReportPdf = async (reportId: number): Promise<void> => {
-  const response = await fetch(`${API_BASE_URL}/api/monthly-reports/download/${reportId}`, {
-    credentials: 'include',
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to download report');
-  }
-
-  const data = await response.json();
-
-  // Convert the data to a downloadable format
-  const blob = new Blob([JSON.stringify(data.data, null, 2)], { type: 'application/json' });
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `monthly-report-${data.data.property.id}-${data.data.report_month}.json`;
-  document.body.appendChild(a);
-  a.click();
-  window.URL.revokeObjectURL(url);
-  document.body.removeChild(a);
-};

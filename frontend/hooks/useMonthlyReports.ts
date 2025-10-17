@@ -9,7 +9,6 @@ import {
   updateMonthlyReport,
   GenerateMonthlyReportData,
   getTenantPropertyReports,
-  downloadMonthlyReportPdf,
 } from '@/lib/monthly-report-api';
 import { toast } from 'sonner';
 
@@ -111,18 +110,5 @@ export function useTenantPropertyReports(params?: { year?: number }) {
   return useQuery({
     queryKey: ['tenant-monthly-reports', params],
     queryFn: () => getTenantPropertyReports(params),
-  });
-}
-
-// Download monthly report as PDF
-export function useDownloadMonthlyReportPdf() {
-  return useMutation({
-    mutationFn: (reportId: number) => downloadMonthlyReportPdf(reportId),
-    onSuccess: () => {
-      toast.success('Report downloaded successfully');
-    },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to download report');
-    },
   });
 }
