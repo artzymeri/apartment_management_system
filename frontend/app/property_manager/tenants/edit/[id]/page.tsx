@@ -14,6 +14,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, Save } from "lucide-react";
 import { toast } from "sonner";
+import PaymentTracker from "@/components/PaymentTracker";
 
 export default function EditTenantPage() {
   const router = useRouter();
@@ -393,6 +394,27 @@ export default function EditTenantPage() {
               </CardContent>
             </Card>
           </form>
+
+          {/* Payment Tracker Section */}
+          {tenantData && formData.property_id && (
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle>Payment Tracking</CardTitle>
+                <CardDescription>
+                  Track monthly payments for this tenant. Payment records are automatically
+                  generated from the property creation date to the current month.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PaymentTracker
+                  tenantId={tenantId}
+                  propertyId={formData.property_id ? parseInt(formData.property_id) : undefined}
+                  monthlyRate={formData.monthly_rate ? parseFloat(formData.monthly_rate) : undefined}
+                  editable={true}
+                />
+              </CardContent>
+            </Card>
+          )}
         </div>
       </PropertyManagerLayout>
     </ProtectedRoute>

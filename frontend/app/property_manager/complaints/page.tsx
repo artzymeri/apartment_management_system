@@ -39,6 +39,8 @@ import { AlertCircle, Building2, CheckCircle2, Clock, Loader2, MessageSquare, Us
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { format } from "date-fns";
 import { toast } from "sonner";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 interface Complaint {
   id: number;
@@ -46,6 +48,7 @@ interface Complaint {
   tenant_user_id: number;
   title: string;
   description: string;
+  response: string;
   status: string;
   created_at: string;
   property: {
@@ -74,6 +77,7 @@ export default function PropertyManagerComplaintsPage() {
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
   const [newStatus, setNewStatus] = useState<string>("");
+  const [response, setResponse] = useState<string>("");
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [properties, setProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -138,19 +142,20 @@ export default function PropertyManagerComplaintsPage() {
 
     setIsUpdating(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/complaints/${selectedComplaint.id}/status`, {
+      const response_text = await fetch(`http://localhost:5000/api/complaints/${selectedComplaint.id}/status`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
         credentials: 'include',
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify({ status: newStatus, response: response }),
       });
 
-      if (response.ok) {
+      if (response_text.ok) {
         toast.success("Complaint status updated successfully");
         setSelectedComplaint(null);
         setNewStatus("");
+        setResponse("");
 
         // Refresh complaints
         const params = new URLSearchParams();
@@ -170,7 +175,7 @@ export default function PropertyManagerComplaintsPage() {
           setComplaints(data.complaints);
         }
       } else {
-        const data = await response.json();
+        const data = await response_text.json();
         toast.error(data.message || "Failed to update complaint status");
       }
     } catch (error) {
@@ -275,7 +280,7 @@ export default function PropertyManagerComplaintsPage() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Properties</SelectItem>
-                      {properties.map((property) => (
+                      {properties?.map((property) => (
                         <SelectItem key={property.id} value={property.id.toString()}>
                           {property.name}
                         </SelectItem>
@@ -433,6 +438,16 @@ export default function PropertyManagerComplaintsPage() {
                     </SelectContent>
                   </Select>
                 </div>
+
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Response (Optional)</Label>
+                  <Textarea
+                    value={response}
+                    onChange={(e) => setResponse(e.target.value)}
+                    placeholder="Enter your response here"
+                    rows={3}
+                  />
+                </div>
               </div>
             )}
 
@@ -457,4 +472,3 @@ export default function PropertyManagerComplaintsPage() {
     </ProtectedRoute>
   );
 }
-

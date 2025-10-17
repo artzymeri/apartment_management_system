@@ -38,6 +38,10 @@ const Suggestion = sequelize.define('Suggestion', {
     type: DataTypes.TEXT,
     allowNull: true
   },
+  response: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
   status: {
     type: DataTypes.ENUM('pending', 'in_progress', 'resolved', 'rejected'),
     allowNull: false,
@@ -64,4 +68,3 @@ const Suggestion = sequelize.define('Suggestion', {
 });
 
 module.exports = Suggestion;
-

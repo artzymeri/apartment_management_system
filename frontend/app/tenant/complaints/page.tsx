@@ -32,6 +32,7 @@ interface Complaint {
   property_id: number;
   title: string;
   description: string;
+  response: string;
   status: string;
   created_at: string;
   property: {
@@ -61,6 +62,10 @@ export default function ComplaintsPage() {
         if (response.ok) {
           const data = await response.json();
           setProperties(data.properties);
+          // Automatically select the first (and only) property for the tenant
+          if (data.properties.length > 0) {
+            setSelectedProperty(data.properties[0].id.toString());
+          }
         } else {
           console.error("Failed to fetch properties:", response.status);
           toast.error("Failed to load properties");
@@ -122,7 +127,7 @@ export default function ComplaintsPage() {
 
       if (response.ok) {
         toast.success("Complaint submitted successfully!");
-        setSelectedProperty("");
+        // Don't reset selectedProperty since it's auto-selected
         setTitle("");
         setDescription("");
 
@@ -215,6 +220,7 @@ export default function ComplaintsPage() {
                     <Select
                       value={selectedProperty}
                       onValueChange={setSelectedProperty}
+                      disabled
                     >
                       <SelectTrigger id="property">
                         <SelectValue placeholder="Select property" />
@@ -338,6 +344,14 @@ export default function ComplaintsPage() {
                                 {complaint.description}
                               </p>
                             )}
+                            {complaint.response && (
+                              <div className="mt-3 p-3 bg-blue-50 rounded-md border border-blue-200">
+                                <p className="text-xs font-semibold text-blue-900 mb-1">Property Manager Response:</p>
+                                <p className="text-sm text-blue-800">
+                                  {complaint.response}
+                                </p>
+                              </div>
+                            )}
                           </div>
                           <div className="ml-4">
                             {getStatusBadge(complaint.status)}
@@ -358,4 +372,3 @@ export default function ComplaintsPage() {
     </ProtectedRoute>
   );
 }
-

@@ -246,6 +246,7 @@ export default function ReportProblemPage() {
                     <Select
                       value={selectedProperty?.id.toString()}
                       onValueChange={handlePropertyChange}
+                      disabled
                     >
                       <SelectTrigger id="property">
                         <SelectValue placeholder="Select property" />

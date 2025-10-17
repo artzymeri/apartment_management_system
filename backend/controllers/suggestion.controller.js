@@ -165,7 +165,7 @@ exports.getPropertyManagerSuggestions = async (req, res) => {
 exports.updateSuggestionStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, response } = req.body;
     const user_id = req.user.id;
 
     // Validate status
@@ -199,8 +199,11 @@ exports.updateSuggestionStatus = async (req, res) => {
       return res.status(403).json({ message: 'You do not manage this property' });
     }
 
-    // Update the suggestion status
+    // Update the suggestion status and response
     suggestion.status = status;
+    if (response !== undefined) {
+      suggestion.response = response;
+    }
     await suggestion.save();
 
     const updatedSuggestion = await Suggestion.findByPk(id, {
@@ -221,4 +224,3 @@ exports.updateSuggestionStatus = async (req, res) => {
 };
 
 module.exports = exports;
-

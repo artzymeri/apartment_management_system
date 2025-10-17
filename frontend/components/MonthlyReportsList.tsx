@@ -1,0 +1,252 @@
+"use client";
+
+import { useState } from "react";
+import { usePropertyReports, useDeleteMonthlyReport, useMonthlyReportDetail } from "@/hooks/useMonthlyReports";
+import { EditReportModal } from "@/components/EditReportModal";
+import { generateMonthlyReportPDF } from "@/lib/pdf-generator";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { FileText, Trash2, Building2, Loader2, TrendingUp, Download, Edit } from "lucide-react";
+import { format } from "date-fns";
+import { toast } from "sonner";
+
+interface MonthlyReport {
+  id: number;
+  property_id: number;
+  report_month: string;
+  total_budget: string;
+  total_tenants: number;
+  paid_tenants: number;
+  pending_amount: string;
+  spending_breakdown: any[];
+  notes: string | null;
+  property: {
+    id: number;
+    name: string;
+    address: string;
+  };
+  created_at: string;
+}
+
+interface MonthlyReportsListProps {
+  propertyId: number;
+  year: number;
+}
+
+export function MonthlyReportsList({ propertyId, year }: MonthlyReportsListProps) {
+  const { data: reportsData, isLoading } = usePropertyReports(propertyId, { year });
+  const deleteMutation = useDeleteMonthlyReport();
+  const [deleteReportId, setDeleteReportId] = useState<number | null>(null);
+  const [editingReport, setEditingReport] = useState<MonthlyReport | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [downloadingReportId, setDownloadingReportId] = useState<number | null>(null);
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const reports = reportsData?.reports || [];
+
+  if (reports.length === 0) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-12">
+          <FileText className="h-12 w-12 text-muted-foreground mb-4" />
+          <p className="text-lg font-medium text-muted-foreground">No reports found</p>
+          <p className="text-sm text-muted-foreground">No reports generated for this property in {year}</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Sort reports by month descending (newest first)
+  const sortedReports = [...reports].sort((a, b) =>
+    new Date(b.report_month).getTime() - new Date(a.report_month).getTime()
+  );
+
+  const handleDelete = async () => {
+    if (deleteReportId) {
+      try {
+        await deleteMutation.mutateAsync(deleteReportId);
+        setDeleteReportId(null);
+      } catch (error) {
+        // Error is handled by the mutation
+      }
+    }
+  };
+
+  const handleEdit = (report: MonthlyReport) => {
+    setEditingReport(report);
+    setIsEditModalOpen(true);
+  };
+
+  const handleDownload = async (report: MonthlyReport) => {
+    try {
+      setDownloadingReportId(report.id);
+      toast.info("Generating PDF...");
+
+      // Generate PDF with just the report data (no tenant payment details)
+      await generateMonthlyReportPDF(report);
+
+      toast.success("PDF downloaded successfully!");
+    } catch (error: any) {
+      console.error('PDF generation error:', error);
+      toast.error(error.message || "Failed to generate PDF");
+    } finally {
+      setDownloadingReportId(null);
+    }
+  };
+
+  const getMonthName = (dateString: string) => {
+    const date = new Date(dateString);
+    return format(date, "MMMM yyyy");
+  };
+
+  const collectionRate = (report: MonthlyReport) => {
+    return report.total_tenants > 0
+      ? ((report.paid_tenants / report.total_tenants) * 100).toFixed(1)
+      : "0";
+  };
+
+  return (
+    <>
+      <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {sortedReports.map((report) => (
+            <Card key={report.id} className="hover:shadow-md transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1 flex-1">
+                    <CardTitle className="text-lg">{getMonthName(report.report_month)}</CardTitle>
+                    <CardDescription className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <TrendingUp className="h-3 w-3" />
+                      <span>{report.paid_tenants} of {report.total_tenants} tenants paid ({collectionRate(report)}%)</span>
+                    </CardDescription>
+                  </div>
+                  <Badge variant="secondary" className="ml-2 flex items-center gap-1">
+                    <Building2 className="h-3 w-3" />
+                    {report.property.name}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <p className="text-muted-foreground text-xs">Total Budget</p>
+                    <p className="font-semibold text-base">€{parseFloat(report.total_budget).toFixed(2)}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground text-xs">Pending</p>
+                    <p className="font-semibold text-base text-orange-600">€{parseFloat(report.pending_amount).toFixed(2)}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <TrendingUp className="h-3 w-3" />
+                  <span>{report.paid_tenants} of {report.total_tenants} tenants paid</span>
+                </div>
+
+                {report.spending_breakdown && report.spending_breakdown.length > 0 && (
+                  <div className="pt-2 border-t">
+                    <p className="text-xs text-muted-foreground mb-2">Budget Allocation</p>
+                    <div className="space-y-1">
+                      {report.spending_breakdown.slice(0, 2).map((item: any, idx: number) => (
+                        <div key={idx} className="flex justify-between text-xs">
+                          <span className="truncate">{item.config_title}</span>
+                          <span className="font-medium">€{parseFloat(item.allocated_amount).toFixed(2)}</span>
+                        </div>
+                      ))}
+                      {report.spending_breakdown.length > 2 && (
+                        <p className="text-xs text-muted-foreground italic">
+                          +{report.spending_breakdown.length - 2} more...
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => handleDownload(report)}
+                    disabled={downloadingReportId === report.id}
+                  >
+                    {downloadingReportId === report.id ? (
+                      <>
+                        <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        <Download className="h-3 w-3 mr-1" />
+                        Download
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleEdit(report)}
+                  >
+                    <Edit className="h-3 w-3" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setDeleteReportId(report.id)}
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      {/* Edit Report Modal */}
+      <EditReportModal
+        open={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        report={editingReport}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteReportId !== null} onOpenChange={(open) => !open && setDeleteReportId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Report</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this monthly report? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+}

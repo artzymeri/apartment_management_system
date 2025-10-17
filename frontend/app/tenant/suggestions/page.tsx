@@ -32,6 +32,7 @@ interface Suggestion {
   property_id: number;
   title: string;
   description: string;
+  response: string;
   status: string;
   created_at: string;
   property: {
@@ -61,6 +62,10 @@ export default function SuggestionsPage() {
         if (response.ok) {
           const data = await response.json();
           setProperties(data.properties);
+          // Automatically select the first (and only) property for the tenant
+          if (data.properties.length > 0) {
+            setSelectedProperty(data.properties[0].id.toString());
+          }
         } else {
           console.error("Failed to fetch properties:", response.status);
           toast.error("Failed to load properties");
@@ -122,7 +127,7 @@ export default function SuggestionsPage() {
 
       if (response.ok) {
         toast.success("Suggestion submitted successfully!");
-        setSelectedProperty("");
+        // Don't reset selectedProperty since it's auto-selected
         setTitle("");
         setDescription("");
 
@@ -215,6 +220,7 @@ export default function SuggestionsPage() {
                     <Select
                       value={selectedProperty}
                       onValueChange={setSelectedProperty}
+                      disabled
                     >
                       <SelectTrigger id="property">
                         <SelectValue placeholder="Select property" />
@@ -339,6 +345,14 @@ export default function SuggestionsPage() {
                                 {suggestion.description}
                               </p>
                             )}
+                            {suggestion.response && (
+                              <div className="mt-3 p-3 bg-emerald-50 rounded-md border border-emerald-200">
+                                <p className="text-xs font-semibold text-emerald-900 mb-1">Property Manager Response:</p>
+                                <p className="text-sm text-emerald-800">
+                                  {suggestion.response}
+                                </p>
+                              </div>
+                            )}
                           </div>
                           <div className="ml-4">
                             {getStatusBadge(suggestion.status)}
@@ -359,4 +373,3 @@ export default function SuggestionsPage() {
     </ProtectedRoute>
   );
 }
-

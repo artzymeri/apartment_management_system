@@ -1,6 +1,7 @@
 const db = require('../models');
 const bcrypt = require('bcrypt');
 const { Op } = require('sequelize');
+const { generatePaymentRecords } = require('../utils/paymentUtils');
 
 // Create user directly (for admin/property_manager)
 exports.createUser = async (req, res) => {
@@ -80,6 +81,17 @@ exports.createUser = async (req, res) => {
 
     // Create user
     const user = await db.User.create(userData);
+
+    // Generate payment records for tenant
+    if (userData.role === 'tenant' && userData.monthly_rate && userData.property_ids && userData.property_ids.length > 0) {
+      for (const propertyId of userData.property_ids) {
+        try {
+          await generatePaymentRecords(user.id, propertyId, userData.monthly_rate);
+        } catch (paymentError) {
+          console.error(`Failed to generate payments for property ${propertyId}:`, paymentError);
+        }
+      }
+    }
 
     // Return user without password
     const userResponse = user.toJSON();
@@ -277,6 +289,34 @@ exports.updateUser = async (req, res) => {
 
     await user.update(updateData);
 
+    // Generate payment records for tenant if properties or monthly_rate changed
+    if ((role === 'tenant' || user.role === 'tenant') && updateData.monthly_rate) {
+      const oldPropertyIds = user.property_ids || [];
+      const newPropertyIds = updateData.property_ids || [];
+
+      // Generate payment records for newly added properties
+      const addedProperties = newPropertyIds.filter(id => !oldPropertyIds.includes(id));
+      for (const propertyId of addedProperties) {
+        try {
+          await generatePaymentRecords(user.id, propertyId, updateData.monthly_rate);
+        } catch (paymentError) {
+          console.error(`Failed to generate payments for property ${propertyId}:`, paymentError);
+        }
+      }
+
+      // If monthly_rate changed, update existing payment records
+      if (monthly_rate !== undefined && monthly_rate !== user.monthly_rate) {
+        const { updatePaymentRecordsAmount } = require('../utils/paymentUtils');
+        for (const propertyId of newPropertyIds) {
+          try {
+            await updatePaymentRecordsAmount(user.id, propertyId, updateData.monthly_rate);
+          } catch (paymentError) {
+            console.error(`Failed to update payment amounts for property ${propertyId}:`, paymentError);
+          }
+        }
+      }
+    }
+
     // Return user without password
     const userData = user.toJSON();
     delete userData.password;
@@ -451,7 +491,7 @@ exports.updateOwnProfile = async (req, res) => {
 exports.getTenantsForPropertyManager = async (req, res) => {
   try {
     const propertyManagerId = req.user.id;
-    const { search, page = 1, limit = 10 } = req.query;
+    const { search, page = 1, limit = 10, property_id } = req.query;
 
     // Check if user is property manager
     const propertyManager = await db.User.findByPk(propertyManagerId);
@@ -469,10 +509,24 @@ exports.getTenantsForPropertyManager = async (req, res) => {
       attributes: ['property_id']
     });
 
-    const managedPropertyIds = managedProperties.map(pm => pm.property_id);
+    let managedPropertyIds = managedProperties.map(pm => pm.property_id);
 
     console.log('Property Manager ID:', propertyManagerId);
     console.log('Managed Property IDs:', managedPropertyIds);
+
+    // If property_id filter is provided, validate and use only that property
+    if (property_id) {
+      const requestedPropertyId = parseInt(property_id);
+      if (!managedPropertyIds.includes(requestedPropertyId)) {
+        return res.status(403).json({
+          success: false,
+          message: 'You do not manage this property'
+        });
+      }
+      // Filter to only this specific property
+      managedPropertyIds = [requestedPropertyId];
+      console.log('Filtering by specific property:', requestedPropertyId);
+    }
 
     if (managedPropertyIds.length === 0) {
       console.log('No properties found for this property manager');
@@ -525,7 +579,7 @@ exports.getTenantsForPropertyManager = async (req, res) => {
     });
 
     console.log('Found tenants count:', count);
-    console.log('Tenants:', rows.map(r => `${r.name} ${r.surname} (${r.email})`));
+    console.log('Tenants:', rows.map(r => `${r.name} ${r.surname} (${r.email}) - Monthly Rate: ${r.monthly_rate || 'NOT SET'}`));
 
     res.status(200).json({
       success: true,
@@ -751,6 +805,34 @@ exports.updateTenantForPropertyManager = async (req, res) => {
     }
 
     await tenant.update(updateData);
+
+    // Generate payment records for tenant if properties or monthly_rate changed
+    if ((role === 'tenant' || tenant.role === 'tenant') && updateData.monthly_rate) {
+      const oldPropertyIds = tenant.property_ids || [];
+      const newPropertyIds = updateData.property_ids || [];
+
+      // Generate payment records for newly added properties
+      const addedProperties = newPropertyIds.filter(id => !oldPropertyIds.includes(id));
+      for (const propertyId of addedProperties) {
+        try {
+          await generatePaymentRecords(tenant.id, propertyId, updateData.monthly_rate);
+        } catch (paymentError) {
+          console.error(`Failed to generate payments for property ${propertyId}:`, paymentError);
+        }
+      }
+
+      // If monthly_rate changed, update existing payment records
+      if (monthly_rate !== undefined && monthly_rate !== tenant.monthly_rate) {
+        const { updatePaymentRecordsAmount } = require('../utils/paymentUtils');
+        for (const propertyId of newPropertyIds) {
+          try {
+            await updatePaymentRecordsAmount(tenant.id, propertyId, updateData.monthly_rate);
+          } catch (paymentError) {
+            console.error(`Failed to update payment amounts for property ${propertyId}:`, paymentError);
+          }
+        }
+      }
+    }
 
     // Return tenant without password
     const tenantData = tenant.toJSON();

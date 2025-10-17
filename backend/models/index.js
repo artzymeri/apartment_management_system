@@ -9,6 +9,10 @@ const PropertyProblemOption = require('./propertyProblemOption.model');
 const Report = require('./report.model');
 const Complaint = require('./complaint.model');
 const Suggestion = require('./suggestion.model');
+const TenantPayment = require('./tenantPayment.model');
+const SpendingConfig = require('./spendingConfig.model');
+const PropertySpendingConfig = require('./propertySpendingConfig.model');
+const MonthlyReport = require('./monthlyReport.model');
 
 const db = {};
 
@@ -23,6 +27,10 @@ db.PropertyProblemOption = PropertyProblemOption;
 db.Report = Report;
 db.Complaint = Complaint;
 db.Suggestion = Suggestion;
+db.TenantPayment = TenantPayment;
+db.SpendingConfig = SpendingConfig;
+db.PropertySpendingConfig = PropertySpendingConfig;
+db.MonthlyReport = MonthlyReport;
 
 // Define relationships
 // Property belongs to User (property manager) - DEPRECATED, kept for backward compatibility
@@ -162,6 +170,65 @@ User.hasMany(Suggestion, {
 Property.hasMany(Suggestion, {
   foreignKey: 'property_id',
   as: 'suggestions'
+});
+
+// TenantPayment relationships
+TenantPayment.belongsTo(User, {
+  foreignKey: 'tenant_id',
+  as: 'tenant'
+});
+
+TenantPayment.belongsTo(Property, {
+  foreignKey: 'property_id',
+  as: 'property'
+});
+
+User.hasMany(TenantPayment, {
+  foreignKey: 'tenant_id',
+  as: 'payments'
+});
+
+Property.hasMany(TenantPayment, {
+  foreignKey: 'property_id',
+  as: 'payments'
+});
+
+// SpendingConfig belongs to User (creator)
+SpendingConfig.belongsTo(User, {
+  foreignKey: 'created_by_user_id',
+  as: 'creator'
+});
+
+User.hasMany(SpendingConfig, {
+  foreignKey: 'created_by_user_id',
+  as: 'createdSpendingConfigs'
+});
+
+// Many-to-Many: Property has many SpendingConfigs through PropertySpendingConfig
+Property.belongsToMany(SpendingConfig, {
+  through: PropertySpendingConfig,
+  foreignKey: 'property_id',
+  otherKey: 'spending_config_id',
+  as: 'spendingConfigs'
+});
+
+// Many-to-Many: SpendingConfig belongs to many Properties through PropertySpendingConfig
+SpendingConfig.belongsToMany(Property, {
+  through: PropertySpendingConfig,
+  foreignKey: 'spending_config_id',
+  otherKey: 'property_id',
+  as: 'properties'
+});
+
+// MonthlyReport relationships
+MonthlyReport.belongsTo(Property, {
+  foreignKey: 'property_id',
+  as: 'property'
+});
+
+Property.hasMany(MonthlyReport, {
+  foreignKey: 'property_id',
+  as: 'monthlyReports'
 });
 
 module.exports = db;

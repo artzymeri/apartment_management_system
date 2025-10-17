@@ -16,6 +16,10 @@ import {
   ChevronUp,
   Settings as SettingsIcon,
   FileText,
+  MessageSquare,
+  Lightbulb,
+  Euro,
+  BarChart3,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -36,7 +40,11 @@ const propertyManagerNavItems = [
   { href: "/property_manager", icon: ClipboardList, label: "Dashboard" },
   { href: "/property_manager/properties", icon: Building2, label: "Properties" },
   { href: "/property_manager/tenants", icon: Users, label: "Tenants" },
+  { href: "/property_manager/payments", icon: Euro, label: "Payments" },
+  { href: "/property_manager/monthly-reports", icon: BarChart3, label: "Monthly Reports" },
   { href: "/property_manager/reports", icon: FileText, label: "Reports" },
+  { href: "/property_manager/complaints", icon: MessageSquare, label: "Complaints" },
+  { href: "/property_manager/suggestions", icon: Lightbulb, label: "Suggestions" },
   { href: "/property_manager/configurations", icon: SettingsIcon, label: "Configurations" },
 ];
 
@@ -48,7 +56,11 @@ const getPageTitle = (pathname: string) => {
   // For nested routes
   if (pathname.startsWith("/property_manager/properties")) return "Properties";
   if (pathname.startsWith("/property_manager/tenants")) return "Tenants";
+  if (pathname.startsWith("/property_manager/payments")) return "Payments";
+  if (pathname.startsWith("/property_manager/monthly-reports")) return "Monthly Reports";
   if (pathname.startsWith("/property_manager/reports")) return "Reports";
+  if (pathname.startsWith("/property_manager/complaints")) return "Complaints";
+  if (pathname.startsWith("/property_manager/suggestions")) return "Suggestions";
   if (pathname.startsWith("/property_manager/configurations")) return "Configurations";
 
   return "Manager Dashboard";

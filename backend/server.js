@@ -12,6 +12,9 @@ const problemOptionRoutes = require('./routes/problemOption.routes');
 const reportRoutes = require('./routes/report.routes');
 const complaintRoutes = require('./routes/complaint.routes');
 const suggestionRoutes = require('./routes/suggestion.routes');
+const tenantPaymentRoutes = require('./routes/tenantPayment.routes');
+const spendingConfigRoutes = require('./routes/spendingConfig.routes');
+const monthlyReportRoutes = require('./routes/monthlyReport.routes');
 require('dotenv').config();
 
 const app = express();
@@ -49,6 +52,9 @@ app.use('/api/problem-options', problemOptionRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/suggestions', suggestionRoutes);
+app.use('/api/tenant-payments', tenantPaymentRoutes);
+app.use('/api/spending-configs', spendingConfigRoutes);
+app.use('/api/monthly-reports', monthlyReportRoutes);
 
 // Test route
 app.get('/', (req, res) => {

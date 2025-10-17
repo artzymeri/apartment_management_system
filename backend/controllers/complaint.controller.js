@@ -165,7 +165,7 @@ exports.getPropertyManagerComplaints = async (req, res) => {
 exports.updateComplaintStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, response } = req.body;
     const user_id = req.user.id;
 
     // Validate status
@@ -199,8 +199,11 @@ exports.updateComplaintStatus = async (req, res) => {
       return res.status(403).json({ message: 'You do not manage this property' });
     }
 
-    // Update the complaint status
+    // Update the complaint status and response
     complaint.status = status;
+    if (response !== undefined) {
+      complaint.response = response;
+    }
     await complaint.save();
 
     const updatedComplaint = await Complaint.findByPk(id, {
@@ -221,4 +224,3 @@ exports.updateComplaintStatus = async (req, res) => {
 };
 
 module.exports = exports;
-

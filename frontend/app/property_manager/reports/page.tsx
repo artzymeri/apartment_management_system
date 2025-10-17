@@ -106,16 +106,8 @@ export default function PropertyManagerReportsPage() {
 
   return (
     <ProtectedRoute allowedRoles={['property_manager']}>
-      <PropertyManagerLayout>
+      <PropertyManagerLayout title="Reports">
         <div className="space-y-6">
-          {/* Header */}
-          <div>
-            <h1 className="text-3xl font-bold text-slate-900">Reports</h1>
-            <p className="mt-2 text-slate-600">
-              Manage and respond to tenant problem reports
-            </p>
-          </div>
-
           {/* Stats Grid */}
           <div className="grid gap-4 md:grid-cols-4">
             <Card className="border-slate-200">
@@ -159,37 +151,32 @@ export default function PropertyManagerReportsPage() {
             </Card>
           </div>
 
-          {/* Filters */}
+          {/* Reports Table with Filters */}
           <Card>
             <CardHeader>
-              <CardTitle>Filters</CardTitle>
-              <CardDescription>
-                Filter reports by property and status
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Property</label>
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                  <CardTitle>Reports Overview</CardTitle>
+                  <CardDescription>
+                    Manage and respond to tenant problem reports
+                  </CardDescription>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2">
                   <Select value={selectedProperty} onValueChange={setSelectedProperty}>
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full sm:w-[200px]">
                       <SelectValue placeholder="All Properties" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Properties</SelectItem>
-                      {properties.map((property: Property) => (
+                      {properties?.map((property: Property) => (
                         <SelectItem key={property.id} value={property.id.toString()}>
                           {property.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Status</label>
                   <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full sm:w-[180px]">
                       <SelectValue placeholder="All Statuses" />
                     </SelectTrigger>
                     <SelectContent>
@@ -202,16 +189,6 @@ export default function PropertyManagerReportsPage() {
                   </Select>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Reports Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Reports List</CardTitle>
-              <CardDescription>
-                View and manage tenant problem reports
-              </CardDescription>
             </CardHeader>
             <CardContent>
               {error && (

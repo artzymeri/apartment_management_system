@@ -6,9 +6,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Home,
-  CreditCard,
-  Wrench,
-  FileText,
   MessageSquare,
   Bell,
   LogOut,
@@ -16,6 +13,9 @@ import {
   Settings,
   ChevronUp,
   AlertTriangle,
+  Lightbulb,
+  Euro,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -34,11 +34,11 @@ import { Separator } from "@/components/ui/separator";
 
 const tenantNavItems = [
   { href: "/tenant", icon: Home, label: "Dashboard" },
+  { href: "/tenant/payments", icon: Euro, label: "My Payments" },
   { href: "/tenant/report-problem", icon: AlertTriangle, label: "Report Problem" },
-  { href: "/tenant/payments", icon: CreditCard, label: "Payments" },
-  { href: "/tenant/maintenance", icon: Wrench, label: "Maintenance" },
-  { href: "/tenant/documents", icon: FileText, label: "Documents" },
-  { href: "/tenant/messages", icon: MessageSquare, label: "Messages" },
+  { href: "/tenant/complaints", icon: MessageSquare, label: "Complaints" },
+  { href: "/tenant/suggestions", icon: Lightbulb, label: "Suggestions" },
+  { href: "/tenant/monthly-reports", icon: FileText, label: "Monthly Reports" },
 ];
 
 export function TenantLayout({ children, title = "My Apartment" }: { children: React.ReactNode; title?: string }) {
