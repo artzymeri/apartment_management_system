@@ -6,11 +6,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Download, FileText, Calendar, DollarSign, Users, AlertCircle, TrendingUp } from "lucide-react";
+import { Download, FileText, Calendar, Euro, AlertCircle, TrendingUp } from "lucide-react";
 import { useTenantPropertyReports, useDownloadMonthlyReportPdf } from "@/hooks/useMonthlyReports";
 import { useState, useMemo } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
+import {Separator} from "@/components/ui/separator";
 
 export default function TenantMonthlyReportsPage() {
   const currentYear = new Date().getFullYear();
@@ -46,17 +47,18 @@ export default function TenantMonthlyReportsPage() {
     <ProtectedRoute allowedRoles={['tenant']}>
       <TenantLayout title="Monthly Reports">
         <div className="space-y-6">
-          {/* Header Section */}
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h2 className="text-3xl font-bold text-slate-900">Property Monthly Reports</h2>
-              <p className="text-slate-600 mt-1">
-                View financial reports for your property
-              </p>
-            </div>
+          {/* Info Alert and Year Filter on Same Line */}
+          <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
+            <Alert className="border-emerald-200 bg-emerald-50 flex-1">
+              <FileText className="h-4 w-4 text-emerald-600" />
+              <AlertTitle className="text-emerald-900">About Monthly Reports</AlertTitle>
+              <AlertDescription className="text-emerald-700">
+                Monthly reports show how collected rent payments are allocated across various property expenses and maintenance categories.
+              </AlertDescription>
+            </Alert>
 
             {/* Year Filter */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-shrink-0">
               <Calendar className="h-5 w-5 text-slate-500" />
               <Select
                 value={selectedYear.toString()}
@@ -76,14 +78,7 @@ export default function TenantMonthlyReportsPage() {
             </div>
           </div>
 
-          {/* Info Alert */}
-          <Alert className="border-emerald-200 bg-emerald-50">
-            <FileText className="h-4 w-4 text-emerald-600" />
-            <AlertTitle className="text-emerald-900">About Monthly Reports</AlertTitle>
-            <AlertDescription className="text-emerald-700">
-              Monthly reports show how collected rent payments are allocated across various property expenses and maintenance categories.
-            </AlertDescription>
-          </Alert>
+          <Separator />
 
           {/* Loading State */}
           {isLoading && (
@@ -132,8 +127,8 @@ export default function TenantMonthlyReportsPage() {
           {!isLoading && !error && reports.length > 0 && (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {reports.map((report) => (
-                <Card key={report.id} className="hover:shadow-lg transition-shadow">
-                  <CardHeader className="border-b border-slate-100 bg-gradient-to-br from-emerald-50 to-white">
+                <Card key={report.id} className="hover:shadow-lg transition-shadow bg-gradient-to-br from-emerald-50 to-white">
+                  <CardHeader className="border-b border-slate-100">
                     <div className="flex items-start justify-between">
                       <div>
                         <CardTitle className="text-xl text-emerald-700">
@@ -150,26 +145,16 @@ export default function TenantMonthlyReportsPage() {
                     </div>
                   </CardHeader>
 
-                  <CardContent className="pt-6 space-y-4">
+                  <CardContent className="space-y-4">
                     {/* Budget Summary */}
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <DollarSign className="h-4 w-4 text-emerald-600" />
+                          <Euro className="h-4 w-4 text-emerald-600" />
                           <span className="text-sm font-medium text-slate-700">Total Budget</span>
                         </div>
                         <span className="text-lg font-bold text-emerald-700">
                           {formatCurrency(report.total_budget)}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Users className="h-4 w-4 text-blue-600" />
-                          <span className="text-sm font-medium text-slate-700">Paid Tenants</span>
-                        </div>
-                        <span className="text-sm font-semibold text-slate-900">
-                          {report.paid_tenants} / {report.total_tenants}
                         </span>
                       </div>
 
@@ -243,4 +228,3 @@ export default function TenantMonthlyReportsPage() {
     </ProtectedRoute>
   );
 }
-
