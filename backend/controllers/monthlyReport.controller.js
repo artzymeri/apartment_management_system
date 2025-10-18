@@ -5,6 +5,7 @@ const Property = db.Property;
 const TenantPayment = db.TenantPayment;
 const User = db.User;
 const SpendingConfig = db.SpendingConfig;
+const emailService = require('../services/email.service');
 
 // Generate or regenerate a monthly report for a property
 exports.generateMonthlyReport = async (req, res) => {
@@ -112,8 +113,11 @@ exports.generateMonthlyReport = async (req, res) => {
     });
 
     let report;
+    let isNewReport = false;
+
     if (existingReport) {
       // Update existing report
+      console.log(`📝 Updating existing report ID ${existingReport.id} for ${reportMonthStr}`);
       await existingReport.update({
         generated_by_user_id: userId,
         total_budget: totalBudget.toFixed(2),
@@ -124,8 +128,10 @@ exports.generateMonthlyReport = async (req, res) => {
         notes: notes || existingReport.notes
       });
       report = existingReport;
+      isNewReport = false;
     } else {
       // Create new report
+      console.log(`✨ Creating new report for ${reportMonthStr}`);
       report = await MonthlyReport.create({
         property_id: propertyId,
         report_month: reportMonthStr,
@@ -137,9 +143,10 @@ exports.generateMonthlyReport = async (req, res) => {
         spending_breakdown: spendingBreakdown,
         notes: notes || null
       });
+      isNewReport = true;
     }
 
-    // Fetch the complete report with relationships
+    // Fetch the complete report with relationships to ensure we have fresh data
     const completeReport = await MonthlyReport.findByPk(report.id, {
       include: [{
         model: Property,
@@ -148,14 +155,39 @@ exports.generateMonthlyReport = async (req, res) => {
       }]
     });
 
-    res.status(existingReport ? 200 : 201).json({
+    if (!completeReport) {
+      throw new Error('Failed to fetch the generated report');
+    }
+
+    // Send email notifications to all tenants (async, don't wait for completion)
+    if (allTenants.length > 0) {
+      console.log(`📧 Sending monthly report emails to ${allTenants.length} tenants...`);
+
+      // Send emails in the background without blocking the response
+      emailService.sendMonthlyReportToAllTenants(completeReport, property, allTenants)
+        .then(emailResults => {
+          console.log(`✅ Email notifications completed: ${emailResults.success.length} sent, ${emailResults.failed.length} failed`);
+        })
+        .catch(emailError => {
+          console.error('❌ Error sending report emails:', emailError);
+        });
+    }
+
+    // Return consistent 200 status for both create and update to avoid frontend confusion
+    res.status(200).json({
       success: true,
-      message: existingReport ? 'Report updated successfully' : 'Report generated successfully',
-      report: completeReport
+      message: isNewReport ? 'Report generated successfully' : 'Report updated successfully',
+      isNew: isNewReport,
+      report: completeReport,
+      emailNotification: allTenants.length > 0 ? `Sending email notifications to ${allTenants.length} tenants` : 'No tenants to notify'
     });
   } catch (error) {
     console.error('Generate monthly report error:', error);
-    res.status(500).json({ message: 'Error generating monthly report', error: error.message });
+    res.status(500).json({
+      success: false,
+      message: 'Error generating monthly report',
+      error: error.message
+    });
   }
 };
 
@@ -376,18 +408,36 @@ exports.deleteMonthlyReport = async (req, res) => {
     });
 
     if (!report) {
-      return res.status(404).json({ message: 'Report not found or unauthorized' });
+      return res.status(404).json({
+        success: false,
+        message: 'Report not found or unauthorized'
+      });
     }
+
+    const reportInfo = {
+      id: report.id,
+      property_id: report.property_id,
+      report_month: report.report_month
+    };
+
+    console.log(`🗑️ Deleting report ID ${reportInfo.id} for month ${reportInfo.report_month}`);
 
     await report.destroy();
 
+    console.log(`✅ Report deleted successfully`);
+
     res.status(200).json({
       success: true,
-      message: 'Report deleted successfully'
+      message: 'Report deleted successfully',
+      deletedReport: reportInfo
     });
   } catch (error) {
     console.error('Delete monthly report error:', error);
-    res.status(500).json({ message: 'Error deleting report', error: error.message });
+    res.status(500).json({
+      success: false,
+      message: 'Error deleting report',
+      error: error.message
+    });
   }
 };
 

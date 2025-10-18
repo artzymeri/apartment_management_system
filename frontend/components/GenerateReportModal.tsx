@@ -42,6 +42,11 @@ export function GenerateReportModal({ open, onOpenChange }: GenerateReportModalP
     }
   }, [properties, selectedProperty]);
 
+  // Handle successful report generation - close modal
+  const handleReportSuccess = () => {
+    onOpenChange(false);
+  };
+
   const months = [
     { value: 1, label: "January" },
     { value: 2, label: "February" },
@@ -147,6 +152,7 @@ export function GenerateReportModal({ open, onOpenChange }: GenerateReportModalP
                       propertyId={parseInt(selectedProperty)}
                       month={selectedMonth}
                       year={selectedYear}
+                      onSuccess={handleReportSuccess}
                     />
                   </div>
                 ) : (

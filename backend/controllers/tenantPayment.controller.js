@@ -1,5 +1,6 @@
 const db = require('../models');
 const { Op, Sequelize } = require('sequelize');
+const emailService = require('../services/email.service');
 
 // Get payments for a specific tenant
 exports.getTenantPayments = async (req, res) => {
@@ -385,6 +386,21 @@ exports.updatePaymentStatus = async (req, res) => {
       ]
     });
 
+    // Send email notification if payment was marked as paid
+    if (status === 'paid' && updatedPayment.tenant && updatedPayment.property) {
+      try {
+        await emailService.sendSinglePaymentPaidEmail(
+          updatedPayment.tenant,
+          updatedPayment,
+          updatedPayment.property
+        );
+        console.log(`✅ Payment confirmation email sent for payment ID: ${id}`);
+      } catch (emailError) {
+        // Log email error but don't fail the request
+        console.error('Failed to send payment confirmation email:', emailError.message);
+      }
+    }
+
     res.json({
       success: true,
       message: 'Payment updated successfully',
@@ -420,13 +436,21 @@ exports.bulkUpdatePayments = async (req, res) => {
       });
     }
 
-    // Get all payments
+    // Get all payments with tenant and property info
     const payments = await db.TenantPayment.findAll({
       where: { id: { [Op.in]: payment_ids } },
-      include: [{
-        model: db.Property,
-        as: 'property'
-      }]
+      include: [
+        {
+          model: db.Property,
+          as: 'property',
+          attributes: ['id', 'name', 'address']
+        },
+        {
+          model: db.User,
+          as: 'tenant',
+          attributes: ['id', 'name', 'surname', 'email']
+        }
+      ]
     });
 
     if (payments.length === 0) {
@@ -472,6 +496,48 @@ exports.bulkUpdatePayments = async (req, res) => {
     await db.TenantPayment.update(updateData, {
       where: { id: { [Op.in]: payment_ids } }
     });
+
+    // Send email notifications if payments were marked as paid
+    if (status === 'paid') {
+      // Group payments by tenant to send one email per tenant
+      const paymentsByTenant = {};
+
+      payments.forEach(payment => {
+        if (payment.tenant && payment.property) {
+          if (!paymentsByTenant[payment.tenant_id]) {
+            paymentsByTenant[payment.tenant_id] = {
+              tenant: payment.tenant,
+              property: payment.property,
+              payments: []
+            };
+          }
+          // Update payment with the new payment_date for email
+          payment.payment_date = updateData.payment_date;
+          payment.notes = notes;
+          paymentsByTenant[payment.tenant_id].payments.push(payment);
+        }
+      });
+
+      // Send emails to each tenant
+      for (const tenantId in paymentsByTenant) {
+        const { tenant, property, payments: tenantPayments } = paymentsByTenant[tenantId];
+
+        try {
+          if (tenantPayments.length === 1) {
+            // Send single payment email
+            await emailService.sendSinglePaymentPaidEmail(tenant, tenantPayments[0], property);
+            console.log(`✅ Single payment confirmation email sent to ${tenant.email}`);
+          } else {
+            // Send multiple payments email
+            await emailService.sendMultiplePaymentsPaidEmail(tenant, tenantPayments, property);
+            console.log(`✅ Multiple payments confirmation email sent to ${tenant.email} for ${tenantPayments.length} payments`);
+          }
+        } catch (emailError) {
+          // Log email error but don't fail the request
+          console.error(`Failed to send payment confirmation email to ${tenant.email}:`, emailError.message);
+        }
+      }
+    }
 
     res.json({
       success: true,

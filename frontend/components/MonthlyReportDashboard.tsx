@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { useMonthlyReportPreview, useGenerateMonthlyReport } from "@/hooks/useMonthlyReports";
+import { useMonthlyReportPreview, useGenerateMonthlyReport, usePropertyReports } from "@/hooks/useMonthlyReports";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,9 +33,10 @@ interface MonthlyReportDashboardProps {
   propertyId: number;
   month: number;
   year: number;
+  onSuccess?: () => void;  // Add callback for successful generation
 }
 
-export function MonthlyReportDashboard({ propertyId, month, year }: MonthlyReportDashboardProps) {
+export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: MonthlyReportDashboardProps) {
   const [notes, setNotes] = useState("");
   const [spendingAllocations, setSpendingAllocations] = useState<SpendingAllocation[]>([]);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -50,9 +51,18 @@ export function MonthlyReportDashboard({ propertyId, month, year }: MonthlyRepor
     year,
   });
 
+  // Check if report already exists for this property/month/year
+  const { data: existingReportsData } = usePropertyReports(propertyId, { year });
+
   const generateMutation = useGenerateMonthlyReport();
 
   const preview = previewData?.preview;
+
+  // Check if a report already exists for the selected month
+  const existingReport = existingReportsData?.reports?.find((report: any) => {
+    const reportDate = new Date(report.report_month);
+    return reportDate.getMonth() + 1 === month && reportDate.getFullYear() === year;
+  });
 
   // Refetch preview data when filters change
   useEffect(() => {
@@ -208,6 +218,12 @@ export function MonthlyReportDashboard({ propertyId, month, year }: MonthlyRepor
   const handleGenerateReport = async () => {
     if (!preview) return;
 
+    // Prevent duplicate report generation
+    if (existingReport) {
+      toast.error(`A report already exists for this period. Please delete the existing report first or view it in the reports list.`);
+      return;
+    }
+
     try {
       await generateMutation.mutateAsync({
         propertyId,
@@ -219,6 +235,11 @@ export function MonthlyReportDashboard({ propertyId, month, year }: MonthlyRepor
 
       toast.success("Monthly report generated successfully!");
       setIsEditMode(false);
+
+      // Call the onSuccess callback to close the modal
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error: any) {
       toast.error(error.message || "Failed to generate report");
     }
