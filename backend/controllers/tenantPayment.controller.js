@@ -30,12 +30,25 @@ exports.getTenantPayments = async (req, res) => {
     if (year) {
       const yearNum = parseInt(year);
       if (month) {
-        const monthNum = parseInt(month) - 1; // JS months are 0-indexed
-        const startDate = new Date(yearNum, monthNum, 1);
-        const endDate = new Date(yearNum, monthNum + 1, 0);
-        whereClause.payment_month = {
-          [Op.between]: [startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]]
-        };
+        // Check if month is an array (multiple months) or a single value
+        const months = Array.isArray(month) ? month : [month];
+
+        if (months.length > 0) {
+          // Create date ranges for each month
+          const monthRanges = months.map(m => {
+            const monthNum = parseInt(m) - 1; // month comes as 1-indexed from API
+            const startDate = new Date(yearNum, monthNum, 1);
+            const endDate = new Date(yearNum, monthNum + 1, 0);
+            return {
+              [Op.between]: [startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]]
+            };
+          });
+
+          // Use OR condition for multiple month ranges
+          whereClause.payment_month = {
+            [Op.or]: monthRanges
+          };
+        }
       } else {
         const startDate = new Date(yearNum, 0, 1);
         const endDate = new Date(yearNum, 11, 31);
@@ -121,12 +134,25 @@ exports.getPropertyManagerPayments = async (req, res) => {
     if (year) {
       const yearNum = parseInt(year);
       if (month) {
-        const monthNum = parseInt(month) - 1;
-        const startDate = new Date(yearNum, monthNum, 1);
-        const endDate = new Date(yearNum, monthNum + 1, 0);
-        whereClause.payment_month = {
-          [Op.between]: [startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]]
-        };
+        // Check if month is an array (multiple months) or a single value
+        const months = Array.isArray(month) ? month : [month];
+
+        if (months.length > 0) {
+          // Create date ranges for each month
+          const monthRanges = months.map(m => {
+            const monthNum = parseInt(m) - 1; // month comes as 1-indexed from API
+            const startDate = new Date(yearNum, monthNum, 1);
+            const endDate = new Date(yearNum, monthNum + 1, 0);
+            return {
+              [Op.between]: [startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]]
+            };
+          });
+
+          // Use OR condition for multiple month ranges
+          whereClause.payment_month = {
+            [Op.or]: monthRanges
+          };
+        }
       } else {
         const startDate = new Date(yearNum, 0, 1);
         const endDate = new Date(yearNum, 11, 31);
@@ -559,7 +585,7 @@ exports.generateFuturePayments = async (req, res) => {
   }
 };
 
-// Generate or ensure payment records exist for specific month
+// Generate or ensure payment records exist for specific month(s)
 exports.ensurePaymentRecords = async (req, res) => {
   try {
     const { tenant_ids, property_id, year, month } = req.body;
@@ -599,72 +625,94 @@ exports.ensurePaymentRecords = async (req, res) => {
       });
     }
 
-    // Create payment month date (first day of the month)
-    // month is 0-indexed from frontend (0=Jan, 11=Dec), so add 1 for the actual month number
-    const monthNumber = month + 1;
-    const monthStr = `${year}-${String(monthNumber).padStart(2, '0')}-01`;
-
-    console.log('Payment month string:', monthStr, 'for month index:', month);
+    // Handle multiple months
+    const months = Array.isArray(month) ? month : [month];
 
     const createdPayments = [];
     const errors = [];
 
-    for (const tenantId of tenant_ids) {
-      try {
-        // Get tenant info
-        const tenant = await db.User.findOne({
-          where: {
-            id: tenantId,
-            role: 'tenant'
+    for (const monthIndex of months) {
+      // Create payment month date (first day of the month)
+      // month is 0-indexed from frontend (0=Jan, 11=Dec), so add 1 for the actual month number
+      const monthNumber = monthIndex + 1;
+      const monthStr = `${year}-${String(monthNumber).padStart(2, '0')}-01`;
+
+      console.log('Processing month:', monthStr, 'for month index:', monthIndex);
+
+      for (const tenantId of tenant_ids) {
+        try {
+          // Check if this tenant has already paid for this month
+          const existingPayment = await db.TenantPayment.findOne({
+            where: {
+              tenant_id: tenantId,
+              property_id: parseInt(property_id),
+              payment_month: monthStr,
+              status: 'paid'
+            }
+          });
+
+          // Skip if already paid for this month
+          if (existingPayment) {
+            console.log('Tenant', tenantId, 'already paid for', monthStr, '- skipping');
+            continue;
           }
-        });
 
-        console.log('Found tenant:', tenantId, tenant ? `has property_ids: ${tenant.property_ids}` : 'NOT FOUND');
+          // Get tenant info
+          const tenant = await db.User.findOne({
+            where: {
+              id: tenantId,
+              role: 'tenant'
+            }
+          });
 
-        if (!tenant) {
-          errors.push({ tenant_id: tenantId, error: 'Tenant not found' });
-          continue;
-        }
+          console.log('Found tenant:', tenantId, tenant ? `has property_ids: ${tenant.property_ids}` : 'NOT FOUND');
 
-        // Check if tenant is associated with this property
-        const hasProperty = tenant.property_ids && tenant.property_ids.includes(parseInt(property_id));
-        console.log('Tenant', tenantId, 'has property', property_id, '?', hasProperty);
+          if (!tenant) {
+            errors.push({ tenant_id: tenantId, month: monthIndex, error: 'Tenant not found' });
+            continue;
+          }
 
-        if (!hasProperty) {
-          errors.push({ tenant_id: tenantId, error: 'Tenant not associated with this property' });
-          continue;
-        }
+          // Check if tenant is associated with this property
+          const hasProperty = tenant.property_ids && tenant.property_ids.includes(parseInt(property_id));
+          console.log('Tenant', tenantId, 'has property', property_id, '?', hasProperty);
 
-        if (!tenant.monthly_rate || tenant.monthly_rate <= 0) {
-          errors.push({ tenant_id: tenantId, error: 'Tenant does not have a monthly rate set' });
-          continue;
-        }
+          if (!hasProperty) {
+            errors.push({ tenant_id: tenantId, month: monthIndex, error: 'Tenant not associated with this property' });
+            continue;
+          }
 
-        console.log('Creating payment record for tenant', tenantId, 'amount:', tenant.monthly_rate);
+          if (!tenant.monthly_rate || tenant.monthly_rate <= 0) {
+            errors.push({ tenant_id: tenantId, month: monthIndex, error: 'Tenant does not have a monthly rate set' });
+            continue;
+          }
 
-        // Create or find payment record
-        const [payment, created] = await db.TenantPayment.findOrCreate({
-          where: {
+          console.log('Creating payment record for tenant', tenantId, 'amount:', tenant.monthly_rate, 'month:', monthStr);
+
+          // Create or find payment record
+          const [payment, created] = await db.TenantPayment.findOrCreate({
+            where: {
+              tenant_id: tenantId,
+              property_id: parseInt(property_id),
+              payment_month: monthStr
+            },
+            defaults: {
+              amount: tenant.monthly_rate,
+              status: 'pending'
+            }
+          });
+
+          console.log('Payment record', created ? 'CREATED' : 'FOUND', 'with ID:', payment.id);
+
+          createdPayments.push({
+            id: payment.id,
             tenant_id: tenantId,
-            property_id: parseInt(property_id),
-            payment_month: monthStr
-          },
-          defaults: {
-            amount: tenant.monthly_rate,
-            status: 'pending'
-          }
-        });
-
-        console.log('Payment record', created ? 'CREATED' : 'FOUND', 'with ID:', payment.id);
-
-        createdPayments.push({
-          id: payment.id,
-          tenant_id: tenantId,
-          created: created
-        });
-      } catch (err) {
-        console.error('Error processing tenant', tenantId, ':', err);
-        errors.push({ tenant_id: tenantId, error: err.message });
+            month: monthIndex,
+            created: created
+          });
+        } catch (err) {
+          console.error('Error processing tenant', tenantId, 'for month', monthIndex, ':', err);
+          errors.push({ tenant_id: tenantId, month: monthIndex, error: err.message });
+        }
       }
     }
 
@@ -672,7 +720,7 @@ exports.ensurePaymentRecords = async (req, res) => {
 
     res.json({
       success: true,
-      message: `Processed ${tenant_ids.length} tenant(s)`,
+      message: `Processed ${tenant_ids.length} tenant(s) for ${months.length} month(s)`,
       data: {
         payments: createdPayments,
         new_records: createdPayments.filter(p => p.created).length,

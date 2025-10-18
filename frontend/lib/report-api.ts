@@ -34,7 +34,7 @@ export interface Report {
   };
   problemOption?: {
     id: number;
-    name: string;
+    title: string;
     description: string | null;
   };
   tenant?: {

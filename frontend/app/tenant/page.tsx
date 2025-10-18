@@ -336,7 +336,7 @@ export default function TenantDashboard() {
                       <div key={report.id} className="flex items-center justify-between border-b border-slate-100 pb-3 last:border-0">
                         <div className="flex-1">
                           <p className="font-medium text-slate-900">
-                            {report.problemOption?.name || 'Problem Report'}
+                            {report.problemOption?.title || 'Problem Report'}
                           </p>
                           <p className="text-sm text-slate-600">
                             Submitted {formatDate(report.created_at)}

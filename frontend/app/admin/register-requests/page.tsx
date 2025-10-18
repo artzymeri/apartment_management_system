@@ -53,11 +53,9 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
 
 export default function RegisterRequestsPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [appliedFilters, setAppliedFilters] = useState<RegisterRequestFilters>({
     search: "",
@@ -93,16 +91,6 @@ export default function RegisterRequestsPage() {
 
     return () => clearTimeout(timer);
   }, [searchTerm]);
-
-  // Apply status filter immediately on change
-  useEffect(() => {
-    setAppliedFilters((prev) => ({
-      ...prev,
-      status: statusFilter === "all" ? undefined : (statusFilter as 'pending' | 'approved' | 'rejected'),
-      page: 1,
-    }));
-    setCurrentPage(1);
-  }, [statusFilter]);
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -186,19 +174,6 @@ export default function RegisterRequestsPage() {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
-                </div>
-                <div className="w-full md:w-48">
-                  <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="All Statuses" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Statuses</SelectItem>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="approved">Approved</SelectItem>
-                      <SelectItem value="rejected">Rejected</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
               </div>
             </CardContent>

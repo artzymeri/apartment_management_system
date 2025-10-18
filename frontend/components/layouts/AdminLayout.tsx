@@ -8,16 +8,13 @@ import Image from "next/image";
 import {
   Building2,
   Users,
-  FileText,
   Settings,
   BarChart3,
-  Shield,
   Bell,
   LogOut,
   Menu,
   UserPlus,
   ChevronUp,
-  User,
   Cog,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -34,6 +31,7 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { useRegisterRequests } from "@/hooks/useRegisterRequests";
 
 const adminNavItems = [
   { href: "/admin", icon: BarChart3, label: "Dashboard" },
@@ -47,6 +45,10 @@ export function AdminLayout({ children, title }: { children: React.ReactNode; ti
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const router = useRouter();
+
+  // Fetch pending register requests count
+  const { data: registerRequestsData } = useRegisterRequests({ status: 'pending', limit: 1 });
+  const pendingRequestsCount = registerRequestsData?.pagination?.total || 0;
 
   const handleLogout = async () => {
     await logout();
@@ -75,6 +77,7 @@ export function AdminLayout({ children, title }: { children: React.ReactNode; ti
           {adminNavItems.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
+            const showBadge = item.href === '/admin/register-requests' && pendingRequestsCount > 0;
             return (
               <Link key={item.href} href={item.href}>
                 <Button
@@ -87,6 +90,14 @@ export function AdminLayout({ children, title }: { children: React.ReactNode; ti
                 >
                   <Icon className="h-5 w-5" />
                   {item.label}
+                  {showBadge && (
+                    <Badge
+                      variant="destructive"
+                      className="ml-auto h-5 min-w-5 px-1.5 text-xs font-semibold"
+                    >
+                      {pendingRequestsCount}
+                    </Badge>
+                  )}
                 </Button>
               </Link>
             );

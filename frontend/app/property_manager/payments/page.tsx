@@ -72,12 +72,12 @@ export default function PaymentsPage() {
   // Dialog state
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogLoading, setDialogLoading] = useState(false);
-  const [selectedMonth, setSelectedMonth] = useState<string>("");
+  const [selectedMonths, setSelectedMonths] = useState<number[]>([]); // Changed to array
   const [selectedDialogProperty, setSelectedDialogProperty] = useState<string>("");
   const [tenants, setTenants] = useState<any[]>([]);
   const [selectedTenantIds, setSelectedTenantIds] = useState<number[]>([]);
   const [tenantsLoading, setTenantsLoading] = useState(false);
-  const [existingPayments, setExistingPayments] = useState<TenantPayment[]>([]);
+  const [existingPayments, setExistingPayments] = useState<TenantPayment[]>([]); // Now stores payments for all months
 
   // Edit payment date dialog state
   const [isEditDateDialogOpen, setIsEditDateDialogOpen] = useState(false);
@@ -94,10 +94,10 @@ export default function PaymentsPage() {
 
   // Fetch existing payments when month or property changes in dialog
   useEffect(() => {
-    if (selectedMonth && selectedDialogProperty) {
+    if (selectedMonths.length > 0 && selectedDialogProperty) {
       fetchExistingPaymentsForMonth();
     }
-  }, [selectedMonth, selectedDialogProperty, selectedYear]);
+  }, [selectedMonths, selectedDialogProperty, selectedYear]);
 
   const fetchData = async () => {
     try {
@@ -156,23 +156,18 @@ export default function PaymentsPage() {
   };
 
   const fetchExistingPaymentsForMonth = async () => {
-    if (!selectedMonth || !selectedDialogProperty) return;
+    if (selectedMonths.length === 0 || !selectedDialogProperty) return;
 
     try {
       setDialogLoading(true);
 
       const propertyId = parseInt(selectedDialogProperty);
-      const monthIndex = parseInt(selectedMonth); // This is 0-indexed (0-11)
-      const month = monthIndex + 1; // Convert to 1-indexed (1-12) for the API
-      const year = selectedYear;
 
-      console.log('Fetching existing payments for:', { propertyId, month, year, monthName: getMonthName(monthIndex) });
-
-      // Fetch existing payments for the selected month and property
+      // Fetch existing payments for the selected months and property
       const paymentsData = await getPropertyManagerPayments({
         property_id: propertyId,
-        month: month, // Send 1-indexed month to API
-        year: year,
+        month: selectedMonths, // Send array of months to API
+        year: selectedYear,
       });
 
       console.log('Existing payments found:', paymentsData);
@@ -195,9 +190,36 @@ export default function PaymentsPage() {
     setSelectedDialogProperty(propertyId);
     setSelectedTenantIds([]);
     setTenants([]);
+    setSelectedMonths([]); // Reset selected months
+    setExistingPayments([]); // Reset existing payments
 
     if (propertyId) {
       fetchTenantsForProperty(propertyId);
+      // Fetch all payments for this property for the selected year to show month status
+      fetchAllPaymentsForProperty(propertyId);
+    }
+  };
+
+  const fetchAllPaymentsForProperty = async (propertyId: string) => {
+    if (!propertyId) return;
+
+    try {
+      setDialogLoading(true);
+
+      // Fetch all payments for the property for the selected year
+      const paymentsData = await getPropertyManagerPayments({
+        property_id: parseInt(propertyId),
+        year: selectedYear,
+      });
+
+      console.log('All payments for property found:', paymentsData);
+
+      setExistingPayments(paymentsData);
+    } catch (error) {
+      console.error("Error fetching property payments:", error);
+      toast.error("Failed to load property payments");
+    } finally {
+      setDialogLoading(false);
     }
   };
 
@@ -218,7 +240,7 @@ export default function PaymentsPage() {
   };
 
   const handleBulkMarkAsPaid = async () => {
-    if (!selectedMonth || !selectedDialogProperty || selectedTenantIds.length === 0) {
+    if (selectedMonths.length === 0 || !selectedDialogProperty || selectedTenantIds.length === 0) {
       toast.error("Please select month, property, and at least one tenant");
       return;
     }
@@ -226,20 +248,19 @@ export default function PaymentsPage() {
     try {
       setDialogLoading(true);
 
-      const selectedMonthNum = parseInt(selectedMonth);
       const propertyId = parseInt(selectedDialogProperty);
 
       // Step 1: Ensure payment records exist for all selected tenants
       console.log('Ensuring payment records exist...');
       console.log('Tenant IDs:', selectedTenantIds);
       console.log('Property ID:', propertyId);
-      console.log('Month:', selectedMonthNum, 'Year:', selectedYear);
+      console.log('Months:', selectedMonths, 'Year:', selectedYear);
 
       const ensureResult = await ensurePaymentRecords(
         selectedTenantIds,
         propertyId,
         selectedYear,
-        selectedMonthNum
+        selectedMonths
       );
 
       console.log('Ensure records result:', ensureResult);
@@ -275,7 +296,7 @@ export default function PaymentsPage() {
 
       // Reset dialog state
       setIsDialogOpen(false);
-      setSelectedMonth("");
+      setSelectedMonths([]);
       setSelectedDialogProperty("");
       setSelectedTenantIds([]);
       setTenants([]);
@@ -417,11 +438,18 @@ export default function PaymentsPage() {
 
   const groupedPayments = groupPaymentsByMonth();
 
-  // Generate dynamic year list - current year and 2 years back
+  // Generate dynamic year list - current year, 2 years prior, and 2 years in future
   const getAvailableYears = () => {
     const currentYear = new Date().getFullYear();
     const years = [];
-    for (let i = 0; i < 3; i++) {
+    // Add 2 future years
+    for (let i = 2; i >= 1; i--) {
+      years.push(currentYear + i);
+    }
+    // Add current year
+    years.push(currentYear);
+    // Add 2 past years
+    for (let i = 1; i <= 2; i++) {
       years.push(currentYear - i);
     }
     return years;
@@ -524,24 +552,7 @@ export default function PaymentsPage() {
                       </DialogHeader>
 
                       <div className="space-y-4 py-4">
-                        {/* Month Selection */}
-                        <div className="space-y-2">
-                          <Label>Payment Month</Label>
-                          <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select month" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {Array.from({ length: 12 }, (_, i) => (
-                                <SelectItem key={i} value={i.toString()}>
-                                  {getMonthName(i)} {selectedYear}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-
-                        {/* Property Selection */}
+                        {/* Property Selection - Move this first */}
                         <div className="space-y-2">
                           <Label>Property</Label>
                           <Select
@@ -561,8 +572,84 @@ export default function PaymentsPage() {
                           </Select>
                         </div>
 
+                        {/* Month Selection - Show after property selected */}
+                        {selectedDialogProperty && tenants.length > 0 && (
+                          <div className="space-y-2">
+                            <Label>Payment Months (select multiple)</Label>
+                            <div className="border rounded-lg divide-y max-h-64 overflow-y-auto">
+                              {Array.from({ length: 12 }, (_, i) => {
+                                // Calculate how many tenants have paid for this month
+                                const monthPayments = existingPayments.filter(p => {
+                                  const [year, month] = p.payment_month.split('-').map(Number);
+                                  return month - 1 === i && p.status === 'paid';
+                                });
+
+                                const paidTenantIds = new Set(monthPayments.map(p => p.tenant_id));
+                                const allTenantsPaid = tenants.every(t => paidTenantIds.has(t.id));
+                                const someTenantsPaid = monthPayments.length > 0;
+
+                                const isSelected = selectedMonths.includes(i);
+
+                                return (
+                                  <div
+                                    key={i}
+                                    className={`flex items-center justify-between p-3 ${
+                                      allTenantsPaid
+                                        ? 'opacity-50 cursor-not-allowed bg-muted/30'
+                                        : 'hover:bg-muted/50 cursor-pointer'
+                                    }`}
+                                    onClick={() => {
+                                      if (!allTenantsPaid) {
+                                        setSelectedMonths(prev =>
+                                          prev.includes(i)
+                                            ? prev.filter(m => m !== i)
+                                            : [...prev, i]
+                                        );
+                                      }
+                                    }}
+                                  >
+                                    <div className="flex items-center space-x-3">
+                                      <Checkbox
+                                        checked={isSelected}
+                                        disabled={allTenantsPaid}
+                                        onCheckedChange={(checked) => {
+                                          if (!allTenantsPaid) {
+                                            setSelectedMonths(prev =>
+                                              checked
+                                                ? [...prev, i]
+                                                : prev.filter(m => m !== i)
+                                            );
+                                          }
+                                        }}
+                                      />
+                                      <div>
+                                        <div className="font-medium">
+                                          {getMonthName(i)} {selectedYear}
+                                        </div>
+                                        {allTenantsPaid ? (
+                                          <div className="text-xs text-green-600 font-medium">
+                                            ✓ All tenants paid ({tenants.length}/{tenants.length})
+                                          </div>
+                                        ) : someTenantsPaid ? (
+                                          <div className="text-xs text-yellow-600">
+                                            {paidTenantIds.size}/{tenants.length} tenants paid
+                                          </div>
+                                        ) : (
+                                          <div className="text-xs text-muted-foreground">
+                                            0/{tenants.length} tenants paid
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+
                         {/* Tenant Selection */}
-                        {selectedDialogProperty && (
+                        {selectedDialogProperty && selectedMonths.length > 0 && (
                           <div className="space-y-2">
                             <div className="flex items-center justify-between">
                               <Label>Select Tenants Who Paid</Label>
@@ -591,12 +678,18 @@ export default function PaymentsPage() {
                                 {tenants.map((tenant) => {
                                   const hasMonthlyRate = tenant.monthly_rate && tenant.monthly_rate > 0;
 
-                                  // Check if this tenant has already paid for the selected month
-                                  const alreadyPaid = existingPayments.some(
-                                    payment => payment.tenant_id === tenant.id && payment.status === 'paid'
-                                  );
+                                  // Check if this tenant has already paid for ALL selected months
+                                  const paidMonths = selectedMonths.filter(monthIndex => {
+                                    return existingPayments.some(payment => {
+                                      const [year, month] = payment.payment_month.split('-').map(Number);
+                                      return payment.tenant_id === tenant.id &&
+                                             payment.status === 'paid' &&
+                                             month - 1 === monthIndex;
+                                    });
+                                  });
 
-                                  const isDisabled = !hasMonthlyRate || alreadyPaid;
+                                  const alreadyPaidAllMonths = paidMonths.length === selectedMonths.length;
+                                  const isDisabled = !hasMonthlyRate || alreadyPaidAllMonths;
 
                                   return (
                                     <div
@@ -624,9 +717,13 @@ export default function PaymentsPage() {
                                           <div className="text-xs text-red-500 font-medium">
                                             ⚠ No monthly rate set
                                           </div>
-                                        ) : alreadyPaid ? (
+                                        ) : alreadyPaidAllMonths ? (
                                           <div className="text-xs text-green-600 font-medium">
-                                            ✓ Already paid for {selectedMonth && getMonthName(parseInt(selectedMonth))}
+                                            ✓ Already paid for all selected months
+                                          </div>
+                                        ) : paidMonths.length > 0 ? (
+                                          <div className="text-xs text-yellow-600">
+                                            Paid {paidMonths.length}/{selectedMonths.length} selected months
                                           </div>
                                         ) : (
                                           <div className="text-xs text-muted-foreground">
@@ -643,13 +740,16 @@ export default function PaymentsPage() {
                         )}
 
                         {/* Summary */}
-                        {selectedTenantIds.length > 0 && (
+                        {selectedTenantIds.length > 0 && selectedMonths.length > 0 && (
                           <div className="bg-muted p-4 rounded-lg">
                             <p className="text-sm font-medium">
-                              Selected: {selectedTenantIds.length} tenant(s)
+                              Selected: {selectedTenantIds.length} tenant(s) for {selectedMonths.length} month(s)
                             </p>
                             <p className="text-xs text-muted-foreground mt-1">
-                              {selectedMonth && `For ${getMonthName(parseInt(selectedMonth))} ${selectedYear}`}
+                              Months: {selectedMonths.map(m => getMonthName(m)).join(', ')}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              Year: {selectedYear}
                             </p>
                           </div>
                         )}
@@ -665,7 +765,7 @@ export default function PaymentsPage() {
                         </Button>
                         <Button
                           onClick={handleBulkMarkAsPaid}
-                          disabled={dialogLoading || !selectedMonth || !selectedDialogProperty || selectedTenantIds.length === 0}
+                          disabled={dialogLoading || selectedMonths.length === 0 || !selectedDialogProperty || selectedTenantIds.length === 0}
                           className="bg-green-600 hover:bg-green-700"
                         >
                           {dialogLoading ? "Processing..." : `Mark ${selectedTenantIds.length} as Paid`}

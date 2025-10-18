@@ -248,7 +248,7 @@ export default function PropertyManagerReportsPage() {
                             </div>
                           </TableCell>
                           <TableCell>
-                            <div className="font-medium">{report.problemOption?.name}</div>
+                            <div className="font-medium">{report.problemOption?.title}</div>
                             {report.description && (
                               <div className="mt-1 text-xs text-slate-500 max-w-xs truncate">
                                 {report.description}
@@ -322,7 +322,7 @@ export default function PropertyManagerReportsPage() {
 
                   <div>
                     <div className="text-xs text-slate-500 uppercase">Problem</div>
-                    <div className="font-medium">{selectedReport.problemOption?.name}</div>
+                    <div className="font-medium">{selectedReport.problemOption?.title}</div>
                   </div>
 
                   {selectedReport.description && (

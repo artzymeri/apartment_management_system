@@ -1,6 +1,7 @@
 const db = require('../models');
 const bcrypt = require('bcrypt');
 const { Op } = require('sequelize');
+const emailService = require('../services/email.service');
 
 // Get all register requests with filtering
 exports.getAllRegisterRequests = async (req, res) => {
@@ -131,12 +132,16 @@ exports.approveRegisterRequest = async (req, res) => {
       }
     }
 
+    // Generate temporary password for the welcome email
+    const temporaryPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8).toUpperCase();
+    const hashedTempPassword = await bcrypt.hash(temporaryPassword, 10);
+
     // Prepare user data
     const userData = {
       name: request.name,
       surname: request.surname,
       email: request.email,
-      password: request.password, // Already hashed from registration
+      password: hashedTempPassword, // Use new temporary password
       number: request.number,
       role: role,
       property_ids: property_ids
@@ -155,9 +160,20 @@ exports.approveRegisterRequest = async (req, res) => {
 
     await transaction.commit();
 
+    // Send welcome email with temporary password (don't wait for it)
+    emailService.sendWelcomeEmail({
+      name: newUser.name,
+      surname: newUser.surname,
+      email: newUser.email,
+      role: newUser.role
+    }, temporaryPassword).catch(err => {
+      console.error('Failed to send welcome email:', err);
+      // Don't fail the approval if email fails
+    });
+
     res.status(200).json({
       success: true,
-      message: 'Register request approved and user created successfully',
+      message: 'Register request approved and user created successfully. Welcome email sent.',
       data: {
         id: newUser.id,
         name: newUser.name,

@@ -73,14 +73,22 @@ export async function getPropertyManagerPayments(filters?: {
   tenant_id?: number;
   status?: string;
   year?: number;
-  month?: number;
+  month?: number | number[]; // Support both single and multiple months
 }): Promise<TenantPayment[]> {
   const params = new URLSearchParams();
   if (filters?.property_id) params.append('property_id', filters.property_id.toString());
   if (filters?.tenant_id) params.append('tenant_id', filters.tenant_id.toString());
   if (filters?.status) params.append('status', filters.status);
   if (filters?.year) params.append('year', filters.year.toString());
-  if (filters?.month) params.append('month', filters.month.toString());
+
+  // Handle multiple months
+  if (filters?.month !== undefined) {
+    if (Array.isArray(filters.month)) {
+      filters.month.forEach(m => params.append('month[]', (m + 1).toString())); // Convert 0-indexed to 1-indexed
+    } else {
+      params.append('month', (filters.month + 1).toString()); // Convert 0-indexed to 1-indexed
+    }
+  }
 
   const response = await fetch(
     `${API_BASE_URL}/api/tenant-payments/property-manager?${params.toString()}`,
@@ -196,13 +204,13 @@ export async function generateFuturePayments(
   return data.data;
 }
 
-// Ensure payment records exist for specific month and tenants
+// Ensure payment records exist for specific month(s) and tenants
 export async function ensurePaymentRecords(
   tenantIds: number[],
   propertyId: number,
   year: number,
-  month: number
-): Promise<{ payments: any[]; new_records: number; existing_records: number }> {
+  month: number | number[] // Support both single and multiple months
+): Promise<{ payments: any[]; new_records: number; existing_records: number; errors?: any[] }> {
   const response = await fetch(`${API_BASE_URL}/api/tenant-payments/ensure-records`, {
     method: 'POST',
     headers: {
@@ -213,7 +221,7 @@ export async function ensurePaymentRecords(
       tenant_ids: tenantIds,
       property_id: propertyId,
       year: year,
-      month: month,
+      month: month, // Send as-is (can be single number or array)
     }),
   });
 
