@@ -16,6 +16,7 @@ const tenantPaymentRoutes = require('./routes/tenantPayment.routes');
 const spendingConfigRoutes = require('./routes/spendingConfig.routes');
 const monthlyReportRoutes = require('./routes/monthlyReport.routes');
 const tenantDashboardRoutes = require('./routes/tenantDashboard.routes');
+const propertyManagerDashboardRoutes = require('./routes/propertyManagerDashboard.routes');
 require('dotenv').config();
 
 const app = express();
@@ -57,6 +58,7 @@ app.use('/api/tenant-payments', tenantPaymentRoutes);
 app.use('/api/spending-configs', spendingConfigRoutes);
 app.use('/api/monthly-reports', monthlyReportRoutes);
 app.use('/api/tenant-dashboard', tenantDashboardRoutes);
+app.use('/api/property-manager-dashboard', propertyManagerDashboardRoutes);
 
 // Test route
 app.get('/', (req, res) => {

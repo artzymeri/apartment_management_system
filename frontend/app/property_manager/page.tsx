@@ -1,102 +1,636 @@
+"use client";
+
 import { PropertyManagerLayout } from "@/components/layouts/PropertyManagerLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Building2, Wrench, Users, MessageSquare } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Building2,
+  Users,
+  Euro,
+  AlertTriangle,
+  TrendingUp,
+  CheckCircle2,
+  Clock,
+  XCircle,
+  MessageSquare,
+  Lightbulb,
+  ArrowRight,
+  Loader2
+} from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { useAuth } from "@/contexts/AuthContext";
+import { authAPI } from "@/lib/auth-api";
+import Link from "next/link";
+import { format } from "date-fns";
+import * as React from "react";
+
+interface DashboardData {
+  overview: {
+    totalProperties: number;
+    totalTenants: number;
+    totalApartments: number;
+    occupiedApartments: number;
+    vacantApartments: number;
+    occupancyRate: number;
+  };
+  payments: {
+    currentMonth: {
+      paid: number;
+      unpaid: number;
+      total: number;
+      revenue: number;
+      collectionRate: string;
+    };
+    overdue: Array<{
+      id: number;
+      tenant: { name: string; email: string; number: string };
+      property: { name: string; address: string };
+      amount: number;
+      paymentMonth: string;
+      daysOverdue: number;
+    }>;
+  };
+  reports: {
+    statistics: {
+      pending: number;
+      in_progress: number;
+      resolved: number;
+    };
+    pending: Array<any>;
+  };
+  complaints: {
+    statistics: {
+      pending: number;
+      in_progress: number;
+      resolved: number;
+    };
+    recent: Array<any>;
+  };
+  suggestions: {
+    recent: Array<any>;
+  };
+  monthlyReports: {
+    recent: Array<any>;
+  };
+  recentActivity: {
+    newReports: number;
+    newComplaints: number;
+    newSuggestions: number;
+    paymentsReceived: number;
+  };
+  properties: Array<{
+    id: number;
+    name: string;
+    address: string;
+    city: string;
+    floors: number | null;
+    totalApartments: number;
+    occupiedApartments: number;
+    tenantCount: number;
+  }>;
+}
 
 export default function PropertyManagerDashboard() {
+  const { user, isAuthenticated } = useAuth();
+
+  const { data: dashboardData, isLoading, error } = useQuery<{ success: boolean; data: DashboardData }>({
+    queryKey: ['pmDashboard', user?.id],
+    queryFn: async () => {
+      const token = authAPI.getToken();
+
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      const response = await axios.get('http://localhost:5000/api/property-manager-dashboard', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true
+      });
+      return response.data;
+    },
+    enabled: isAuthenticated && !!user,
+    refetchInterval: 60000, // Refetch every minute
+    retry: 1,
+  });
+
+  if (isLoading) {
+    return (
+      <ProtectedRoute allowedRoles={['property_manager']}>
+        <PropertyManagerLayout>
+          <div className="flex items-center justify-center h-96">
+            <Loader2 className="h-4 w-4 animate-spin" />
+          </div>
+        </PropertyManagerLayout>
+      </ProtectedRoute>
+    );
+  }
+
+  if (error || !dashboardData?.success) {
+    return (
+      <ProtectedRoute allowedRoles={['property_manager']}>
+        <PropertyManagerLayout>
+          <div className="flex items-center justify-center h-96">
+            <Card className="border-red-200">
+              <CardContent className="pt-6">
+                <p className="text-red-600">Error loading dashboard data. Please try again.</p>
+              </CardContent>
+            </Card>
+          </div>
+        </PropertyManagerLayout>
+      </ProtectedRoute>
+    );
+  }
+
+  const data = dashboardData.data;
+
   return (
     <ProtectedRoute allowedRoles={['property_manager']}>
       <PropertyManagerLayout>
         <div className="space-y-6">
-          {/* Stats Grid */}
+
+          {/* Key Metrics Grid */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            <Card className="border-indigo-200 bg-indigo-50/50">
+            {/* Properties Card */}
+            <Card className="border-indigo-200 bg-gradient-to-br from-indigo-50 to-white hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">My Properties</CardTitle>
-                <Building2 className="h-4 w-4 text-indigo-600" />
+                <CardTitle className="text-sm font-medium text-slate-700">Properties</CardTitle>
+                <Building2 className="h-5 w-5 text-indigo-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-indigo-700">8</div>
-                <p className="text-xs text-slate-600">Under your management</p>
+                <div className="text-3xl font-bold text-indigo-700">{data.overview.totalProperties}</div>
+                <p className="text-xs text-slate-600 mt-1">
+                  {data.overview.totalApartments} total apartments
+                </p>
+                <div className="mt-3">
+                  <Link href="/property_manager/properties">
+                    <Button variant="ghost" size="sm" className="text-indigo-600 hover:text-indigo-700 px-0">
+                      View all <ArrowRight className="ml-1 h-3 w-3" />
+                    </Button>
+                  </Link>
+                </div>
               </CardContent>
             </Card>
 
-            <Card className="border-amber-200 bg-amber-50/50">
+            {/* Tenants Card */}
+            <Card className="border-amber-200 bg-gradient-to-br from-amber-50 to-white hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Active Tenants</CardTitle>
-                <Users className="h-4 w-4 text-amber-600" />
+                <CardTitle className="text-sm font-medium text-slate-700">Active Tenants</CardTitle>
+                <Users className="h-5 w-5 text-amber-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-amber-700">142</div>
-                <p className="text-xs text-slate-600">96% occupancy rate</p>
+                <div className="text-3xl font-bold text-amber-700">{data.overview.totalTenants}</div>
+                <div className="flex items-center mt-1">
+                  <Badge variant="secondary" className="bg-amber-100 text-amber-800 text-xs">
+                    {data.overview.occupancyRate}% occupancy
+                  </Badge>
+                </div>
+                <div className="mt-3">
+                  <Link href="/property_manager/tenants">
+                    <Button variant="ghost" size="sm" className="text-amber-600 hover:text-amber-700 px-0">
+                      Manage tenants <ArrowRight className="ml-1 h-3 w-3" />
+                    </Button>
+                  </Link>
+                </div>
               </CardContent>
             </Card>
 
-            <Card className="border-indigo-200 bg-indigo-50/50">
+            {/* Payments Card */}
+            <Card className="border-green-200 bg-gradient-to-br from-green-50 to-white hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Maintenance</CardTitle>
-                <Wrench className="h-4 w-4 text-indigo-600" />
+                <CardTitle className="text-sm font-medium text-slate-700">Monthly Revenue</CardTitle>
+                <Euro className="h-5 w-5 text-green-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-indigo-700">7</div>
-                <p className="text-xs text-slate-600">Pending requests</p>
+                <div className="text-3xl font-bold text-green-700">€{data.payments.currentMonth.revenue.toLocaleString()}</div>
+                <div className="flex items-center gap-2 mt-1">
+                  <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs">
+                    {data.payments.currentMonth.collectionRate}% collected
+                  </Badge>
+                </div>
+                <div className="mt-3">
+                  <Link href="/property_manager/payments">
+                    <Button variant="ghost" size="sm" className="text-green-600 hover:text-green-700 px-0">
+                      View payments <ArrowRight className="ml-1 h-3 w-3" />
+                    </Button>
+                  </Link>
+                </div>
               </CardContent>
             </Card>
 
-            <Card className="border-amber-200 bg-amber-50/50">
+            {/* Maintenance Card */}
+            <Card className="border-red-200 bg-gradient-to-br from-red-50 to-white hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Messages</CardTitle>
-                <MessageSquare className="h-4 w-4 text-amber-600" />
+                <CardTitle className="text-sm font-medium text-slate-700">Pending Complaints</CardTitle>
+                <MessageSquare className="h-5 w-5 text-red-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-amber-700">23</div>
-                <p className="text-xs text-slate-600">Unread messages</p>
+                <div className="text-3xl font-bold text-red-700">
+                  {data.complaints.statistics.pending + data.complaints.statistics.in_progress}
+                </div>
+                <p className="text-xs text-slate-600 mt-1">
+                  Pending complaints
+                </p>
+                <div className="mt-3">
+                  <Link href="/property_manager/complaints">
+                    <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 px-0">
+                      Review complaints <ArrowRight className="ml-1 h-3 w-3" />
+                    </Button>
+                  </Link>
+                </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Quick Actions */}
+          {/* Recent Activity Stats */}
           <Card>
             <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
-              <CardDescription>
-                Manage your properties and tenants efficiently
-              </CardDescription>
+              <CardTitle>Activity Overview (Last 7 Days)</CardTitle>
+              <CardDescription>Recent activity across all your properties</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between border-b pb-4">
-                  <div>
-                    <p className="font-medium">Maintenance Requests</p>
-                    <p className="text-sm text-slate-600">Review and assign work orders</p>
+              <div className="grid gap-4 md:grid-cols-4">
+                <div className="flex items-center gap-3 p-4 border rounded-lg bg-slate-50">
+                  <div className="p-2 bg-indigo-100 rounded-lg">
+                    <AlertTriangle className="h-5 w-5 text-indigo-600" />
                   </div>
-                  <Badge variant="secondary" className="bg-amber-500 text-slate-900">
-                    7 Pending
-                  </Badge>
+                  <div>
+                    <p className="text-2xl font-bold text-slate-900">{data.recentActivity.newReports}</p>
+                    <p className="text-xs text-slate-600">New Reports</p>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between border-b pb-4">
-                  <div>
-                    <p className="font-medium">Tenant Messages</p>
-                    <p className="text-sm text-slate-600">Respond to tenant inquiries</p>
+                <div className="flex items-center gap-3 p-4 border rounded-lg bg-slate-50">
+                  <div className="p-2 bg-amber-100 rounded-lg">
+                    <MessageSquare className="h-5 w-5 text-amber-600" />
                   </div>
-                  <Badge variant="secondary" className="bg-indigo-600 text-white">
-                    23 New
-                  </Badge>
+                  <div>
+                    <p className="text-2xl font-bold text-slate-900">{data.recentActivity.newComplaints}</p>
+                    <p className="text-xs text-slate-600">New Complaints</p>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Property Inspections</p>
-                    <p className="text-sm text-slate-600">Schedule and track inspections</p>
+                <div className="flex items-center gap-3 p-4 border rounded-lg bg-slate-50">
+                  <div className="p-2 bg-purple-100 rounded-lg">
+                    <Lightbulb className="h-5 w-5 text-purple-600" />
                   </div>
-                  <Button variant="outline" className="border-indigo-200 text-indigo-700 hover:bg-indigo-50">
-                    Schedule
-                  </Button>
+                  <div>
+                    <p className="text-2xl font-bold text-slate-900">{data.recentActivity.newSuggestions}</p>
+                    <p className="text-xs text-slate-600">New Suggestions</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-4 border rounded-lg bg-slate-50">
+                  <div className="p-2 bg-green-100 rounded-lg">
+                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-slate-900">{data.recentActivity.paymentsReceived}</p>
+                    <p className="text-xs text-slate-600">Payments Received</p>
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
+
+          {/* Tabs for Different Sections */}
+          <Tabs defaultValue="urgent" className="space-y-4">
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="urgent">Urgent Items</TabsTrigger>
+              <TabsTrigger value="properties">Properties</TabsTrigger>
+              <TabsTrigger value="payments">Payments</TabsTrigger>
+              <TabsTrigger value="reports">Reports</TabsTrigger>
+              <TabsTrigger value="complaints">Complaints</TabsTrigger>
+            </TabsList>
+
+            {/* Urgent Items Tab */}
+            <TabsContent value="urgent" className="space-y-4">
+              {/* Overdue Payments */}
+              {data.payments.overdue.length > 0 && (
+                <Card className="border-red-200">
+                  <CardHeader>
+                    <CardTitle className="text-red-700 flex items-center gap-2">
+                      <AlertTriangle className="h-5 w-5" />
+                      Overdue Payments ({data.payments.overdue.length})
+                    </CardTitle>
+                    <CardDescription>Immediate attention required</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {data.payments.overdue.slice(0, 5).map((payment) => (
+                        <div key={payment.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-slate-50 transition-colors">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <p className="font-medium text-slate-900">{payment.tenant?.name}</p>
+                              <Badge variant="destructive" className="text-xs">
+                                {payment.daysOverdue} days overdue
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-slate-600">{payment.property?.name} - {payment.property?.address}</p>
+                            <p className="text-xs text-slate-500 mt-1">Due: {format(new Date(payment.paymentMonth), 'MMMM yyyy')}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-lg font-bold text-red-600">€{payment.amount.toLocaleString()}</p>
+                            <Button size="sm" className="mt-2">Contact Tenant</Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    {data.payments.overdue.length > 5 && (
+                      <div className="mt-4 text-center">
+                        <Link href="/property_manager/payments">
+                          <Button variant="outline">View All Overdue Payments</Button>
+                        </Link>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Pending Reports */}
+              {data.reports.pending.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Clock className="h-5 w-5 text-amber-600" />
+                      Pending Maintenance Reports ({data.reports.pending.length})
+                    </CardTitle>
+                    <CardDescription>Issues requiring action</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {data.reports.pending.slice(0, 5).map((report) => (
+                        <div key={report.id} className="flex items-start justify-between p-4 border rounded-lg hover:bg-slate-50 transition-colors">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <p className="font-medium text-slate-900">{report.title}</p>
+                              <Badge variant={report.status === 'in_progress' ? 'default' : 'secondary'}>
+                                {report.status.replace('_', ' ')}
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-slate-600 mb-2">{report.description}</p>
+                            <div className="flex items-center gap-4 text-xs text-slate-500">
+                              <span>📍 {report.property?.name}</span>
+                              <span>👤 {report.tenant?.name}</span>
+                              <span>📅 {format(new Date(report.createdAt), 'MMM dd, yyyy')}</span>
+                            </div>
+                          </div>
+                          <Link href={`/property_manager/reports`}>
+                            <Button size="sm" variant="outline">View Details</Button>
+                          </Link>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* No Urgent Items */}
+              {data.payments.overdue.length === 0 && data.reports.pending.length === 0 && (
+                <Card className="border-green-200 bg-green-50">
+                  <CardContent className="pt-6">
+                    <div className="text-center">
+                      <CheckCircle2 className="h-12 w-12 text-green-600 mx-auto mb-3" />
+                      <p className="text-lg font-medium text-green-900">All caught up!</p>
+                      <p className="text-sm text-green-700">No urgent items requiring immediate attention.</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
+
+            {/* Properties Tab */}
+            <TabsContent value="properties" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Your Properties</CardTitle>
+                  <CardDescription>Overview of all managed properties</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {data.properties.map((property) => (
+                      <div key={property.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow bg-slate-50">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="p-2 bg-indigo-100 rounded-lg">
+                            <Building2 className="h-5 w-5 text-indigo-600" />
+                          </div>
+                        </div>
+                        <h3 className="font-semibold text-slate-900 mb-1">{property.name}</h3>
+                        <p className="text-sm text-slate-600 mb-3">{property.address}, {property.city}</p>
+                        <div className="grid grid-cols-2 gap-2 text-sm">
+                          <div>
+                            <p className="text-slate-500">Floors</p>
+                            <p className="font-medium text-slate-900">
+                              {property.floors !== null ? property.floors : 'N/A'}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-slate-500">Tenants</p>
+                            <p className="font-medium text-slate-900">{property.tenantCount || 0}</p>
+                          </div>
+                        </div>
+                        <Link href={`/property_manager/properties`}>
+                          <Button size="sm" variant="outline" className="w-full mt-3">
+                            View Details
+                          </Button>
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Payments Tab */}
+            <TabsContent value="payments" className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-3">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm">Paid This Month</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="h-5 w-5 text-green-600" />
+                      <span className="text-2xl font-bold text-green-700">{data.payments.currentMonth.paid}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm">Unpaid This Month</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center gap-2">
+                      <XCircle className="h-5 w-5 text-red-600" />
+                      <span className="text-2xl font-bold text-red-700">{data.payments.currentMonth.unpaid}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm">Collection Rate</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center gap-2">
+                      <TrendingUp className="h-5 w-5 text-indigo-600" />
+                      <span className="text-2xl font-bold text-indigo-700">{data.payments.currentMonth.collectionRate}%</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Current Month Summary</CardTitle>
+                  <CardDescription>{format(new Date(), 'MMMM yyyy')}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+                      <div>
+                        <p className="text-sm text-green-700 font-medium">Total Revenue Collected</p>
+                        <p className="text-xs text-green-600">{data.payments.currentMonth.paid} payments</p>
+                      </div>
+                      <p className="text-2xl font-bold text-green-700">€{data.payments.currentMonth.revenue.toLocaleString()}</p>
+                    </div>
+                    <Link href="/property_manager/payments">
+                      <Button className="w-full">View All Payments</Button>
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Reports Tab */}
+            <TabsContent value="reports" className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-3">
+                <Card className="border-yellow-200 bg-yellow-50">
+                  <CardHeader>
+                    <CardTitle className="text-sm text-yellow-800">Pending</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-3xl font-bold text-yellow-700">{data.reports.statistics.pending}</p>
+                  </CardContent>
+                </Card>
+                <Card className="border-blue-200 bg-blue-50">
+                  <CardHeader>
+                    <CardTitle className="text-sm text-blue-800">In Progress</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-3xl font-bold text-blue-700">{data.reports.statistics.in_progress}</p>
+                  </CardContent>
+                </Card>
+                <Card className="border-green-200 bg-green-50">
+                  <CardHeader>
+                    <CardTitle className="text-sm text-green-800">Resolved</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-3xl font-bold text-green-700">{data.reports.statistics.resolved}</p>
+                  </CardContent>
+                </Card>
+              </div>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Recent Reports</CardTitle>
+                  <CardDescription>Latest maintenance and issue reports</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {data.reports.pending.length > 0 ? (
+                    <div className="space-y-3">
+                      {data.reports.pending.slice(0, 5).map((report) => (
+                        <div key={report.id} className="p-4 border rounded-lg hover:bg-slate-50">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <p className="font-medium text-slate-900">{report.title}</p>
+                              <p className="text-sm text-slate-600 mt-1">{report.description}</p>
+                              <div className="flex items-center gap-4 mt-2 text-xs text-slate-500">
+                                <span>🏢 {report.property?.name}</span>
+                                <span>👤 {report.tenant?.name}</span>
+                              </div>
+                            </div>
+                            <Badge variant={report.status === 'pending' ? 'secondary' : 'default'}>
+                              {report.status}
+                            </Badge>
+                          </div>
+                        </div>
+                      ))}
+                      <Link href="/property_manager/reports">
+                        <Button variant="outline" className="w-full">View All Reports</Button>
+                      </Link>
+                    </div>
+                  ) : (
+                    <p className="text-center text-slate-500 py-8">No reports available</p>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Complaints Tab */}
+            <TabsContent value="complaints" className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-3">
+                <Card className="border-red-200 bg-red-50">
+                  <CardHeader>
+                    <CardTitle className="text-sm text-red-800">Pending</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-3xl font-bold text-red-700">{data.complaints.statistics.pending}</p>
+                  </CardContent>
+                </Card>
+                <Card className="border-orange-200 bg-orange-50">
+                  <CardHeader>
+                    <CardTitle className="text-sm text-orange-800">In Progress</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-3xl font-bold text-orange-700">{data.complaints.statistics.in_progress}</p>
+                  </CardContent>
+                </Card>
+                <Card className="border-green-200 bg-green-50">
+                  <CardHeader>
+                    <CardTitle className="text-sm text-green-800">Resolved</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-3xl font-bold text-green-700">{data.complaints.statistics.resolved}</p>
+                  </CardContent>
+                </Card>
+              </div>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Recent Complaints</CardTitle>
+                  <CardDescription>Latest tenant complaints</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {data.complaints.recent.length > 0 ? (
+                    <div className="space-y-3">
+                      {data.complaints.recent.map((complaint) => (
+                        <div key={complaint.id} className="p-4 border rounded-lg hover:bg-slate-50">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <p className="font-medium text-slate-900">{complaint.title}</p>
+                              <p className="text-sm text-slate-600 mt-1">{complaint.description}</p>
+                              <div className="flex items-center gap-4 mt-2 text-xs text-slate-500">
+                                <span>🏢 {complaint.property?.name}</span>
+                                <span>👤 {complaint.tenant?.name}</span>
+                              </div>
+                            </div>
+                            <Badge className="capitalize" variant={complaint.status === 'pending' ? 'destructive' : 'secondary'}>
+                              {complaint.status}
+                            </Badge>
+                          </div>
+                        </div>
+                      ))}
+                      <Link href="/property_manager/complaints">
+                        <Button variant="outline" className="w-full">View All Complaints</Button>
+                      </Link>
+                    </div>
+                  ) : (
+                    <p className="text-center text-slate-500 py-8">No complaints available</p>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
       </PropertyManagerLayout>
     </ProtectedRoute>
