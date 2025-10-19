@@ -13,6 +13,20 @@ import { useCities } from "@/hooks/useCities";
 import Link from "next/link";
 import { useMemo } from "react";
 
+type User = {
+  id: number;
+  name: string;
+  surname: string;
+  email: string;
+  role: string;
+  created_at: string;
+};
+
+type Property = {
+  id: number;
+  managers?: unknown[];
+};
+
 export default function AdminDashboard() {
   // Fetch all data
   const { data: usersData, isLoading: usersLoading } = useUsers();
@@ -34,19 +48,19 @@ export default function AdminDashboard() {
     const totalCities = citiesData?.data?.length || 0;
 
     // Role breakdown
-    const adminCount = usersData?.data?.filter((u: any) => u.role === 'admin').length || 0;
-    const propertyManagerCount = usersData?.data?.filter((u: any) => u.role === 'property_manager').length || 0;
-    const tenantCount = usersData?.data?.filter((u: any) => u.role === 'tenant').length || 0;
+    const adminCount = usersData?.data?.filter((u: User) => u.role === 'admin').length || 0;
+    const propertyManagerCount = usersData?.data?.filter((u: User) => u.role === 'property_manager').length || 0;
+    const tenantCount = usersData?.data?.filter((u: User) => u.role === 'tenant').length || 0;
 
     // Recent registrations (last 7 days)
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    const recentUsers = usersData?.data?.filter((u: any) =>
+    const recentUsers = usersData?.data?.filter((u: User) =>
       new Date(u.created_at) > sevenDaysAgo
     ).length || 0;
 
     // Properties with managers
-    const propertiesWithManagers = propertiesData?.data?.filter((p: any) =>
+    const propertiesWithManagers = propertiesData?.data?.filter((p: Property) =>
       p.managers && p.managers.length > 0
     ).length || 0;
 
@@ -67,7 +81,7 @@ export default function AdminDashboard() {
   const recentUsers = useMemo(() => {
     if (!usersData?.data) return [];
     return [...usersData.data]
-      .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .sort((a: User, b: User) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
       .slice(0, 5);
   }, [usersData]);
 
@@ -191,7 +205,7 @@ export default function AdminDashboard() {
                   <p className="text-sm text-slate-500">No users yet</p>
                 ) : (
                   <div className="space-y-3">
-                    {recentUsers.map((user: any) => (
+                    {recentUsers.map((user: User) => (
                       <div key={user.id} className="flex items-center justify-between border-b border-slate-100 pb-3 last:border-0">
                         <div className="flex-1">
                           <p className="font-medium text-sm">{user.name} {user.surname}</p>
@@ -263,7 +277,7 @@ export default function AdminDashboard() {
                         </div>
                         <div>
                           <p className="font-medium text-sm">Manage Properties</p>
-                          <p className="text-xs text-slate-500">{stats.totalProperties} total properties</p>
+                          <p className="text-xs text-slate-500">View and edit all properties</p>
                         </div>
                       </div>
                     </div>
@@ -276,8 +290,8 @@ export default function AdminDashboard() {
                           <Users className="h-4 w-4 text-blue-700" />
                         </div>
                         <div>
-                          <p className="font-medium text-sm">User Management</p>
-                          <p className="text-xs text-slate-500">{stats.totalUsers} total users</p>
+                          <p className="font-medium text-sm">Manage Users</p>
+                          <p className="text-xs text-slate-500">View and manage all users</p>
                         </div>
                       </div>
                     </div>
@@ -290,8 +304,8 @@ export default function AdminDashboard() {
                           <MapPin className="h-4 w-4 text-green-700" />
                         </div>
                         <div>
-                          <p className="font-medium text-sm">City Configurations</p>
-                          <p className="text-xs text-slate-500">{stats.totalCities} cities configured</p>
+                          <p className="font-medium text-sm">System Configuration</p>
+                          <p className="text-xs text-slate-500">Manage cities and settings</p>
                         </div>
                       </div>
                     </div>

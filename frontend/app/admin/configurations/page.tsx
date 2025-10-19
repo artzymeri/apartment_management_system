@@ -33,8 +33,6 @@ import {
 
 export default function ConfigurationsPage() {
   const [newCityName, setNewCityName] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [isAddCityDialogOpen, setIsAddCityDialogOpen] = useState(false);
   const [cityToDelete, setCityToDelete] = useState<{ id: number; name: string } | null>(null);
   const [cityToEdit, setCityToEdit] = useState<{ id: number; name: string } | null>(null);
@@ -51,11 +49,9 @@ export default function ConfigurationsPage() {
 
   const handleCreateCity = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
 
     if (!newCityName.trim()) {
-      setError("City name is required");
+      toast.error("City name is required");
       return;
     }
 
@@ -63,16 +59,13 @@ export default function ConfigurationsPage() {
       const result = await createMutation.mutateAsync(newCityName.trim());
 
       if (result.success) {
-        setSuccess("City added successfully!");
         setNewCityName("");
         setIsAddCityDialogOpen(false);
         toast.success("City added successfully!");
       } else {
-        setError(result.message || "Failed to add city");
         toast.error(result.message || "Failed to add city");
       }
     } catch (err) {
-      setError("Failed to connect to server");
       console.error("Create city error:", err);
       toast.error("Failed to connect to server");
     }
@@ -81,23 +74,17 @@ export default function ConfigurationsPage() {
   const handleDeleteCity = async () => {
     if (!cityToDelete) return;
 
-    setError("");
-    setSuccess("");
-
     try {
       const result = await deleteMutation.mutateAsync(cityToDelete.id);
 
       if (result.success) {
-        setSuccess("City deleted successfully!");
         setCityToDelete(null);
         toast.success("City deleted successfully!");
       } else {
-        setError(result.message || "Failed to delete city");
         setCityToDelete(null);
         toast.error(result.message || "Failed to delete city");
       }
     } catch (err) {
-      setError("Failed to connect to server");
       console.error("Delete city error:", err);
       setCityToDelete(null);
       toast.error("Failed to connect to server");
@@ -106,16 +93,14 @@ export default function ConfigurationsPage() {
 
   const handleUpdateCity = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
 
     if (!editCityName.trim()) {
-      setError("City name is required");
+      toast.error("City name is required");
       return;
     }
 
     if (!cityToEdit) {
-      setError("No city selected for editing");
+      toast.error("No city selected for editing");
       return;
     }
 
@@ -123,17 +108,14 @@ export default function ConfigurationsPage() {
       const result = await updateMutation.mutateAsync({ id: cityToEdit.id, name: editCityName.trim() });
 
       if (result.success) {
-        setSuccess("City updated successfully!");
         setEditCityName("");
         setCityToEdit(null);
         setIsEditDialogOpen(false);
         toast.success("City updated successfully!");
       } else {
-        setError(result.message || "Failed to update city");
         toast.error(result.message || "Failed to update city");
       }
     } catch (err) {
-      setError("Failed to connect to server");
       console.error("Update city error:", err);
       toast.error("Failed to connect to server");
     }
