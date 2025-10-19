@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { authAPI } from '@/lib/auth-api';
 
@@ -33,12 +33,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const isAuthenticated = !!user;
 
-  // Check authentication on mount
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async (): Promise<boolean> => {
+  const checkAuth = useCallback(async (): Promise<boolean> => {
     try {
       const isValid = await authAPI.verifyToken();
 
@@ -63,9 +58,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
       return false;
     }
-  };
+  }, []);
 
-  const login = async (identifier: string, password: string, method: 'email' | 'phone' = 'email') => {
+  // Check authentication on mount
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  const login = useCallback(async (identifier: string, password: string, method: 'email' | 'phone' = 'email') => {
     try {
       const response = await authAPI.login(identifier, password, method);
 
@@ -100,9 +100,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         message: 'Failed to connect to server'
       };
     }
-  };
+  }, [router]);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       await authAPI.logout();
     } catch (error) {
@@ -112,9 +112,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       authAPI.removeToken();
       router.push('/login');
     }
-  };
+  }, [router]);
 
-  const updateProfile = async () => {
+  const updateProfile = useCallback(async () => {
     try {
       const response = await authAPI.getCurrentUser();
       if (response && response.success) {
@@ -123,20 +123,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error('Update profile error:', error);
     }
-  };
+  }, []);
+
+  const value = useMemo(
+    () => ({
+      user,
+      isLoading,
+      isAuthenticated,
+      login,
+      logout,
+      checkAuth,
+      updateProfile
+    }),
+    [user, isLoading, isAuthenticated, login, logout, checkAuth, updateProfile]
+  );
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isLoading,
-        isAuthenticated,
-        login,
-        logout,
-        checkAuth,
-        updateProfile
-      }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
