@@ -54,6 +54,7 @@ import {
   updatePaymentDate,
   TenantPayment,
   PaymentStatistics,
+  EnsurePaymentRecordsResult,
 } from "@/lib/tenant-payment-api";
 import { useProperties } from "@/hooks/useProperties";
 import { userAPI } from "@/lib/user-api";
@@ -256,7 +257,7 @@ export default function PaymentsPage() {
       console.log('Property ID:', propertyId);
       console.log('Months:', selectedMonths, 'Year:', selectedYear);
 
-      const ensureResult = await ensurePaymentRecords(
+      const ensureResult: EnsurePaymentRecordsResult = await ensurePaymentRecords(
         selectedTenantIds,
         propertyId,
         selectedYear,
@@ -270,7 +271,7 @@ export default function PaymentsPage() {
         console.error('Errors creating payment records:', ensureResult.errors);
 
         // Show specific errors
-        ensureResult.errors.forEach(err => {
+        ensureResult.errors.forEach((err: any) => {
           toast.error(`Tenant ${err.tenant_id}: ${err.error}`);
         });
       }

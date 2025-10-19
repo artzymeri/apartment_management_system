@@ -35,6 +35,13 @@ export interface PaymentStatistics {
   overdueAmount: number;
 }
 
+export interface EnsurePaymentRecordsResult {
+  payments: any[];
+  new_records: number;
+  existing_records: number;
+  errors?: any[];
+}
+
 // Get payments for a specific tenant
 export async function getTenantPayments(
   tenantId: number,
@@ -210,7 +217,7 @@ export async function ensurePaymentRecords(
   propertyId: number,
   year: number,
   month: number | number[] // Support both single and multiple months
-): Promise<{ payments: any[]; new_records: number; existing_records: number; errors?: any[] }> {
+): Promise<EnsurePaymentRecordsResult> {
   const response = await fetch(`${API_BASE_URL}/api/tenant-payments/ensure-records`, {
     method: 'POST',
     headers: {
@@ -231,7 +238,7 @@ export async function ensurePaymentRecords(
   }
 
   const data = await response.json();
-  return data.data;
+  return data.data as EnsurePaymentRecordsResult;
 }
 
 // Update payment date

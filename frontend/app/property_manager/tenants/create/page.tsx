@@ -81,7 +81,6 @@ export default function CreateTenantPage() {
     }
 
     try {
-      // @ts-expect-error - monthly_rate is properly typed in CreateUserData but TS cache may not reflect it
       const userData = {
         name: formData.name,
         surname: formData.surname,
