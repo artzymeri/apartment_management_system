@@ -137,7 +137,7 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="name">
                       <User className="inline h-4 w-4 mr-1" />
@@ -228,7 +228,7 @@ export default function SettingsPage() {
                     />
                   </div>
 
-                  <div className="grid gap-4 md:grid-cols-2">
+                  <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="newPassword">New Password</Label>
                       <Input
@@ -257,16 +257,17 @@ export default function SettingsPage() {
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-4">
+                <div className="flex flex-col sm:flex-row justify-end gap-3 pt-2">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => router.back()}
                     disabled={updateProfileMutation.isPending}
+                    className="w-full sm:w-auto"
                   >
                     Cancel
                   </Button>
-                  <Button type="submit" isLoading={updateProfileMutation.isPending}>
+                  <Button type="submit" isLoading={updateProfileMutation.isPending} className="w-full sm:w-auto">
                     {!updateProfileMutation.isPending && <Save className="mr-2 h-4 w-4" />}
                     Save Changes
                   </Button>
@@ -287,7 +288,7 @@ export default function SettingsPage() {
 
   if (user.role === "admin") {
     return (
-      <AdminLayout>
+      <AdminLayout title="Profile Settings">
         {SettingsContent}
       </AdminLayout>
     );
@@ -295,14 +296,14 @@ export default function SettingsPage() {
 
   if (user.role === "property_manager") {
     return (
-      <PropertyManagerLayout>
+      <PropertyManagerLayout title="Profile Settings">
         {SettingsContent}
       </PropertyManagerLayout>
     );
   }
 
   return (
-    <TenantLayout>
+    <TenantLayout title="Profile Settings">
       {SettingsContent}
     </TenantLayout>
   );

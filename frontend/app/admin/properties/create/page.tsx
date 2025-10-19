@@ -97,25 +97,20 @@ export default function CreatePropertyPage() {
 
   return (
     <ProtectedRoute allowedRoles={["admin"]}>
-      <AdminLayout>
-        <div className="max-w-4xl space-y-6">
-          {/* Header */}
-          <div className="flex items-center gap-4">
+      <AdminLayout title="Create Property">
+        <div className="w-full max-w-4xl mx-auto space-y-4 md:space-y-6">
+          {/* Back Button - Mobile Friendly */}
+          <div className="flex items-center gap-2">
             <Button
               variant="outline"
-              size="icon"
+              size="sm"
               onClick={() => router.push("/admin/properties")}
+              className="gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
+              <span className="hidden sm:inline">Back to Properties</span>
+              <span className="sm:hidden">Back</span>
             </Button>
-            <div>
-              <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-                Create Property
-              </h2>
-              <p className="text-slate-600 mt-2">
-                Add a new property to the system
-              </p>
-            </div>
           </div>
 
           {/* Success Alert */}
@@ -134,16 +129,16 @@ export default function CreatePropertyPage() {
             </Alert>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
             {/* Property Details Form */}
             <Card className="border-red-200">
               <CardHeader>
-                <CardTitle>Property Details</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-lg md:text-xl">Property Details</CardTitle>
+                <CardDescription className="text-sm">
                   Enter the property information below
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-4 md:space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="name">Property Name *</Label>
                   <Input
@@ -196,7 +191,7 @@ export default function CreatePropertyPage() {
 
                 <div className="space-y-2">
                   <Label>Floor Range (Optional)</Label>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="floors_from" className="text-sm text-slate-600">From</Label>
                       <Select
@@ -272,10 +267,10 @@ export default function CreatePropertyPage() {
             />
 
             {/* Action Buttons */}
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <Button
                 type="submit"
-                className="bg-red-600 hover:bg-red-700 gap-2"
+                className="bg-red-600 hover:bg-red-700 gap-2 w-full sm:w-auto"
                 isLoading={createMutation.isPending}
               >
                 <Save className="h-4 w-4" />
@@ -286,6 +281,7 @@ export default function CreatePropertyPage() {
                 variant="outline"
                 onClick={() => router.push("/admin/properties")}
                 disabled={createMutation.isPending}
+                className="w-full sm:w-auto"
               >
                 Cancel
               </Button>

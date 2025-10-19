@@ -142,7 +142,21 @@ export default function EditPropertyPage() {
   return (
     <ProtectedRoute allowedRoles={["admin"]}>
       <AdminLayout title="Edit Property">
-        <div className="max-w-4xl space-y-6">
+        <div className="w-full max-w-4xl mx-auto space-y-4 md:space-y-6">
+          {/* Back Button - Mobile Friendly */}
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => router.push("/admin/properties")}
+              className="gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span className="hidden sm:inline">Back to Properties</span>
+              <span className="sm:hidden">Back</span>
+            </Button>
+          </div>
+
           {/* Success Alert */}
           {success && (
             <Alert className="border-green-200 bg-green-50">
@@ -160,16 +174,16 @@ export default function EditPropertyPage() {
           )}
 
           {isFormReady && (
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
               {/* Property Details Form */}
               <Card className="border-red-200">
                 <CardHeader>
-                  <CardTitle>Property Details</CardTitle>
-                  <CardDescription>
+                  <CardTitle className="text-lg md:text-xl">Property Details</CardTitle>
+                  <CardDescription className="text-sm">
                     Update the property information below
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-4 md:space-y-6">
                   <div className="space-y-2">
                     <Label htmlFor="name">Property Name *</Label>
                     <Input
@@ -222,7 +236,7 @@ export default function EditPropertyPage() {
 
                   <div className="space-y-2">
                     <Label>Floor Range (Optional)</Label>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="floors_from" className="text-sm text-slate-600">From</Label>
                         <Select
@@ -300,10 +314,10 @@ export default function EditPropertyPage() {
               />
 
               {/* Action Buttons */}
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <Button
                   type="submit"
-                  className="bg-red-600 hover:bg-red-700 gap-2"
+                  className="bg-red-600 hover:bg-red-700 gap-2 w-full sm:w-auto"
                   isLoading={updateMutation.isPending}
                 >
                   <Save className="h-4 w-4" />
@@ -314,6 +328,7 @@ export default function EditPropertyPage() {
                   variant="outline"
                   onClick={() => router.push("/admin/properties")}
                   disabled={updateMutation.isPending}
+                  className="w-full sm:w-auto"
                 >
                   Cancel
                 </Button>

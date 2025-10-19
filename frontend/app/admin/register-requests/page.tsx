@@ -23,7 +23,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { UserPlus, Search, Check, X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { UserPlus, Search, Check, X, ChevronLeft, ChevronRight, Loader2, Mail, Phone, Calendar as CalendarIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
@@ -179,8 +179,8 @@ export default function RegisterRequestsPage() {
             </CardContent>
           </Card>
 
-          {/* Register Requests Table */}
-          <Card>
+          {/* Register Requests Table - Desktop */}
+          <Card className="hidden md:block">
             <CardHeader>
               <CardTitle>Registration Requests</CardTitle>
               <CardDescription>
@@ -298,11 +298,148 @@ export default function RegisterRequestsPage() {
               )}
             </CardContent>
           </Card>
+
+          {/* Register Requests Cards - Mobile */}
+          <div className="md:hidden space-y-4">
+            {/* Header Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Registration Requests</CardTitle>
+                <CardDescription>
+                  {data?.pagination.total || 0} total request(s)
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            {error && (
+              <Alert variant="destructive">
+                <AlertDescription>
+                  Error loading register requests. Please try again.
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {isLoading ? (
+              <Card>
+                <CardContent className="py-12">
+                  <div className="flex items-center justify-center text-slate-500">
+                    <Loader2 className="h-6 w-6 animate-spin mr-2" />
+                    Loading...
+                  </div>
+                </CardContent>
+              </Card>
+            ) : !data?.data || data.data.length === 0 ? (
+              <Card>
+                <CardContent className="py-12">
+                  <div className="flex flex-col items-center justify-center text-center text-slate-500">
+                    <UserPlus className="h-12 w-12 mb-4 opacity-50" />
+                    <h3 className="text-lg font-semibold mb-2">No Registration Requests</h3>
+                    <p className="text-sm">
+                      There are no registration requests matching your filters.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <>
+                {data.data.map((request) => (
+                  <Card key={request.id}>
+                    <CardContent className="pt-6 space-y-3">
+                      {/* Name and Status */}
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <h3 className="font-semibold text-base">
+                            {request.name} {request.surname}
+                          </h3>
+                        </div>
+                        {getStatusBadge(request.status)}
+                      </div>
+
+                      {/* Contact Info */}
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center gap-2 text-slate-600">
+                          <Mail className="h-4 w-4 flex-shrink-0" />
+                          <span className="break-all">{request.email}</span>
+                        </div>
+                        {request.number && (
+                          <div className="flex items-center gap-2 text-slate-600">
+                            <Phone className="h-4 w-4 flex-shrink-0" />
+                            <span>{request.number}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Request Date */}
+                      <div className="flex items-center gap-2 text-sm text-slate-500 pt-2 border-t">
+                        <CalendarIcon className="h-3.5 w-3.5" />
+                        <span>Requested: {format(new Date(request.created_at), "MMM dd, yyyy")}</span>
+                      </div>
+
+                      {/* Actions */}
+                      {request.status === "pending" && (
+                        <div className="flex gap-2 pt-2">
+                          <Button
+                            size="sm"
+                            variant="default"
+                            className="flex-1"
+                            onClick={() => openApprovalDialog(request)}
+                            disabled={approveMutation.isPending}
+                          >
+                            <Check className="h-4 w-4 mr-2" />
+                            Approve
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            className="flex-1"
+                            onClick={() => handleReject(request)}
+                            disabled={rejectMutation.isPending}
+                          >
+                            <X className="h-4 w-4 mr-2" />
+                            Reject
+                          </Button>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+
+                {/* Pagination */}
+                {data.pagination.totalPages > 1 && (
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+                    <p className="text-sm text-slate-600 text-center sm:text-left">
+                      Page {data.pagination.page} of {data.pagination.totalPages}
+                    </p>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                      >
+                        <ChevronLeft className="h-4 w-4 sm:mr-2" />
+                        <span className="hidden sm:inline">Previous</span>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === data.pagination.totalPages}
+                      >
+                        <span className="hidden sm:inline">Next</span>
+                        <ChevronRight className="h-4 w-4 sm:ml-2" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         </div>
 
         {/* Approval Dialog */}
         <Dialog open={approvalDialog.isOpen} onOpenChange={closeApprovalDialog}>
-          <DialogContent>
+          <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Approve Registration Request</DialogTitle>
               <DialogDescription>
@@ -337,7 +474,7 @@ export default function RegisterRequestsPage() {
                         {expiryDate ? format(expiryDate, "MMM dd, yyyy") : "Select expiry date"}
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-4">
+                    <PopoverContent className="w-auto p-4" align="start">
                       <Calendar
                         mode="single"
                         selected={expiryDate}
@@ -366,11 +503,11 @@ export default function RegisterRequestsPage() {
                 </div>
               )}
             </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={closeApprovalDialog}>
+            <DialogFooter className="flex-col sm:flex-row gap-2">
+              <Button variant="outline" onClick={closeApprovalDialog} className="w-full sm:w-auto">
                 Cancel
               </Button>
-              <Button onClick={handleApprove} disabled={approveMutation.isPending}>
+              <Button onClick={handleApprove} disabled={approveMutation.isPending} className="w-full sm:w-auto">
                 {approveMutation.isPending ? "Approving..." : "Approve"}
               </Button>
             </DialogFooter>
@@ -379,7 +516,7 @@ export default function RegisterRequestsPage() {
 
         {/* Reject Confirmation AlertDialog */}
         <AlertDialog open={!!requestToReject} onOpenChange={() => setRequestToReject(null)}>
-          <AlertDialogContent>
+          <AlertDialogContent className="sm:max-w-[425px]">
             <AlertDialogHeader>
               <AlertDialogTitle>Confirm Rejection</AlertDialogTitle>
               <AlertDialogDescription>
@@ -387,8 +524,8 @@ export default function RegisterRequestsPage() {
                 This will permanently delete the request and cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+              <AlertDialogCancel className="w-full sm:w-auto">Cancel</AlertDialogCancel>
               <AlertDialogAction
                 onClick={async () => {
                   if (requestToReject) {
@@ -399,21 +536,13 @@ export default function RegisterRequestsPage() {
                     } catch (error) {
                       console.error("Error rejecting request:", error);
                       toast.error("Failed to reject registration request");
-                      setRequestToReject(null);
                     }
                   }
                 }}
                 disabled={rejectMutation.isPending}
-                className="bg-red-600 hover:bg-red-700"
+                className="bg-red-600 hover:bg-red-700 w-full sm:w-auto"
               >
-                {rejectMutation.isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Rejecting...
-                  </>
-                ) : (
-                  "Reject Request"
-                )}
+                {rejectMutation.isPending ? "Rejecting..." : "Reject"}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

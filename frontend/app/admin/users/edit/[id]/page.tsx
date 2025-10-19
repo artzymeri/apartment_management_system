@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft, UserCog, Calendar as CalendarIcon } from "lucide-react";
+import { UserCog, Calendar as CalendarIcon } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -217,7 +217,7 @@ export default function EditUserPage() {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">
                       Name <span className="text-red-600">*</span>
@@ -318,7 +318,7 @@ export default function EditUserPage() {
                           {expiryDate ? format(expiryDate, "PPP") : "Pick a date"}
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
+                      <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
                           selected={expiryDate}
@@ -347,7 +347,7 @@ export default function EditUserPage() {
                   <p className="text-sm text-slate-600 mb-4">
                     Change Password (optional - leave blank to keep current password)
                   </p>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="password">New Password</Label>
                       <Input
@@ -379,10 +379,10 @@ export default function EditUserPage() {
                   </div>
                 </div>
 
-                <div className="flex gap-4 pt-4">
+                <div className="flex flex-col sm:flex-row gap-3 pt-4">
                   <Button
                     type="submit"
-                    className="bg-red-600 hover:bg-red-700"
+                    className="bg-red-600 hover:bg-red-700 w-full sm:w-auto"
                     isLoading={updateMutation.isPending}
                   >
                     Update User
@@ -391,6 +391,7 @@ export default function EditUserPage() {
                     type="button"
                     variant="outline"
                     onClick={() => router.back()}
+                    className="w-full sm:w-auto"
                   >
                     Cancel
                   </Button>
