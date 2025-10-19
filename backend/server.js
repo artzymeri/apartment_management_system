@@ -24,8 +24,25 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
+const allowedOrigins = process.env.NODE_ENV === 'production'
+  ? [
+      'https://bllokusync.com',
+      'https://www.bllokusync.com',
+      process.env.FRONTEND_URL
+    ].filter(Boolean)
+  : ['http://localhost:3333', 'http://localhost:3000'];
+
 app.use(cors({
-  origin: 'http://localhost:3333',
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 app.use(cookieParser());
@@ -67,6 +84,43 @@ app.use('/api/property-manager-dashboard', propertyManagerDashboardRoutes);
 // Test route
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to Apartment Management API' });
+});
+
+// Health check route
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
+// API info route
+app.get('/api', (req, res) => {
+  res.json({
+    message: 'Apartment Management API',
+    version: '1.0.0',
+    endpoints: {
+      auth: {
+        login: 'POST /api/auth/login',
+        register: 'POST /api/auth/register',
+        logout: 'POST /api/auth/logout',
+        me: 'GET /api/auth/me'
+      },
+      note: 'Most endpoints require authentication'
+    }
+  });
+});
+
+// 404 handler for undefined routes
+app.use((req, res) => {
+  res.status(404).json({
+    error: 'Not Found',
+    message: `Cannot ${req.method} ${req.path}`,
+    hint: req.path.includes('/api/auth/login')
+      ? 'This endpoint requires a POST request, not GET. Use your login form or a tool like Postman/curl.'
+      : 'Please check the API documentation for available endpoints.'
+  });
 });
 
 // Start server
