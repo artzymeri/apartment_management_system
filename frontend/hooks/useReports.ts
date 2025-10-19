@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getPropertyManagerReports, updateReportStatus, GetPropertyManagerReportsParams, UpdateReportStatusData } from '@/lib/report-api';
 import { toast } from 'sonner';
+import { sidebarCountsKeys } from './usePropertyManagerSidebarCounts';
 
 // Hook to get property manager reports
 export const usePropertyManagerReports = (params?: GetPropertyManagerReportsParams) => {
@@ -19,6 +20,7 @@ export const useUpdateReportStatus = () => {
       updateReportStatus(id, data),
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['propertyManagerReports'] });
+      queryClient.invalidateQueries({ queryKey: sidebarCountsKeys.all });
       toast.success(response.message || 'Report status updated successfully');
     },
     onError: (error: any) => {
@@ -26,4 +28,3 @@ export const useUpdateReportStatus = () => {
     },
   });
 };
-

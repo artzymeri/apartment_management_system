@@ -8,8 +8,6 @@ import {
   Building2,
   Users,
   ClipboardList,
-  Star,
-  Bell,
   LogOut,
   Menu,
   Settings,
@@ -36,6 +34,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
+import { usePropertyManagerSidebarCounts } from "@/hooks/usePropertyManagerSidebarCounts";
 
 const propertyManagerNavItems = [
   { href: "/property_manager", icon: ClipboardList, label: "Dashboard" },
@@ -72,6 +71,14 @@ export function PropertyManagerLayout({ children, title }: { children: React.Rea
   const { user, logout } = useAuth();
   const router = useRouter();
 
+  // Fetch sidebar badge counts
+  const { data: sidebarCounts, isLoading, error } = usePropertyManagerSidebarCounts();
+
+  // Debug logging
+  React.useEffect(() => {
+    console.log('[PM Layout] Sidebar Counts:', { sidebarCounts, isLoading, error });
+  }, [sidebarCounts, isLoading, error]);
+
   const handleLogout = async () => {
     await logout();
   };
@@ -92,6 +99,19 @@ export function PropertyManagerLayout({ children, title }: { children: React.Rea
           {propertyManagerNavItems.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
+
+            // Determine if badge should be shown
+            let badgeCount = 0;
+            if (item.href === '/property_manager/reports' && sidebarCounts?.pendingReports) {
+              badgeCount = sidebarCounts.pendingReports;
+            } else if (item.href === '/property_manager/complaints' && sidebarCounts?.pendingComplaints) {
+              badgeCount = sidebarCounts.pendingComplaints;
+            } else if (item.href === '/property_manager/suggestions' && sidebarCounts?.pendingSuggestions) {
+              badgeCount = sidebarCounts.pendingSuggestions;
+            }
+
+            const showBadge = badgeCount > 0;
+
             return (
               <Link key={item.href} href={item.href}>
                 <Button
@@ -104,6 +124,17 @@ export function PropertyManagerLayout({ children, title }: { children: React.Rea
                 >
                   <Icon className="h-5 w-5" />
                   {item.label}
+                  {showBadge && (
+                    <Badge
+                      className={`ml-auto h-5 min-w-5 px-1.5 text-xs font-semibold ${
+                        isActive
+                          ? "bg-indigo-800 text-slate-50 hover:bg-indigo-800"
+                          : "bg-amber-500 text-slate-900 hover:bg-amber-500"
+                      }`}
+                    >
+                      {badgeCount}
+                    </Badge>
+                  )}
                 </Button>
               </Link>
             );
@@ -184,11 +215,6 @@ export function PropertyManagerLayout({ children, title }: { children: React.Rea
               {pageTitle}
             </h1>
           </div>
-
-          <Button variant="ghost" size="icon" className="relative">
-            <Bell className="h-5 w-5" />
-            <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-amber-500" />
-          </Button>
         </header>
 
         {/* Page Content */}

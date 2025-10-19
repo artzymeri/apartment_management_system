@@ -367,7 +367,7 @@ export default function PropertyManagerDashboard() {
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
                               <p className="font-medium text-slate-900">{report.title}</p>
-                              <Badge variant={report.status === 'in_progress' ? 'default' : 'secondary'}>
+                              <Badge className="capitalize" variant={report.status === 'in_progress' ? 'default' : 'secondary'}>
                                 {report.status.replace('_', ' ')}
                               </Badge>
                             </div>

@@ -416,3 +416,70 @@ exports.getPropertyManagerDashboardData = async (req, res) => {
     });
   }
 };
+
+// Get sidebar badge counts for Property Manager
+exports.getSidebarCounts = async (req, res) => {
+  try {
+    const property_manager_id = req.user.id;
+
+    // Get all properties managed by this property manager using the junction table
+    const propertyManagerRecords = await PropertyManager.findAll({
+      where: { user_id: property_manager_id },
+      attributes: ['property_id']
+    });
+
+    const propertyIds = propertyManagerRecords.map(pm => pm.property_id);
+
+    if (propertyIds.length === 0) {
+      return res.json({
+        success: true,
+        data: {
+          pendingReports: 0,
+          pendingComplaints: 0,
+          pendingSuggestions: 0
+        }
+      });
+    }
+
+    // Count pending reports
+    const pendingReports = await Report.count({
+      where: {
+        property_id: { [Op.in]: propertyIds },
+        status: 'pending'
+      }
+    });
+
+    // Count pending complaints
+    const pendingComplaints = await Complaint.count({
+      where: {
+        property_id: { [Op.in]: propertyIds },
+        status: 'pending'
+      }
+    });
+
+    // Count pending suggestions
+    const pendingSuggestions = await Suggestion.count({
+      where: {
+        property_id: { [Op.in]: propertyIds },
+        status: 'pending'
+      }
+    });
+
+    res.json({
+      success: true,
+      data: {
+        pendingReports,
+        pendingComplaints,
+        pendingSuggestions
+      }
+    });
+
+  } catch (error) {
+    console.error('Error fetching sidebar counts:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching sidebar counts',
+      error: error.message
+    });
+  }
+};

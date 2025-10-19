@@ -1,0 +1,46 @@
+import axios from "axios";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+// Get sidebar badge counts for Property Manager
+export const getSidebarCounts = async () => {
+  const token = localStorage.getItem("auth_token");
+
+  console.log(
+    "[PM Sidebar Counts] Fetching counts from:",
+    `${API_URL}/api/property-manager-dashboard/sidebar-counts`
+  );
+
+  try {
+    const response = await axios.get(
+      `${API_URL}/api/property-manager-dashboard/sidebar-counts`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log("[PM Sidebar Counts] Response:", response.data);
+    return response.data.data;
+  } catch (error) {
+    console.error("[PM Sidebar Counts] Error:", error);
+    throw error;
+  }
+};
+
+// Get full dashboard data
+export const getPropertyManagerDashboardData = async () => {
+  const token = localStorage.getItem("auth_token");
+
+  const response = await axios.get(
+    `${API_URL}/api/property-manager-dashboard`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data.data;
+};

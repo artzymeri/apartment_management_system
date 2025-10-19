@@ -41,6 +41,8 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { useQueryClient } from "@tanstack/react-query";
+import { sidebarCountsKeys } from "@/hooks/usePropertyManagerSidebarCounts";
 
 interface Complaint {
   id: number;
@@ -82,6 +84,7 @@ export default function PropertyManagerComplaintsPage() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
+  const queryClient = useQueryClient();
 
   // Fetch complaints
   useEffect(() => {
@@ -156,6 +159,9 @@ export default function PropertyManagerComplaintsPage() {
         setSelectedComplaint(null);
         setNewStatus("");
         setResponse("");
+
+        // Invalidate sidebar counts
+        queryClient.invalidateQueries({ queryKey: sidebarCountsKeys.all });
 
         // Refresh complaints
         const params = new URLSearchParams();

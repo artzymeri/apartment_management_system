@@ -3,6 +3,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const { connectDB } = require('./config/database');
 const db = require('./models');
+const { runMigrations } = require('./utils/migrationRunner');
 const authRoutes = require('./routes/auth.routes');
 const propertyRoutes = require('./routes/property.routes');
 const userRoutes = require('./routes/user.routes');
@@ -34,6 +35,9 @@ app.use(express.urlencoded({ extended: true }));
 // Database connection and sync
 const initializeDatabase = async () => {
   await connectDB();
+
+  // Run pending migrations first
+  await runMigrations();
 
   // Sync all models with database
   // Changed from { alter: true } to { alter: false } to prevent index duplication
