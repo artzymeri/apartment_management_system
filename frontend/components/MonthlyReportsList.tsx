@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { usePropertyReports, useDeleteMonthlyReport, useMonthlyReportDetail } from "@/hooks/useMonthlyReports";
+import { usePropertyReports, useDeleteMonthlyReport } from "@/hooks/useMonthlyReports";
+import { MonthlyReport } from "@/lib/monthly-report-api";
 import { EditReportModal } from "@/components/EditReportModal";
 import { generateMonthlyReportPDF } from "@/lib/pdf-generator";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,24 +21,6 @@ import {
 import { FileText, Trash2, Building2, Loader2, TrendingUp, Download, Edit } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
-
-interface MonthlyReport {
-  id: number;
-  property_id: number;
-  report_month: string;
-  total_budget: string;
-  total_tenants: number;
-  paid_tenants: number;
-  pending_amount: string;
-  spending_breakdown: any[];
-  notes: string | null;
-  property: {
-    id: number;
-    name: string;
-    address: string;
-  };
-  created_at: string;
-}
 
 interface MonthlyReportsListProps {
   propertyId: number;
@@ -140,10 +123,12 @@ export function MonthlyReportsList({ propertyId, year }: MonthlyReportsListProps
                       <span>{report.paid_tenants} of {report.total_tenants} tenants paid ({collectionRate(report)}%)</span>
                     </CardDescription>
                   </div>
-                  <Badge variant="secondary" className="ml-2 flex items-center gap-1">
-                    <Building2 className="h-3 w-3" />
-                    {report.property.name}
-                  </Badge>
+                  {report.property && (
+                    <Badge variant="secondary" className="ml-2 flex items-center gap-1">
+                      <Building2 className="h-3 w-3" />
+                      {report.property.name}
+                    </Badge>
+                  )}
                 </div>
               </CardHeader>
               <CardContent className="space-y-3">

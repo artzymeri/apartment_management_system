@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useUpdateMonthlyReport } from "@/hooks/useMonthlyReports";
+import { MonthlyReport, SpendingBreakdown } from "@/lib/monthly-report-api";
 import {
   Dialog,
   DialogContent,
@@ -15,33 +16,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Save, AlertCircle, Calculator } from "lucide-react";
+import { Save, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
-
-interface SpendingAllocation {
-  config_id: number;
-  config_title: string;
-  allocated_amount: number;
-  percentage: number;
-  description?: string | null;
-}
-
-interface MonthlyReport {
-  id: number;
-  property_id: number;
-  report_month: string;
-  total_budget: string;
-  total_tenants: number;
-  paid_tenants: number;
-  pending_amount: string;
-  spending_breakdown: SpendingAllocation[];
-  notes?: string;
-  property?: {
-    id: number;
-    name: string;
-    address: string;
-  };
-}
 
 interface EditReportModalProps {
   open: boolean;
@@ -51,7 +27,7 @@ interface EditReportModalProps {
 
 export function EditReportModal({ open, onOpenChange, report }: EditReportModalProps) {
   const [notes, setNotes] = useState("");
-  const [spendingAllocations, setSpendingAllocations] = useState<SpendingAllocation[]>([]);
+  const [spendingAllocations, setSpendingAllocations] = useState<SpendingBreakdown[]>([]);
   const [editingAmounts, setEditingAmounts] = useState<Record<number, string>>({});
   const [editingPercentages, setEditingPercentages] = useState<Record<number, string>>({});
 
@@ -67,8 +43,8 @@ export function EditReportModal({ open, onOpenChange, report }: EditReportModalP
       const amounts: Record<number, string> = {};
       const percentages: Record<number, string> = {};
       (report.spending_breakdown || []).forEach(alloc => {
-        amounts[alloc.config_id] = parseFloat(alloc.allocated_amount).toFixed(2);
-        percentages[alloc.config_id] = parseFloat(alloc.percentage).toFixed(1);
+        amounts[alloc.config_id] = alloc.allocated_amount.toFixed(2);
+        percentages[alloc.config_id] = alloc.percentage.toFixed(1);
       });
       setEditingAmounts(amounts);
       setEditingPercentages(percentages);
@@ -209,7 +185,6 @@ export function EditReportModal({ open, onOpenChange, report }: EditReportModalP
 
   const totalAllocated = spendingAllocations.reduce((sum, alloc) => sum + alloc.allocated_amount, 0);
   const remainingBudget = totalBudget - totalAllocated;
-  const allocationPercentage = totalBudget > 0 ? (totalAllocated / totalBudget) * 100 : 0;
 
   const getMonthName = (dateString: string) => {
     const date = new Date(dateString);

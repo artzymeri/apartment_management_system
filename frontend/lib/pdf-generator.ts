@@ -16,7 +16,7 @@ interface MonthlyReportData {
     percentage: number;
     description?: string | null;
   }>;
-  notes?: string;
+  notes?: string | null;
   property?: {
     id: number;
     name: string;
