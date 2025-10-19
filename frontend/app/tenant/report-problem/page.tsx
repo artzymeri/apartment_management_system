@@ -64,7 +64,7 @@ export default function ReportProblemPage() {
   useEffect(() => {
     const fetchProblemOptions = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/reports/problem-options", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/reports/problem-options`, {
           credentials: 'include',
         });
 
@@ -88,7 +88,7 @@ export default function ReportProblemPage() {
 
     const fetchMyReports = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/reports/my-reports", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/reports/my-reports`, {
           credentials: 'include',
         });
 
@@ -137,7 +137,7 @@ export default function ReportProblemPage() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/reports", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/reports`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -159,7 +159,7 @@ export default function ReportProblemPage() {
         setSelectedFloor("");
 
         // Refresh reports list
-        const reportsResponse = await fetch("http://localhost:5000/api/reports/my-reports", {
+        const reportsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/reports/my-reports`, {
           credentials: 'include',
         });
         if (reportsResponse.ok) {

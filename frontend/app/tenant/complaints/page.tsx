@@ -55,7 +55,7 @@ export default function ComplaintsPage() {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/complaints/properties", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/complaints/properties`, {
           credentials: 'include',
         });
 
@@ -80,7 +80,7 @@ export default function ComplaintsPage() {
 
     const fetchMyComplaints = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/complaints/my-complaints", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/complaints/my-complaints`, {
           credentials: 'include',
         });
 
@@ -110,7 +110,7 @@ export default function ComplaintsPage() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/complaints", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/complaints`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -132,7 +132,7 @@ export default function ComplaintsPage() {
         setDescription("");
 
         // Refresh complaints list
-        const complaintsResponse = await fetch("http://localhost:5000/api/complaints/my-complaints", {
+        const complaintsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/complaints/my-complaints`, {
           credentials: 'include',
         });
         if (complaintsResponse.ok) {

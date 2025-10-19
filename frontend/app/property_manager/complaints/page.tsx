@@ -99,7 +99,7 @@ export default function PropertyManagerComplaintsPage() {
           params.append("status", selectedStatus);
         }
 
-        const response = await fetch(`http://localhost:5000/api/complaints/manager?${params.toString()}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/complaints/manager?${params.toString()}`, {
           credentials: 'include',
         });
 
@@ -124,7 +124,7 @@ export default function PropertyManagerComplaintsPage() {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/properties?limit=1000", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/properties?limit=1000`, {
           credentials: 'include',
         });
 
@@ -145,7 +145,7 @@ export default function PropertyManagerComplaintsPage() {
 
     setIsUpdating(true);
     try {
-      const response_text = await fetch(`http://localhost:5000/api/complaints/${selectedComplaint.id}/status`, {
+      const response_text = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/complaints/${selectedComplaint.id}/status`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -172,7 +172,7 @@ export default function PropertyManagerComplaintsPage() {
           params.append("status", selectedStatus);
         }
 
-        const refreshResponse = await fetch(`http://localhost:5000/api/complaints/manager?${params.toString()}`, {
+        const refreshResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/complaints/manager?${params.toString()}`, {
           credentials: 'include',
         });
 

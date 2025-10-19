@@ -55,7 +55,7 @@ export default function SuggestionsPage() {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/suggestions/properties", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/suggestions/properties`, {
           credentials: 'include',
         });
 
@@ -80,7 +80,7 @@ export default function SuggestionsPage() {
 
     const fetchMySuggestions = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/suggestions/my-suggestions", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/suggestions/my-suggestions`, {
           credentials: 'include',
         });
 
@@ -110,7 +110,7 @@ export default function SuggestionsPage() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/suggestions", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/suggestions`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -132,7 +132,7 @@ export default function SuggestionsPage() {
         setDescription("");
 
         // Refresh suggestions list
-        const suggestionsResponse = await fetch("http://localhost:5000/api/suggestions/my-suggestions", {
+        const suggestionsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/suggestions/my-suggestions`, {
           credentials: 'include',
         });
         if (suggestionsResponse.ok) {
