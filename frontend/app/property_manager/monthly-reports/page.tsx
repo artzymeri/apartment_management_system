@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, FileText, Filter } from "lucide-react";
+import { Property } from "@/lib/property-api";
 
 export default function MonthlyReportsPage() {
   const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
@@ -53,7 +54,7 @@ export default function MonthlyReportsPage() {
                       <SelectValue placeholder="Select a property" />
                     </SelectTrigger>
                     <SelectContent>
-                      {properties.map((property) => (
+                      {properties.map((property: Property) => (
                         <SelectItem key={property.id} value={property.id.toString()}>
                           {property.name}
                         </SelectItem>
