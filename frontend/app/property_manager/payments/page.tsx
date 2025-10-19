@@ -981,7 +981,7 @@ export default function PaymentsPage() {
                                                     <DialogHeader>
                                                       <DialogTitle>Edit Payment Date</DialogTitle>
                                                       <DialogDescription>
-                                                        Update the payment date for {payment.tenant.name} {payment.tenant.surname}
+                                                        Update the payment date for {payment.tenant?.name} {payment.tenant?.surname}
                                                       </DialogDescription>
                                                     </DialogHeader>
                                                     <div className="space-y-4">
