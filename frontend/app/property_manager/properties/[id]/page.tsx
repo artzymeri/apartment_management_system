@@ -5,6 +5,7 @@ import { PropertyManagerLayout } from "@/components/layouts/PropertyManagerLayou
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { useQuery } from "@tanstack/react-query";
 import { propertyAPI, Property } from "@/lib/property-api";
+import { LocationPicker } from "@/components/maps/LocationPicker";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -285,11 +286,12 @@ export default function PropertyDetailsPage() {
                 <CardDescription>Property location on map</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-96 bg-slate-100 rounded-lg flex items-center justify-center">
-                  <p className="text-slate-500">
-                    Map integration can be added here (Google Maps, Leaflet, etc.)
-                  </p>
-                </div>
+                <LocationPicker
+                  latitude={Number(property.latitude)}
+                  longitude={Number(property.longitude)}
+                  onLocationChange={() => {}} // Read-only, no changes needed
+                  disabled={true} // Make it read-only for viewing
+                />
               </CardContent>
             </Card>
           )}

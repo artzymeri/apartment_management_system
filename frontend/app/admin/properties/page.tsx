@@ -112,19 +112,19 @@ export default function PropertiesPage() {
           {/* Filters */}
           <Card className="border-red-200">
             <CardHeader>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <CardTitle className="text-lg flex items-center gap-2">
                     <Search className="h-5 w-5" />
                     Filter Properties
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="mt-1">
                     Search by name, address, or filter by city
                   </CardDescription>
                 </div>
                 <Button
                   onClick={() => router.push("/admin/properties/create")}
-                  className="bg-red-600 hover:bg-red-700 gap-2"
+                  className="bg-red-600 hover:bg-red-700 gap-2 w-full sm:w-auto"
                 >
                   <Plus className="h-4 w-4" />
                   Create Property
@@ -132,7 +132,7 @@ export default function PropertiesPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="flex gap-4">
+              <div className="flex flex-col gap-4 sm:flex-row">
                 <div className="flex-1">
                   <Input
                     placeholder="Search by name or address..."
@@ -140,7 +140,7 @@ export default function PropertiesPage() {
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
-                <div className="w-64">
+                <div className="sm:w-64">
                   <Input
                     placeholder="Filter by city..."
                     value={cityFilter}
@@ -151,8 +151,8 @@ export default function PropertiesPage() {
             </CardContent>
           </Card>
 
-          {/* Properties Table */}
-          <Card>
+          {/* Properties Table - Desktop */}
+          <Card className="hidden md:block">
             <CardContent className="p-0">
               {isLoading ? (
                 <div className="flex items-center justify-center py-12">
@@ -269,10 +269,126 @@ export default function PropertiesPage() {
             </CardContent>
           </Card>
 
+          {/* Properties Cards - Mobile */}
+          <div className="md:hidden space-y-4">
+            {isLoading ? (
+              <Card>
+                <CardContent className="flex items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600" />
+                </CardContent>
+              </Card>
+            ) : properties.length === 0 ? (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12 text-slate-500">
+                  <Building2 className="h-12 w-12 mb-4 opacity-50" />
+                  <p className="text-lg font-medium">No properties found</p>
+                  <p className="text-sm text-center">Try adjusting your filters or create a new property</p>
+                </CardContent>
+              </Card>
+            ) : (
+              properties.map((property: any) => {
+                const managers = property.managers || [];
+                const managerCount = managers.length;
+                const floorsCount = calculateFloorsCount(property.floors_from, property.floors_to);
+
+                return (
+                  <Card key={property.id} className="border-slate-200">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <CardTitle className="text-base truncate">
+                            {property.name}
+                          </CardTitle>
+                          <CardDescription className="text-sm mt-1">
+                            {property.address}
+                          </CardDescription>
+                        </div>
+                        <Badge variant="secondary" className="flex-shrink-0">
+                          {property.cityDetails?.name || 'Unknown'}
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {/* Property Details */}
+                      <div className="grid grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <p className="text-slate-500 text-xs mb-1">Floors</p>
+                          {floorsCount !== null ? (
+                            <p className="font-medium">
+                              {floorsCount} {floorsCount === 1 ? 'floor' : 'floors'}
+                            </p>
+                          ) : (
+                            <p className="text-slate-400">Not specified</p>
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-slate-500 text-xs mb-1">Created</p>
+                          <p className="font-medium">
+                            {new Date(property.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Managers */}
+                      <div>
+                        <p className="text-slate-500 text-xs mb-2">Managers</p>
+                        {managerCount === 0 ? (
+                          <p className="text-slate-400 text-sm">Not Assigned</p>
+                        ) : managerCount === 1 ? (
+                          <div className="text-sm p-2 bg-slate-50 rounded-md">
+                            <p className="font-medium">
+                              {managers[0].name} {managers[0].surname}
+                            </p>
+                            <p className="text-slate-500 text-xs truncate">
+                              {managers[0].email}
+                            </p>
+                          </div>
+                        ) : (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleViewManagers(managers)}
+                            className="gap-2 w-full"
+                          >
+                            <Users className="h-4 w-4" />
+                            {managerCount} Managers
+                          </Button>
+                        )}
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex gap-2 pt-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => router.push(`/admin/properties/edit/${property.id}`)}
+                          className="flex-1 gap-2"
+                        >
+                          <Pencil className="h-3 w-3" />
+                          Edit
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setPropertyToDelete({ id: property.id, name: property.name })}
+                          disabled={deleteMutation.isPending}
+                          className="flex-1 gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                          Delete
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })
+            )}
+          </div>
+
           {/* Pagination */}
           {!isLoading && properties.length > 0 && (
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-slate-600">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-sm text-slate-600 text-center sm:text-left">
                 Page {currentPage} of {totalPages}
               </p>
               <div className="flex gap-2">
@@ -281,7 +397,7 @@ export default function PropertiesPage() {
                   size="sm"
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="gap-2"
+                  className="flex-1 sm:flex-none gap-2"
                 >
                   <ChevronLeft className="h-4 w-4" />
                   Previous
@@ -291,7 +407,7 @@ export default function PropertiesPage() {
                   size="sm"
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className="gap-2"
+                  className="flex-1 sm:flex-none gap-2"
                 >
                   Next
                   <ChevronRight className="h-4 w-4" />
