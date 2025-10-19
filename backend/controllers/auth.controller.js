@@ -164,7 +164,7 @@ exports.login = async (req, res) => {
     const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production', // HTTPS in production
-      sameSite: 'strict',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict', // 'none' for cross-origin in production
       maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     };
 
@@ -200,6 +200,8 @@ exports.logout = async (req, res) => {
   try {
     res.cookie('token', '', {
       httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
       expires: new Date(0)
     });
 
