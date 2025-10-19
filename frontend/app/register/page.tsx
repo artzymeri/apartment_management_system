@@ -66,20 +66,23 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          surname: formData.surname,
-          email: formData.email,
-          password: formData.password,
-          number: formData.number,
-          role: "tenant",
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/auth/register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            surname: formData.surname,
+            email: formData.email,
+            password: formData.password,
+            number: formData.number,
+            role: "tenant",
+          }),
+        }
+      );
 
       const data = await response.json();
 
@@ -124,13 +127,13 @@ export default function RegisterPage() {
           </Link>
           <div className="flex justify-center items-center mb-2 gap-2">
             <Image
-                src="/favicon.svg"
-                alt="BllokuSync"
-                width={10}
-                height={10}
-                className="h-8 w-auto"
-                priority
-                style={{filter: 'brightness(0%)'}}
+              src="/favicon.svg"
+              alt="BllokuSync"
+              width={10}
+              height={10}
+              className="h-8 w-auto"
+              priority
+              style={{ filter: "brightness(0%)" }}
             />
             <h1 className="font-bold">BllokuSync</h1>
           </div>

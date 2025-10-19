@@ -99,7 +99,7 @@ export default function PropertyManagerSuggestionsPage() {
           params.append("status", selectedStatus);
         }
 
-        const response = await fetch(`http://localhost:5000/api/suggestions/manager?${params.toString()}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/suggestions/manager?${params.toString()}`, {
           credentials: 'include',
         });
 
@@ -124,7 +124,7 @@ export default function PropertyManagerSuggestionsPage() {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/properties?limit=1000", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/properties?limit=1000`, {
           credentials: 'include',
         });
 
@@ -145,7 +145,7 @@ export default function PropertyManagerSuggestionsPage() {
 
     setIsUpdating(true);
     try {
-      const response_text = await fetch(`http://localhost:5000/api/suggestions/${selectedSuggestion.id}/status`, {
+      const response_text = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/suggestions/${selectedSuggestion.id}/status`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -172,7 +172,7 @@ export default function PropertyManagerSuggestionsPage() {
           params.append("status", selectedStatus);
         }
 
-        const refreshResponse = await fetch(`http://localhost:5000/api/suggestions/manager?${params.toString()}`, {
+        const refreshResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/suggestions/manager?${params.toString()}`, {
           credentials: 'include',
         });
 

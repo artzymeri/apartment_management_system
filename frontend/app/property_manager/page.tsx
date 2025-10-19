@@ -106,7 +106,7 @@ export default function PropertyManagerDashboard() {
         throw new Error('No authentication token found');
       }
 
-      const response = await axios.get('http://localhost:5000/api/property-manager-dashboard', {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/property-manager-dashboard`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
