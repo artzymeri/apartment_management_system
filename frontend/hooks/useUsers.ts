@@ -149,6 +149,19 @@ export function useDeleteUser() {
   });
 }
 
+// Delete tenant mutation (for property managers)
+export function useDeleteTenant() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => userAPI.deleteTenant(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: userKeys.tenants() });
+      queryClient.invalidateQueries({ queryKey: userKeys.lists() });
+    },
+  });
+}
+
 // Update own profile mutation
 export function useUpdateOwnProfile() {
   const queryClient = useQueryClient();

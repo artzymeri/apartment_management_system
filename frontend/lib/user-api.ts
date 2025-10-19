@@ -202,6 +202,16 @@ class UserAPI {
     await handleApiResponse(response);
     return response.json();
   }
+
+  async deleteTenant(id: number) {
+    const response = await fetch(`${API_BASE_URL}/api/users/tenants/${id}`, {
+      method: 'DELETE',
+      headers: this.getAuthHeaders(),
+      credentials: 'include',
+    });
+    await handleApiResponse(response);
+    return response.json();
+  }
 }
 
 export const userAPI = new UserAPI();

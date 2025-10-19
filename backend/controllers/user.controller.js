@@ -852,3 +852,92 @@ exports.updateTenantForPropertyManager = async (req, res) => {
     });
   }
 };
+
+// Delete tenant for property manager
+exports.deleteTenantForPropertyManager = async (req, res) => {
+  try {
+    const propertyManagerId = req.user.id;
+    const tenantId = parseInt(req.params.id);
+
+    // Check if user is property manager or admin
+    const propertyManager = await db.User.findByPk(propertyManagerId);
+
+    if (!propertyManager || (propertyManager.role !== 'property_manager' && propertyManager.role !== 'admin')) {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied. Property Manager or Admin privileges required.'
+      });
+    }
+
+    // Get the property IDs that this property manager manages
+    const managedProperties = await db.PropertyManager.findAll({
+      where: { user_id: propertyManagerId },
+      attributes: ['property_id']
+    });
+
+    const managedPropertyIds = managedProperties.map(pm => pm.property_id);
+
+    // Admins can delete any tenant without property checks
+    if (propertyManager.role !== 'admin') {
+      if (managedPropertyIds.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: 'Tenant not found or you do not have permission to delete this tenant.'
+        });
+      }
+    }
+
+    // Find the tenant
+    const tenant = await db.User.findOne({
+      where: {
+        id: tenantId,
+        role: 'tenant'
+      }
+    });
+
+    if (!tenant) {
+      return res.status(404).json({
+        success: false,
+        message: 'Tenant not found or invalid tenant ID.'
+      });
+    }
+
+    // Prevent deleting yourself
+    if (propertyManagerId === tenantId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot delete your own account'
+      });
+    }
+
+    // For property managers (not admins), check if tenant is assigned to any of their properties
+    if (propertyManager.role !== 'admin') {
+      const tenantPropertyIds = tenant.property_ids || [];
+      const hasAccessToTenant = tenantPropertyIds.some(propId =>
+        managedPropertyIds.includes(propId)
+      );
+
+      if (!hasAccessToTenant) {
+        return res.status(404).json({
+          success: false,
+          message: 'Tenant not found or you do not have permission to delete this tenant.'
+        });
+      }
+    }
+
+    // Delete the tenant
+    await tenant.destroy();
+
+    res.status(200).json({
+      success: true,
+      message: 'Tenant deleted successfully'
+    });
+  } catch (error) {
+    console.error('Delete tenant for property manager error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error deleting tenant',
+      error: error.message
+    });
+  }
+};

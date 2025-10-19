@@ -18,6 +18,9 @@ router.get('/tenants/:id', isAdminOrPropertyManager, userController.getTenantByI
 // Update tenant for property manager
 router.put('/tenants/:id', isAdminOrPropertyManager, userController.updateTenantForPropertyManager);
 
+// Delete tenant for property manager
+router.delete('/tenants/:id', isAdminOrPropertyManager, userController.deleteTenantForPropertyManager);
+
 // Create user (admin or property_manager can create users)
 router.post('/', isAdminOrPropertyManager, userController.createUser);
 

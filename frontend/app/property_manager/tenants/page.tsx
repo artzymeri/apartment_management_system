@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { PropertyManagerLayout } from "@/components/layouts/PropertyManagerLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { useTenants, useDeleteUser } from "@/hooks/useUsers";
+import { useTenants, useDeleteTenant } from "@/hooks/useUsers";
 import { useProperties } from "@/hooks/useProperties";
 import { User } from "@/lib/user-api";
 import { Button } from "@/components/ui/button";
@@ -55,7 +55,7 @@ export default function PropertyManagerTenantsPage() {
 
   const { data, isLoading, error } = useTenants(appliedFilters);
   const { data: propertiesData } = useProperties({ myProperties: true });
-  const deleteMutation = useDeleteUser();
+  const deleteMutation = useDeleteTenant();
 
   // Create a properties map for quick lookup
   const propertiesMap = useMemo(() => {
