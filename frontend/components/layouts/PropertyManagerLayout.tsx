@@ -74,11 +74,6 @@ export function PropertyManagerLayout({ children, title }: { children: React.Rea
   // Fetch sidebar badge counts
   const { data: sidebarCounts, isLoading, error } = usePropertyManagerSidebarCounts();
 
-  // Debug logging
-  React.useEffect(() => {
-    console.log('[PM Layout] Sidebar Counts:', { sidebarCounts, isLoading, error });
-  }, [sidebarCounts, isLoading, error]);
-
   const handleLogout = async () => {
     await logout();
   };
@@ -150,7 +145,6 @@ export function PropertyManagerLayout({ children, title }: { children: React.Rea
               className="w-full justify-start gap-3 rounded-lg bg-indigo-700/50 px-3 py-6 hover:bg-indigo-700"
             >
               <Avatar>
-                <AvatarImage src="/manager-avatar.jpg" />
                 <AvatarFallback className="bg-amber-500 text-slate-900">
                   {user?.name?.[0]}
                   {user?.surname?.[0]}

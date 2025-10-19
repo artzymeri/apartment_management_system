@@ -171,8 +171,6 @@ export default function PaymentsPage() {
         year: selectedYear,
       });
 
-      console.log('Existing payments found:', paymentsData);
-
       setExistingPayments(paymentsData);
 
       // Clear any previously selected tenant IDs that have already paid
@@ -213,8 +211,6 @@ export default function PaymentsPage() {
         year: selectedYear,
       });
 
-      console.log('All payments for property found:', paymentsData);
-
       setExistingPayments(paymentsData);
     } catch (error) {
       console.error("Error fetching property payments:", error);
@@ -251,20 +247,12 @@ export default function PaymentsPage() {
 
       const propertyId = parseInt(selectedDialogProperty);
 
-      // Step 1: Ensure payment records exist for all selected tenants
-      console.log('Ensuring payment records exist...');
-      console.log('Tenant IDs:', selectedTenantIds);
-      console.log('Property ID:', propertyId);
-      console.log('Months:', selectedMonths, 'Year:', selectedYear);
-
       const ensureResult: EnsurePaymentRecordsResult = await ensurePaymentRecords(
         selectedTenantIds,
         propertyId,
         selectedYear,
         selectedMonths
       );
-
-      console.log('Ensure records result:', ensureResult);
 
       // Check if there were any errors
       if (ensureResult.errors && ensureResult.errors.length > 0) {
@@ -282,8 +270,6 @@ export default function PaymentsPage() {
 
       // Step 2: Get the payment IDs that were created/found
       const paymentIds = ensureResult.payments.map(p => p.id);
-
-      console.log('Payment IDs to mark as paid:', paymentIds);
 
       if (paymentIds.length === 0) {
         toast.error(`Could not create payment records. Check console for details.`);
