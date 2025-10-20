@@ -50,7 +50,7 @@ export default function LoginPage() {
       const phoneRegex = /^\+3834\d{7}$/;
       if (!phoneRegex.test(formData.identifier)) {
         toast.error(
-          "Phone number must start with +383 and be in format +3834911122"
+          "Numri i telefonit duhet të fillojë me +383 dhe të jetë në formatin +3834911122"
         );
         return;
       }
@@ -66,13 +66,13 @@ export default function LoginPage() {
       );
 
       if (!result.success) {
-        toast.error(result.message || "Login failed");
+        toast.error(result.message || "Hyrja dështoi");
       } else {
-        toast.success("Login successful! Redirecting...");
+        toast.success("Hyrja u krye me sukses! Duke ridrejtuar...");
       }
       // If successful, AuthContext will handle the redirect
     } catch (err) {
-      toast.error("Failed to connect to server. Please try again.");
+      toast.error("Dështoi lidhja me serverin. Ju lutemi provoni përsëri.");
       console.error("Login error:", err);
     } finally {
       setIsLoading(false);
@@ -99,18 +99,18 @@ export default function LoginPage() {
             <h1 className="font-bold text-xl">BllokuSync</h1>
           </Link>
           <h1 className="text-4xl font-bold text-slate-900 mb-2">
-            Welcome Back
+            Mirë se vini përsëri
           </h1>
           <p className="text-slate-600">
-            Sign in to access your apartment portal
+            Hyni për të aksesuar portalin tuaj të apartamentit
           </p>
         </div>
 
         <Card className="border-blue-200 shadow-xl">
           <CardHeader>
-            <CardTitle>Login</CardTitle>
+            <CardTitle>Hyrje</CardTitle>
             <CardDescription>
-              Enter your credentials to access your account
+              Vendosni kredencialet tuaja për të hyrë në llogarinë tuaj
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -142,14 +142,14 @@ export default function LoginPage() {
                 disabled={isLoading}
               >
                 <Phone className="h-4 w-4 mr-2" />
-                Phone
+                Telefon
               </Button>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="identifier">
-                  {loginMethod === "email" ? "Email" : "Phone Number"}
+                  {loginMethod === "email" ? "Email" : "Numri i Telefonit"}
                 </Label>
                 <Input
                   id="identifier"
@@ -169,7 +169,7 @@ export default function LoginPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">Fjalëkalimi</Label>
                 <Input
                   id="password"
                   name="password"
@@ -188,17 +188,17 @@ export default function LoginPage() {
                 className="w-full bg-blue-600 hover:bg-blue-700"
                 isLoading={isLoading}
               >
-                Sign In
+                Hyni
               </Button>
 
               <div className="text-center text-sm space-y-2">
                 <div>
-                  <span className="text-slate-600">Don't have an account? </span>
+                  <span className="text-slate-600">Nuk keni një llogari? </span>
                   <Link
                     href="/register"
                     className="text-blue-600 hover:text-blue-700 font-medium"
                   >
-                    Register here
+                    Regjistrohuni këtu
                   </Link>
                 </div>
                 <div>
@@ -206,7 +206,7 @@ export default function LoginPage() {
                     href="/forgot-password"
                     className="text-slate-600 hover:text-slate-700"
                   >
-                    Forgot password?
+                    Keni harruar fjalëkalimin?
                   </Link>
                 </div>
               </div>

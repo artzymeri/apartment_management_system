@@ -72,7 +72,7 @@ export function LocationPicker({
     return (
       <Alert variant="destructive">
         <AlertDescription>
-          Google Maps API key is not configured. Please add NEXT_PUBLIC_GOOGLE_MAPS_API_KEY to your environment variables.
+          Çelësi i Google Maps API nuk është konfiguruar. Ju lutem shtoni NEXT_PUBLIC_GOOGLE_MAPS_API_KEY në variablat e ambientit tuaj.
         </AlertDescription>
       </Alert>
     );
@@ -82,7 +82,7 @@ export function LocationPicker({
     return (
       <Alert variant="destructive">
         <AlertDescription>
-          Error loading Google Maps. Please try again later.
+          Gabim në ngarkimin e Google Maps. Ju lutem provoni përsëri më vonë.
         </AlertDescription>
       </Alert>
     );
@@ -94,12 +94,12 @@ export function LocationPicker({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <MapPin className="h-5 w-5" />
-            Property Location
+            Vendndodhja e Pronës
           </CardTitle>
           <CardDescription>
             {disabled
-              ? "View the property location on the map"
-              : "Click on the map to set the property location"
+              ? "Shiko vendndodhjen e pronës në hartë"
+              : "Kliko në hartë për të vendosur vendndodhjen e pronës"
             }
           </CardDescription>
         </CardHeader>
@@ -119,14 +119,14 @@ export function LocationPicker({
           <div>
             <CardTitle className="flex items-center gap-2">
               <MapPin className="h-5 w-5" />
-              Property Location
+              Vendndodhja e Pronës
             </CardTitle>
             <CardDescription>
               {isLocked
-                ? "Location is locked. Click the button to enable editing."
+                ? "Vendndodhja është e kyçur. Kliko butonin për të aktivizuar modifikimin."
                 : disabled
-                ? "View the property location on the map"
-                : "Click on the map to set the property location"
+                ? "Shiko vendndodhjen e pronës në hartë"
+                : "Kliko në hartë për të vendosur vendndodhjen e pronës"
               }
             </CardDescription>
           </div>
@@ -141,12 +141,12 @@ export function LocationPicker({
               {isLocked ? (
                 <>
                   <Lock className="h-4 w-4" />
-                  Unlock to Edit
+                  Zhblloko për Modifikim
                 </>
               ) : (
                 <>
                   <Unlock className="h-4 w-4" />
-                  Lock Location
+                  Kyç Vendndodhjen
                 </>
               )}
             </Button>
@@ -173,14 +173,14 @@ export function LocationPicker({
 
         {markerPosition && (
           <div className="mt-4 p-3 bg-slate-50 rounded-lg border border-slate-200">
-            <p className="text-sm font-medium text-slate-700">Selected Coordinates:</p>
+            <p className="text-sm font-medium text-slate-700">Koordinatat e Zgjedhura:</p>
             <p className="text-xs text-slate-600 mt-1">
-              Latitude: {Number(markerPosition.lat).toFixed(6)}, Longitude: {Number(markerPosition.lng).toFixed(6)}
+              Gjerësia: {Number(markerPosition.lat).toFixed(6)}, Gjatësia: {Number(markerPosition.lng).toFixed(6)}
             </p>
             {isLocked && (
               <p className="text-xs text-amber-600 mt-2 flex items-center gap-1">
                 <Lock className="h-3 w-3" />
-                Location is locked and cannot be changed
+                Vendndodhja është e kyçur dhe nuk mund të ndryshohet
               </p>
             )}
           </div>

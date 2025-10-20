@@ -41,13 +41,13 @@ export default function RegisterPage() {
 
     // Validate password match
     if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match");
+      toast.error("Fjalëkalimet nuk përputhen");
       return;
     }
 
     // Validate password length
     if (formData.password.length < 6) {
-      toast.error("Password must be at least 6 characters long");
+      toast.error("Fjalëkalimi duhet të jetë të paktën 6 karaktere i gjatë");
       return;
     }
 
@@ -56,7 +56,7 @@ export default function RegisterPage() {
       const phoneRegex = /^\+3834\d{7}$/;
       if (!phoneRegex.test(formData.number)) {
         toast.error(
-          "Phone number must start with +383 and be in format +3834911122"
+          "Numri i telefonit duhet të fillojë me +383 dhe të jetë në formatin +3834911122"
         );
         return;
       }
@@ -87,7 +87,7 @@ export default function RegisterPage() {
 
       if (data.success) {
         toast.success(
-          data.message || "Registration successful! Redirecting to login..."
+          data.message || "Regjistrimi u krye me sukses! Duke ridrejtuar në hyrje..."
         );
         setFormData({
           name: "",
@@ -103,10 +103,10 @@ export default function RegisterPage() {
           router.push("/login");
         }, 2000);
       } else {
-        toast.error(data.message || "Registration failed");
+        toast.error(data.message || "Regjistrimi dështoi");
       }
     } catch (err) {
-      toast.error("Failed to connect to server. Please try again.");
+      toast.error("Dështoi lidhja me serverin. Ju lutemi provoni përsëri.");
       console.error("Registration error:", err);
     } finally {
       setIsLoading(false);
@@ -133,30 +133,30 @@ export default function RegisterPage() {
             <h1 className="font-bold text-xl">BllokuSync</h1>
           </Link>
           <h1 className="text-4xl font-bold text-slate-900 mb-2">
-            Create Account
+            Krijo Llogari
           </h1>
           <p className="text-slate-600">
-            Register for the Apartment Management System
+            Regjistrohuni për Sistemin e Menaxhimit të Apartamenteve
           </p>
         </div>
 
         <Card className="border-emerald-200 shadow-xl">
           <CardHeader>
-            <CardTitle>Registration Form</CardTitle>
+            <CardTitle>Formular Regjistrimi</CardTitle>
             <CardDescription>
-              Submit your details to request access
+              Vendosni detajet tuaja për të kërkuar qasje
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">First Name *</Label>
+                  <Label htmlFor="name">Emri *</Label>
                   <Input
                     id="name"
                     name="name"
                     type="text"
-                    placeholder="John"
+                    placeholder="Agron"
                     value={formData.name}
                     onChange={handleChange}
                     required
@@ -164,12 +164,12 @@ export default function RegisterPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="surname">Last Name *</Label>
+                  <Label htmlFor="surname">Mbiemri *</Label>
                   <Input
                     id="surname"
                     name="surname"
                     type="text"
-                    placeholder="Doe"
+                    placeholder="Krasniqi"
                     value={formData.surname}
                     onChange={handleChange}
                     required
@@ -184,7 +184,7 @@ export default function RegisterPage() {
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="john.doe@example.com"
+                  placeholder="agron.krasniqi@example.com"
                   value={formData.email}
                   onChange={handleChange}
                   required
@@ -193,7 +193,7 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="number">Phone Number</Label>
+                <Label htmlFor="number">Numri i Telefonit</Label>
                 <Input
                   id="number"
                   name="number"
@@ -204,12 +204,12 @@ export default function RegisterPage() {
                   disabled={isLoading}
                 />
                 <p className="text-xs text-slate-600">
-                  Format: +3834911122 (must start with +383)
+                  Formati: +3834911122 (duhet të fillojë me +383)
                 </p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password *</Label>
+                <Label htmlFor="password">Fjalëkalimi *</Label>
                 <Input
                   id="password"
                   name="password"
@@ -221,12 +221,12 @@ export default function RegisterPage() {
                   disabled={isLoading}
                 />
                 <p className="text-xs text-slate-600">
-                  Must be at least 6 characters
+                  Duhet të jetë të paktën 6 karaktere
                 </p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password *</Label>
+                <Label htmlFor="confirmPassword">Konfirmo Fjalëkalimin *</Label>
                 <Input
                   id="confirmPassword"
                   name="confirmPassword"
@@ -244,16 +244,16 @@ export default function RegisterPage() {
                 className="w-full bg-emerald-600 hover:bg-emerald-700"
                 isLoading={isLoading}
               >
-                Submit Registration
+                Dërgo Regjistrimin
               </Button>
 
               <div className="text-center text-sm">
-                <span className="text-slate-600">Already have an account? </span>
+                <span className="text-slate-600">Keni tashmë një llogari? </span>
                 <Link
                   href="/login"
                   className="text-emerald-600 hover:text-emerald-700 font-medium"
                 >
-                  Login here
+                  Hyni këtu
                 </Link>
               </div>
             </form>

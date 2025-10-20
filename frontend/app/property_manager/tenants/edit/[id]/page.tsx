@@ -112,8 +112,8 @@ export default function EditTenantPage() {
 
     // Validate property selection
     if (!formData.property_id) {
-      setError("Please select a property for this tenant");
-      toast.error("Please select a property for this tenant");
+      setError("Ju lutemi zgjidhni një pronë për këtë qiramarrës");
+      toast.error("Ju lutemi zgjidhni një pronë për këtë qiramarrës");
       return;
     }
 
@@ -138,12 +138,12 @@ export default function EditTenantPage() {
         data: updateData,
       });
 
-      toast.success("Tenant updated successfully! Redirecting...");
+      toast.success("Qiramarrësi u përditësua me sukses! Duke ridrejtuar...");
       setTimeout(() => {
         router.push("/property_manager/tenants");
       }, 1500);
     } catch (err: any) {
-      const errorMessage = err?.message || "Failed to update tenant";
+      const errorMessage = err?.message || "Dështoi përditësimi i qiramarrësit";
       setError(errorMessage);
       toast.error(errorMessage);
       console.error("Update tenant error:", err);
@@ -153,7 +153,7 @@ export default function EditTenantPage() {
   if (isLoading || propertiesLoading || isRefetching) {
     return (
       <ProtectedRoute allowedRoles={["property_manager"]}>
-        <PropertyManagerLayout title="Edit Tenant">
+        <PropertyManagerLayout title="Ndrysho Qiramarrësin">
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
           </div>
@@ -165,10 +165,10 @@ export default function EditTenantPage() {
   if (!tenantData?.data || tenantData.data.role !== "tenant") {
     return (
       <ProtectedRoute allowedRoles={["property_manager"]}>
-        <PropertyManagerLayout title="Edit Tenant">
+        <PropertyManagerLayout title="Ndrysho Qiramarrësin">
           <Alert variant="destructive">
             <AlertDescription className="text-xs md:text-sm">
-              Tenant not found or invalid tenant ID.
+              Qiramarrësi nuk u gjet ose ID e pavlefshme.
             </AlertDescription>
           </Alert>
         </PropertyManagerLayout>
@@ -178,7 +178,7 @@ export default function EditTenantPage() {
 
   return (
     <ProtectedRoute allowedRoles={["property_manager"]}>
-      <PropertyManagerLayout title="Edit Tenant">
+      <PropertyManagerLayout title="Ndrysho Qiramarrësin">
         <div className="max-w-2xl mx-auto space-y-4 md:space-y-6">
           {/* Back button */}
           <div className="flex items-center gap-3">
@@ -191,7 +191,7 @@ export default function EditTenantPage() {
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <p className="text-xs md:text-sm text-slate-600">
-              Update the details for this tenant
+              Përditëso detajet për këtë qiramarrës
             </p>
           </div>
 
@@ -199,9 +199,9 @@ export default function EditTenantPage() {
           <form onSubmit={handleSubmit}>
             <Card>
               <CardHeader>
-                <CardTitle className="text-base md:text-lg">Tenant Information</CardTitle>
+                <CardTitle className="text-base md:text-lg">Informacioni i Qiramarrësit</CardTitle>
                 <CardDescription className="text-xs md:text-sm">
-                  Update the details for this tenant
+                  Përditëso detajet për këtë qiramarrës
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 md:space-y-6">
@@ -213,7 +213,7 @@ export default function EditTenantPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name" className="text-xs md:text-sm">First Name *</Label>
+                    <Label htmlFor="name" className="text-xs md:text-sm">Emri *</Label>
                     <Input
                       id="name"
                       value={formData.name}
@@ -221,13 +221,13 @@ export default function EditTenantPage() {
                         setFormData((prev) => ({ ...prev, name: e.target.value }))
                       }
                       required
-                      placeholder="John"
+                      placeholder="Agron"
                       className="text-sm md:text-base h-9 md:h-10"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="surname" className="text-xs md:text-sm">Last Name *</Label>
+                    <Label htmlFor="surname" className="text-xs md:text-sm">Mbiemri *</Label>
                     <Input
                       id="surname"
                       value={formData.surname}
@@ -235,7 +235,7 @@ export default function EditTenantPage() {
                         setFormData((prev) => ({ ...prev, surname: e.target.value }))
                       }
                       required
-                      placeholder="Doe"
+                      placeholder="Krasniqi"
                       className="text-sm md:text-base h-9 md:h-10"
                     />
                   </div>
@@ -251,13 +251,13 @@ export default function EditTenantPage() {
                       setFormData((prev) => ({ ...prev, email: e.target.value }))
                     }
                     required
-                    placeholder="john.doe@example.com"
+                    placeholder="agron.krasniqi@example.com"
                     className="text-sm md:text-base h-9 md:h-10"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-xs md:text-sm">New Password</Label>
+                  <Label htmlFor="password" className="text-xs md:text-sm">Fjalëkalimi i Ri</Label>
                   <Input
                     id="password"
                     type="password"
@@ -265,17 +265,17 @@ export default function EditTenantPage() {
                     onChange={(e) =>
                       setFormData((prev) => ({ ...prev, password: e.target.value }))
                     }
-                    placeholder="Leave blank to keep current password"
+                    placeholder="Lëreni bosh për të mbajtur fjalëkalimin aktual"
                     minLength={6}
                     className="text-sm md:text-base h-9 md:h-10"
                   />
                   <p className="text-xs text-slate-500">
-                    Only fill this if you want to change the password
+                    Plotësoni vetëm nëse dëshironi të ndryshoni fjalëkalimin
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="number" className="text-xs md:text-sm">Phone Number</Label>
+                  <Label htmlFor="number" className="text-xs md:text-sm">Numri i Telefonit</Label>
                   <Input
                     id="number"
                     type="tel"
@@ -283,13 +283,13 @@ export default function EditTenantPage() {
                     onChange={(e) =>
                       setFormData((prev) => ({ ...prev, number: e.target.value }))
                     }
-                    placeholder="+1234567890"
+                    placeholder="+38349123456"
                     className="text-sm md:text-base h-9 md:h-10"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="property_id" className="text-xs md:text-sm">Select Property</Label>
+                  <Label htmlFor="property_id" className="text-xs md:text-sm">Zgjidhni Pronën</Label>
                   <Select
                     key={formData.property_id || 'no-selection'}
                     value={formData.property_id}
@@ -299,12 +299,12 @@ export default function EditTenantPage() {
                     required
                   >
                     <SelectTrigger className="text-sm md:text-base h-9 md:h-10">
-                      <SelectValue placeholder="Select a property" />
+                      <SelectValue placeholder="Zgjidhni një pronë" />
                     </SelectTrigger>
                     <SelectContent>
                       {managedProperties.length === 0 && (
                         <SelectItem value="no-properties" disabled className="text-sm">
-                          No properties found
+                          Asnjë pronë nuk u gjet
                         </SelectItem>
                       )}
                       {managedProperties.map((property: any) => (
@@ -315,12 +315,12 @@ export default function EditTenantPage() {
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-slate-500">
-                    Assign the tenant to a property
+                    Caktoni qiramarrësin në një pronë
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="floor_assigned" className="text-xs md:text-sm">Floor Number</Label>
+                  <Label htmlFor="floor_assigned" className="text-xs md:text-sm">Numri i Katit</Label>
                   <select
                     id="floor_assigned"
                     value={formData.floor_assigned}
@@ -336,24 +336,24 @@ export default function EditTenantPage() {
                   >
                     <option value="">
                       {!formData.property_id
-                        ? "Select a property first"
+                        ? "Zgjidhni një pronë së pari"
                         : availableFloors.length === 0
-                        ? "No floors available"
-                        : "Select a floor (optional)"}
+                        ? "Asnjë kat i disponueshëm"
+                        : "Zgjidhni një kat (opsionale)"}
                     </option>
                     {availableFloors.map((floor) => (
                       <option key={floor} value={floor.toString()}>
-                        Floor {floor}
+                        Kati {floor}
                       </option>
                     ))}
                   </select>
                   <p className="text-xs text-slate-500">
-                    Assign the tenant to a specific floor (optional)
+                    Caktoni qiramarrësin në një kat specifik (opsionale)
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="monthly_rate" className="text-xs md:text-sm">Monthly Rate</Label>
+                  <Label htmlFor="monthly_rate" className="text-xs md:text-sm">Norma Mujore</Label>
                   <div className="relative">
                     <Input
                       id="monthly_rate"
@@ -362,7 +362,7 @@ export default function EditTenantPage() {
                       onChange={(e) =>
                         setFormData((prev) => ({ ...prev, monthly_rate: e.target.value }))
                       }
-                      placeholder="e.g., 500, 1000, 1500..."
+                      placeholder="p.sh., 500, 1000, 1500..."
                       min="0"
                       step="0.01"
                       className="pr-8 text-sm md:text-base h-9 md:h-10"
@@ -372,7 +372,7 @@ export default function EditTenantPage() {
                     </span>
                   </div>
                   <p className="text-xs text-slate-500">
-                    Set the monthly rent for the tenant
+                    Vendosni qiranë mujore për qiramarrësin
                   </p>
                 </div>
 
@@ -383,7 +383,7 @@ export default function EditTenantPage() {
                     onClick={() => router.push("/property_manager/tenants")}
                     className="flex-1 text-xs md:text-sm h-9 md:h-10"
                   >
-                    Cancel
+                    Anulo
                   </Button>
                   <Button
                     type="submit"
@@ -391,11 +391,11 @@ export default function EditTenantPage() {
                     className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-xs md:text-sm h-9 md:h-10"
                   >
                     {updateMutation.isPending ? (
-                      <>Updating...</>
+                      <>Duke përditësuar...</>
                     ) : (
                       <>
                         <Save className="mr-2 h-4 w-4" />
-                        Update Tenant
+                        Përditëso Qiramarrësin
                       </>
                     )}
                   </Button>
@@ -408,10 +408,10 @@ export default function EditTenantPage() {
           {tenantData && formData.property_id && (
             <Card className="mt-4 md:mt-6">
               <CardHeader>
-                <CardTitle className="text-base md:text-lg">Payment Tracking</CardTitle>
+                <CardTitle className="text-base md:text-lg">Ndjekja e Pagesave</CardTitle>
                 <CardDescription className="text-xs md:text-sm">
-                  Track monthly payments for this tenant. Payment records are automatically
-                  generated from the property creation date to the current month.
+                  Ndiqni pagesat mujore për këtë qiramarrës. Regjistrat e pagesave gjenerohen automatikisht
+                  nga data e krijimit të pronës deri në muajin aktual.
                 </CardDescription>
               </CardHeader>
               <CardContent>

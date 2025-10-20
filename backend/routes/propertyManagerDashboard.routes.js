@@ -1,23 +1,19 @@
 const express = require('express');
 const router = express.Router();
+const { verifyToken, isAdminOrPropertyManager } = require('../middleware/auth.middleware');
 const propertyManagerDashboardController = require('../controllers/propertyManagerDashboard.controller');
-const { authenticateToken, authorizeRoles } = require('../middleware/auth.middleware');
 
-// Get sidebar badge counts (pending reports, complaints, suggestions)
-// This must come BEFORE the root '/' route
-router.get(
-  '/sidebar-counts',
-  authenticateToken,
-  authorizeRoles('property_manager'),
-  propertyManagerDashboardController.getSidebarCounts
-);
+// All routes require authentication and property_manager or admin role
+router.use(verifyToken);
+router.use(isAdminOrPropertyManager);
 
-// Get all property manager dashboard data in one call
-router.get(
-  '/',
-  authenticateToken,
-  authorizeRoles('property_manager'),
-  propertyManagerDashboardController.getPropertyManagerDashboardData
-);
+// Get main dashboard data
+router.get('/', propertyManagerDashboardController.getPropertyManagerDashboardData);
+
+// Get sidebar badge counts
+router.get('/sidebar-counts', propertyManagerDashboardController.getSidebarCounts);
+
+// Get detailed payments data
+router.get('/payments', propertyManagerDashboardController.getPropertyManagerPayments);
 
 module.exports = router;

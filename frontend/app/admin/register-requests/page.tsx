@@ -127,11 +127,11 @@ export default function RegisterRequestsPage() {
         id: approvalDialog.request.id,
         data: approvalData,
       });
-      toast.success(`Registration request approved for ${approvalDialog.request.name} ${approvalDialog.request.surname}`);
+      toast.success(`Kërkesa për regjistrim u miratua për ${approvalDialog.request.name} ${approvalDialog.request.surname}`);
       closeApprovalDialog();
     } catch (error) {
       console.error("Error approving request:", error);
-      toast.error("Failed to approve registration request");
+      toast.error("Dështoi miratimi i kërkesës për regjistrim");
     }
   };
 
@@ -146,9 +146,15 @@ export default function RegisterRequestsPage() {
       rejected: "destructive",
     };
 
+    const labels: Record<string, string> = {
+      pending: "Në pritje",
+      approved: "Miratuar",
+      rejected: "Refuzuar",
+    };
+
     return (
       <Badge variant={variants[status] || "default"}>
-        {status.charAt(0).toUpperCase() + status.slice(1)}
+        {labels[status] || status}
       </Badge>
     );
   };
@@ -162,15 +168,15 @@ export default function RegisterRequestsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Search className="h-5 w-5" />
-                Filter Register Requests
+                Filtro Kërkesat për Regjistrim
               </CardTitle>
-              <CardDescription>Search and filter registration requests</CardDescription>
+              <CardDescription>Kërko dhe filtro kërkesat për regjistrim</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col gap-4 md:flex-row">
                 <div className="flex-1">
                   <Input
-                    placeholder="Search by name, surname, or email..."
+                    placeholder="Kërko sipas emrit, mbiemrit ose emailit..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
@@ -182,30 +188,30 @@ export default function RegisterRequestsPage() {
           {/* Register Requests Table - Desktop */}
           <Card className="hidden md:block">
             <CardHeader>
-              <CardTitle>Registration Requests</CardTitle>
+              <CardTitle>Kërkesat për Regjistrim</CardTitle>
               <CardDescription>
-                {data?.pagination.total || 0} total request(s)
+                {data?.pagination.total || 0} kërkesa gjithsej
               </CardDescription>
             </CardHeader>
             <CardContent>
               {error && (
                 <Alert variant="destructive" className="mb-4">
                   <AlertDescription>
-                    Error loading register requests. Please try again.
+                    Gabim në ngarkimin e kërkesave. Ju lutem provoni përsëri.
                   </AlertDescription>
                 </Alert>
               )}
 
               {isLoading ? (
                 <div className="flex items-center justify-center py-8">
-                  <div className="text-slate-500">Loading...</div>
+                  <div className="text-slate-500">Duke u ngarkuar...</div>
                 </div>
               ) : !data?.data || data.data.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <UserPlus className="h-12 w-12 mb-4 opacity-50" />
-                  <h3 className="text-lg font-semibold mb-2">No Registration Requests</h3>
+                  <h3 className="text-lg font-semibold mb-2">Nuk ka Kërkesa për Regjistrim</h3>
                   <p className="text-slate-500">
-                    There are no registration requests matching your filters.
+                    Nuk ka kërkesa për regjistrim që përputhen me filtrat tuaj.
                   </p>
                 </div>
               ) : (
@@ -214,12 +220,12 @@ export default function RegisterRequestsPage() {
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Name</TableHead>
+                          <TableHead>Emri</TableHead>
                           <TableHead>Email</TableHead>
-                          <TableHead>Phone</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead>Request Date</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
+                          <TableHead>Telefoni</TableHead>
+                          <TableHead>Statusi</TableHead>
+                          <TableHead>Data e Kërkesës</TableHead>
+                          <TableHead className="text-right">Veprime</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -245,7 +251,7 @@ export default function RegisterRequestsPage() {
                                       disabled={approveMutation.isPending}
                                     >
                                       <Check className="h-4 w-4 mr-1" />
-                                      Approve
+                                      Aprovo
                                     </Button>
                                     <Button
                                       size="sm"
@@ -254,7 +260,7 @@ export default function RegisterRequestsPage() {
                                       disabled={rejectMutation.isPending}
                                     >
                                       <X className="h-4 w-4 mr-1" />
-                                      Reject
+                                      Refuzo
                                     </Button>
                                   </>
                                 )}
@@ -270,7 +276,7 @@ export default function RegisterRequestsPage() {
                   {data.pagination.totalPages > 1 && (
                     <div className="mt-4 flex items-center justify-between">
                       <div className="text-sm text-slate-600">
-                        Page {data.pagination.page} of {data.pagination.totalPages}
+                        Faqja {data.pagination.page} nga {data.pagination.totalPages}
                       </div>
                       <div className="flex gap-2">
                         <Button
@@ -280,7 +286,7 @@ export default function RegisterRequestsPage() {
                           disabled={currentPage === 1}
                         >
                           <ChevronLeft className="h-4 w-4" />
-                          Previous
+                          Mëparshme
                         </Button>
                         <Button
                           variant="outline"
@@ -288,7 +294,7 @@ export default function RegisterRequestsPage() {
                           onClick={() => handlePageChange(currentPage + 1)}
                           disabled={currentPage === data.pagination.totalPages}
                         >
-                          Next
+                          Tjetër
                           <ChevronRight className="h-4 w-4" />
                         </Button>
                       </div>
@@ -304,9 +310,9 @@ export default function RegisterRequestsPage() {
             {/* Header Card */}
             <Card>
               <CardHeader>
-                <CardTitle>Registration Requests</CardTitle>
+                <CardTitle>Kërkesat për Regjistrim</CardTitle>
                 <CardDescription>
-                  {data?.pagination.total || 0} total request(s)
+                  {data?.pagination.total || 0} kërkesa gjithsej
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -314,7 +320,7 @@ export default function RegisterRequestsPage() {
             {error && (
               <Alert variant="destructive">
                 <AlertDescription>
-                  Error loading register requests. Please try again.
+                  Gabim në ngarkimin e kërkesave. Ju lutem provoni përsëri.
                 </AlertDescription>
               </Alert>
             )}
@@ -324,7 +330,7 @@ export default function RegisterRequestsPage() {
                 <CardContent className="py-12">
                   <div className="flex items-center justify-center text-slate-500">
                     <Loader2 className="h-6 w-6 animate-spin mr-2" />
-                    Loading...
+                    Duke u ngarkuar...
                   </div>
                 </CardContent>
               </Card>
@@ -333,9 +339,9 @@ export default function RegisterRequestsPage() {
                 <CardContent className="py-12">
                   <div className="flex flex-col items-center justify-center text-center text-slate-500">
                     <UserPlus className="h-12 w-12 mb-4 opacity-50" />
-                    <h3 className="text-lg font-semibold mb-2">No Registration Requests</h3>
+                    <h3 className="text-lg font-semibold mb-2">Nuk ka Kërkesa për Regjistrim</h3>
                     <p className="text-sm">
-                      There are no registration requests matching your filters.
+                      Nuk ka kërkesa për regjistrim që përputhen me filtrat tuaj.
                     </p>
                   </div>
                 </CardContent>
@@ -372,7 +378,7 @@ export default function RegisterRequestsPage() {
                       {/* Request Date */}
                       <div className="flex items-center gap-2 text-sm text-slate-500 pt-2 border-t">
                         <CalendarIcon className="h-3.5 w-3.5" />
-                        <span>Requested: {format(new Date(request.created_at), "MMM dd, yyyy")}</span>
+                        <span>Kërkuar: {format(new Date(request.created_at), "MMM dd, yyyy")}</span>
                       </div>
 
                       {/* Actions */}
@@ -386,7 +392,7 @@ export default function RegisterRequestsPage() {
                             disabled={approveMutation.isPending}
                           >
                             <Check className="h-4 w-4 mr-2" />
-                            Approve
+                            Aprovo
                           </Button>
                           <Button
                             size="sm"
@@ -396,7 +402,7 @@ export default function RegisterRequestsPage() {
                             disabled={rejectMutation.isPending}
                           >
                             <X className="h-4 w-4 mr-2" />
-                            Reject
+                            Refuzo
                           </Button>
                         </div>
                       )}
@@ -408,7 +414,7 @@ export default function RegisterRequestsPage() {
                 {data.pagination.totalPages > 1 && (
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
                     <p className="text-sm text-slate-600 text-center sm:text-left">
-                      Page {data.pagination.page} of {data.pagination.totalPages}
+                      Faqja {data.pagination.page} nga {data.pagination.totalPages}
                     </p>
                     <div className="flex gap-2">
                       <Button
@@ -418,7 +424,7 @@ export default function RegisterRequestsPage() {
                         disabled={currentPage === 1}
                       >
                         <ChevronLeft className="h-4 w-4 sm:mr-2" />
-                        <span className="hidden sm:inline">Previous</span>
+                        <span className="hidden sm:inline">Mëparshme</span>
                       </Button>
                       <Button
                         variant="outline"
@@ -426,7 +432,7 @@ export default function RegisterRequestsPage() {
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={currentPage === data.pagination.totalPages}
                       >
-                        <span className="hidden sm:inline">Next</span>
+                        <span className="hidden sm:inline">Tjetër</span>
                         <ChevronRight className="h-4 w-4 sm:ml-2" />
                       </Button>
                     </div>
@@ -441,29 +447,29 @@ export default function RegisterRequestsPage() {
         <Dialog open={approvalDialog.isOpen} onOpenChange={closeApprovalDialog}>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Approve Registration Request</DialogTitle>
+              <DialogTitle>Aprovo Kërkesën për Regjistrim</DialogTitle>
               <DialogDescription>
-                Approve and assign a role to {approvalDialog.request?.name}{" "}
+                Aprovo dhe cakto një rol për {approvalDialog.request?.name}{" "}
                 {approvalDialog.request?.surname}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="role">User Role</Label>
+                <Label htmlFor="role">Roli i Përdoruesit</Label>
                 <Select value={approvalRole} onValueChange={setApprovalRole}>
                   <SelectTrigger id="role">
-                    <SelectValue placeholder="Select role" />
+                    <SelectValue placeholder="Zgjidh rolin" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="tenant">Tenant</SelectItem>
-                    <SelectItem value="property_manager">Property Manager</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="tenant">Qiramarrës</SelectItem>
+                    <SelectItem value="property_manager">Menaxher Pronash</SelectItem>
+                    <SelectItem value="admin">Administrator</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               {approvalRole === 'property_manager' && (
                 <div className="space-y-2">
-                  <Label htmlFor="expiry-date">Expiry Date</Label>
+                  <Label htmlFor="expiry-date">Data e Skadimit</Label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
@@ -471,7 +477,7 @@ export default function RegisterRequestsPage() {
                         className="w-full justify-start text-left"
                         onClick={(e) => e.preventDefault()}
                       >
-                        {expiryDate ? format(expiryDate, "MMM dd, yyyy") : "Select expiry date"}
+                        {expiryDate ? format(expiryDate, "MMM dd, yyyy") : "Zgjidh datën e skadimit"}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-4" align="start">
@@ -487,13 +493,13 @@ export default function RegisterRequestsPage() {
                               size="sm"
                               onClick={() => setExpiryDate(undefined)}
                             >
-                              Clear
+                              Pastro
                             </Button>
                             <Button
                               size="sm"
-                              onClick={() => setExpiryDate(undefined)}
+                              onClick={() => setExpiryDate(new Date())}
                             >
-                              Today
+                              Sot
                             </Button>
                           </div>
                         }
@@ -505,10 +511,10 @@ export default function RegisterRequestsPage() {
             </div>
             <DialogFooter className="flex-col sm:flex-row gap-2">
               <Button variant="outline" onClick={closeApprovalDialog} className="w-full sm:w-auto">
-                Cancel
+                Anulo
               </Button>
               <Button onClick={handleApprove} disabled={approveMutation.isPending} className="w-full sm:w-auto">
-                {approveMutation.isPending ? "Approving..." : "Approve"}
+                {approveMutation.isPending ? "Duke aprovuar..." : "Aprovo"}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -518,31 +524,31 @@ export default function RegisterRequestsPage() {
         <AlertDialog open={!!requestToReject} onOpenChange={() => setRequestToReject(null)}>
           <AlertDialogContent className="sm:max-w-[425px]">
             <AlertDialogHeader>
-              <AlertDialogTitle>Confirm Rejection</AlertDialogTitle>
+              <AlertDialogTitle>Konfirmo Refuzimin</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to reject the registration request from &quot;{requestToReject?.email}&quot;?{" "}
-                This will permanently delete the request and cannot be undone.
+                Jeni i sigurt që dëshironi të refuzoni kërkesën për regjistrim nga &quot;{requestToReject?.email}&quot;?{" "}
+                Ky veprim do të fshijë përgjithmonë kërkesën dhe nuk mund të zhbëhet.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter className="flex-col sm:flex-row gap-2">
-              <AlertDialogCancel className="w-full sm:w-auto">Cancel</AlertDialogCancel>
+              <AlertDialogCancel className="w-full sm:w-auto">Anulo</AlertDialogCancel>
               <AlertDialogAction
                 onClick={async () => {
                   if (requestToReject) {
                     try {
                       await rejectMutation.mutateAsync(requestToReject.id);
-                      toast.success(`Registration request rejected for ${requestToReject.name} ${requestToReject.surname}`);
+                      toast.success(`Kërkesa për regjistrim u refuzua për ${requestToReject.name} ${requestToReject.surname}`);
                       setRequestToReject(null);
                     } catch (error) {
                       console.error("Error rejecting request:", error);
-                      toast.error("Failed to reject registration request");
+                      toast.error("Dështoi refuzimi i kërkesës për regjistrim");
                     }
                   }
                 }}
                 disabled={rejectMutation.isPending}
                 className="bg-red-600 hover:bg-red-700 w-full sm:w-auto"
               >
-                {rejectMutation.isPending ? "Rejecting..." : "Reject"}
+                {rejectMutation.isPending ? "Duke refuzuar..." : "Refuzo"}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

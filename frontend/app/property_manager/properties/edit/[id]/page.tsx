@@ -73,8 +73,8 @@ export default function EditPropertyPage() {
     setSuccess(false);
 
     if (!formData.city_id) {
-      setError("Please select a city");
-      toast.error("Please select a city");
+      setError("Ju lutemi zgjidhni një qytet");
+      toast.error("Ju lutemi zgjidhni një qytet");
       return;
     }
 
@@ -94,17 +94,17 @@ export default function EditPropertyPage() {
 
       if (result.success) {
         setSuccess(true);
-        toast.success("Property updated successfully! Redirecting...");
+        toast.success("Prona u përditësua me sukses! Duke ridrejtuar...");
         setTimeout(() => {
           router.push("/property_manager/properties");
         }, 1500);
       } else {
-        setError(result.message || "Failed to update property");
-        toast.error(result.message || "Failed to update property");
+        setError(result.message || "Dështoi përditësimi i pronës");
+        toast.error(result.message || "Dështoi përditësimi i pronës");
       }
     } catch (err) {
-      setError("Failed to connect to server");
-      toast.error("Failed to connect to server");
+      setError("Dështoi lidhja me serverin");
+      toast.error("Dështoi lidhja me serverin");
       console.error("Update property error:", err);
     }
   };
@@ -112,7 +112,7 @@ export default function EditPropertyPage() {
   if (isLoading) {
     return (
       <ProtectedRoute allowedRoles={["property_manager"]}>
-        <PropertyManagerLayout title="Edit Property">
+        <PropertyManagerLayout title="Ndrysho Pronën">
           <div className="flex items-center justify-center h-96">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" />
           </div>
@@ -123,7 +123,7 @@ export default function EditPropertyPage() {
 
   return (
     <ProtectedRoute allowedRoles={["property_manager"]}>
-      <PropertyManagerLayout title="Edit Property">
+      <PropertyManagerLayout title="Ndrysho Pronën">
         <div className="max-w-4xl mx-auto space-y-4 md:space-y-6">
           {/* Back Button */}
           <div className="flex items-center gap-3">
@@ -136,7 +136,7 @@ export default function EditPropertyPage() {
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <p className="text-xs md:text-sm text-slate-600">
-              Update the property information
+              Përditëso informacionin e pronës
             </p>
           </div>
 
@@ -144,7 +144,7 @@ export default function EditPropertyPage() {
           {success && (
             <Alert className="border-green-200 bg-green-50">
               <AlertDescription className="text-green-800 text-xs md:text-sm">
-                Property updated successfully! Redirecting...
+                Prona u përditësua me sukses! Duke ridrejtuar...
               </AlertDescription>
             </Alert>
           )}
@@ -161,17 +161,17 @@ export default function EditPropertyPage() {
               {/* Property Details Form */}
               <Card className="border-indigo-200">
                 <CardHeader>
-                  <CardTitle className="text-base md:text-lg">Property Details</CardTitle>
+                  <CardTitle className="text-base md:text-lg">Detajet e Pronës</CardTitle>
                   <CardDescription className="text-xs md:text-sm">
-                    Update the property information below
+                    Përditëso informacionin e pronës më poshtë
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4 md:space-y-6">
                   <div className="space-y-2">
-                    <Label htmlFor="name" className="text-xs md:text-sm">Property Name *</Label>
+                    <Label htmlFor="name" className="text-xs md:text-sm">Emri i Pronës *</Label>
                     <Input
                       id="name"
-                      placeholder="e.g., Greenwood Apartments"
+                      placeholder="p.sh., Apartamentet Greenwood"
                       value={formData.name}
                       onChange={(e) =>
                         setFormData({ ...formData, name: e.target.value })
@@ -183,10 +183,10 @@ export default function EditPropertyPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="address" className="text-xs md:text-sm">Address *</Label>
+                    <Label htmlFor="address" className="text-xs md:text-sm">Adresa *</Label>
                     <Input
                       id="address"
-                      placeholder="e.g., 123 Main Street"
+                      placeholder="p.sh., Rruga Kryesore 123"
                       value={formData.address}
                       onChange={(e) =>
                         setFormData({ ...formData, address: e.target.value })
@@ -198,7 +198,7 @@ export default function EditPropertyPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="city" className="text-xs md:text-sm">City *</Label>
+                    <Label htmlFor="city" className="text-xs md:text-sm">Qyteti *</Label>
                     <Select
                       value={formData.city_id.toString()}
                       onValueChange={(value) =>
@@ -207,7 +207,7 @@ export default function EditPropertyPage() {
                       disabled={updateMutation.isPending}
                     >
                       <SelectTrigger id="city" className="text-sm md:text-base h-9 md:h-10">
-                        <SelectValue placeholder="Select a city" />
+                        <SelectValue placeholder="Zgjidhni një qytet" />
                       </SelectTrigger>
                       <SelectContent>
                         {cities.map((city) => (
@@ -220,10 +220,10 @@ export default function EditPropertyPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-xs md:text-sm">Floor Range (Optional)</Label>
+                    <Label className="text-xs md:text-sm">Diapazoni i Kateve (Opsionale)</Label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="floors_from" className="text-xs text-slate-600">From</Label>
+                        <Label htmlFor="floors_from" className="text-xs text-slate-600">Nga</Label>
                         <Select
                           value={formData.floors_from !== null ? formData.floors_from.toString() : "none"}
                           onValueChange={(value) =>
@@ -232,20 +232,20 @@ export default function EditPropertyPage() {
                           disabled={updateMutation.isPending}
                         >
                           <SelectTrigger id="floors_from" className="text-sm md:text-base h-9 md:h-10">
-                            <SelectValue placeholder="Starting floor" />
+                            <SelectValue placeholder="Kati fillestar" />
                           </SelectTrigger>
                           <SelectContent className="max-h-[300px]">
-                            <SelectItem value="none" className="text-sm">Not specified</SelectItem>
+                            <SelectItem value="none" className="text-sm">Nuk është specifikuar</SelectItem>
                             {Array.from({ length: 221 }, (_, i) => i - 20).map((floor) => (
                               <SelectItem key={floor} value={floor.toString()} className="text-sm">
-                                {floor === 0 ? "Ground Level" : floor < 0 ? `B${Math.abs(floor)}` : `Floor ${floor}`}
+                                {floor === 0 ? "Niveli Përdhesë" : floor < 0 ? `B${Math.abs(floor)}` : `Kati ${floor}`}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="floors_to" className="text-xs text-slate-600">To</Label>
+                        <Label htmlFor="floors_to" className="text-xs text-slate-600">Në</Label>
                         <Select
                           value={formData.floors_to !== null ? formData.floors_to.toString() : "none"}
                           onValueChange={(value) =>
@@ -254,13 +254,13 @@ export default function EditPropertyPage() {
                           disabled={updateMutation.isPending}
                         >
                           <SelectTrigger id="floors_to" className="text-sm md:text-base h-9 md:h-10">
-                            <SelectValue placeholder="Ending floor" />
+                            <SelectValue placeholder="Kati përfundimtar" />
                           </SelectTrigger>
                           <SelectContent className="max-h-[300px]">
-                            <SelectItem value="none" className="text-sm">Not specified</SelectItem>
+                            <SelectItem value="none" className="text-sm">Nuk është specifikuar</SelectItem>
                             {Array.from({ length: 221 }, (_, i) => i - 20).map((floor) => (
                               <SelectItem key={floor} value={floor.toString()} className="text-sm">
-                                {floor === 0 ? "Ground Level" : floor < 0 ? `B${Math.abs(floor)}` : `Floor ${floor}`}
+                                {floor === 0 ? "Niveli Përdhesë" : floor < 0 ? `B${Math.abs(floor)}` : `Kati ${floor}`}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -268,7 +268,7 @@ export default function EditPropertyPage() {
                       </div>
                     </div>
                     <p className="text-xs text-slate-600">
-                      Specify the floor range for this property (from -20 underground to 200 above ground)
+                      Specifikoni diapazonin e kateve për këtë pronë (nga -20 nëntokë deri në 200 mbi tokë)
                     </p>
                   </div>
                 </CardContent>
@@ -292,7 +292,7 @@ export default function EditPropertyPage() {
                   isLoading={updateMutation.isPending}
                 >
                   <Save className="h-4 w-4" />
-                  Update Property
+                  Përditëso Pronën
                 </Button>
                 <Button
                   type="button"
@@ -301,7 +301,7 @@ export default function EditPropertyPage() {
                   disabled={updateMutation.isPending}
                   className="text-xs md:text-sm h-9 md:h-10"
                 >
-                  Cancel
+                  Anulo
                 </Button>
               </div>
             </form>

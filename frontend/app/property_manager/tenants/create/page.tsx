@@ -74,8 +74,8 @@ export default function CreateTenantPage() {
 
     // Validate property selection
     if (!formData.property_id) {
-      setError("Please select a property for this tenant");
-      toast.error("Please select a property for this tenant");
+      setError("Ju lutemi zgjidhni një pronë për këtë qiramarrës");
+      toast.error("Ju lutemi zgjidhni një pronë për këtë qiramarrës");
       setIsSubmitting(false);
       return;
     }
@@ -97,16 +97,16 @@ export default function CreateTenantPage() {
       const result = await createMutation.mutateAsync(userData);
 
       if (result.success) {
-        toast.success("Tenant created successfully! Redirecting...");
+        toast.success("Qiramarrësi u krijua me sukses! Duke ridrejtuar...");
         setTimeout(() => {
           router.push("/property_manager/tenants");
         }, 1500);
       } else {
-        setError(result.message || "Failed to create tenant");
-        toast.error(result.message || "Failed to create tenant");
+        setError(result.message || "Dështoi krijimi i qiramarrësit");
+        toast.error(result.message || "Dështoi krijimi i qiramarrësit");
       }
     } catch (err: any) {
-      const errorMessage = err?.message || "Failed to create tenant";
+      const errorMessage = err?.message || "Dështoi krijimi i qiramarrësit";
       setError(errorMessage);
       toast.error(errorMessage);
       console.error("Create tenant error:", err);
@@ -117,9 +117,9 @@ export default function CreateTenantPage() {
 
   return (
     <ProtectedRoute allowedRoles={["property_manager"]}>
-      <PropertyManagerLayout>
+      <PropertyManagerLayout title="Shto Qiramarrës të Ri">
         <div className="max-w-2xl space-y-6">
-          {/* Header */}
+          {/* Back Button */}
           <div className="flex items-center gap-4">
             <Button
               variant="outline"
@@ -128,23 +128,18 @@ export default function CreateTenantPage() {
             >
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <div>
-              <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-                Add New Tenant
-              </h2>
-              <p className="text-slate-600 mt-2">
-                Create a new tenant account
-              </p>
-            </div>
+            <p className="text-slate-600">
+              Krijo një llogari të re qiramarrësi
+            </p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit}>
             <Card>
               <CardHeader>
-                <CardTitle>Tenant Information</CardTitle>
+                <CardTitle>Informacioni i Qiramarrësit</CardTitle>
                 <CardDescription>
-                  Fill in the details to create a new tenant account
+                  Plotësoni detajet për të krijuar një llogari të re qiramarrësi
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -156,7 +151,7 @@ export default function CreateTenantPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">First Name *</Label>
+                    <Label htmlFor="name">Emri *</Label>
                     <Input
                       id="name"
                       value={formData.name}
@@ -164,12 +159,12 @@ export default function CreateTenantPage() {
                         setFormData((prev) => ({ ...prev, name: e.target.value }))
                       }
                       required
-                      placeholder="John"
+                      placeholder="Agron"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="surname">Last Name *</Label>
+                    <Label htmlFor="surname">Mbiemri *</Label>
                     <Input
                       id="surname"
                       value={formData.surname}
@@ -177,7 +172,7 @@ export default function CreateTenantPage() {
                         setFormData((prev) => ({ ...prev, surname: e.target.value }))
                       }
                       required
-                      placeholder="Doe"
+                      placeholder="Krasniqi"
                     />
                   </div>
                 </div>
@@ -192,12 +187,12 @@ export default function CreateTenantPage() {
                       setFormData((prev) => ({ ...prev, email: e.target.value }))
                     }
                     required
-                    placeholder="john.doe@example.com"
+                    placeholder="agron.krasniqi@example.com"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password *</Label>
+                  <Label htmlFor="password">Fjalëkalimi *</Label>
                   <Input
                     id="password"
                     type="password"
@@ -206,13 +201,13 @@ export default function CreateTenantPage() {
                       setFormData((prev) => ({ ...prev, password: e.target.value }))
                     }
                     required
-                    placeholder="Minimum 6 characters"
+                    placeholder="Minimum 6 karaktere"
                     minLength={6}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="number">Phone Number</Label>
+                  <Label htmlFor="number">Numri i Telefonit</Label>
                   <Input
                     id="number"
                     type="tel"
@@ -220,12 +215,12 @@ export default function CreateTenantPage() {
                     onChange={(e) =>
                       setFormData((prev) => ({ ...prev, number: e.target.value }))
                     }
-                    placeholder="+1234567890"
+                    placeholder="+38349123456"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="property_id">Select Property *</Label>
+                  <Label htmlFor="property_id">Zgjidhni Pronën *</Label>
                   <Select
                     value={formData.property_id}
                     onValueChange={(value) =>
@@ -234,11 +229,11 @@ export default function CreateTenantPage() {
                     required
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a property" />
+                      <SelectValue placeholder="Zgjidhni një pronë" />
                     </SelectTrigger>
                     <SelectContent>
                       {propertiesLoading ? (
-                        <SelectItem value="">Loading properties...</SelectItem>
+                        <SelectItem value="">Duke ngarkuar pronat...</SelectItem>
                       ) : (
                         managedProperties.map((property: any) => (
                           <SelectItem key={property.id} value={property.id.toString()}>
@@ -251,7 +246,7 @@ export default function CreateTenantPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="floor_assigned">Floor Number</Label>
+                  <Label htmlFor="floor_assigned">Numri i Katit</Label>
                   <select
                     id="floor_assigned"
                     value={formData.floor_assigned}
@@ -267,24 +262,24 @@ export default function CreateTenantPage() {
                   >
                     <option value="">
                       {!formData.property_id
-                        ? "Select a property first"
+                        ? "Zgjidhni një pronë së pari"
                         : availableFloors.length === 0
-                        ? "No floors available"
-                        : "Select a floor (optional)"}
+                        ? "Asnjë kat i disponueshëm"
+                        : "Zgjidhni një kat (opsionale)"}
                     </option>
                     {availableFloors.map((floor) => (
                       <option key={floor} value={floor.toString()}>
-                        Floor {floor}
+                        Kati {floor}
                       </option>
                     ))}
                   </select>
                   <p className="text-sm text-slate-500">
-                    Assign the tenant to a specific floor (optional)
+                    Caktoni qiramarrësin në një kat specifik (opsionale)
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="monthly_rate">Monthly Rate</Label>
+                  <Label htmlFor="monthly_rate">Norma Mujore</Label>
                   <div className="relative">
                     <Input
                       id="monthly_rate"
@@ -293,7 +288,7 @@ export default function CreateTenantPage() {
                       onChange={(e) =>
                         setFormData((prev) => ({ ...prev, monthly_rate: e.target.value }))
                       }
-                      placeholder="e.g., 500, 1000, 1500..."
+                      placeholder="p.sh., 500, 1000, 1500..."
                       min="0"
                       step="0.01"
                       className="pr-8"
@@ -303,7 +298,7 @@ export default function CreateTenantPage() {
                     </span>
                   </div>
                   <p className="text-sm text-slate-500">
-                    Set the monthly rent for the tenant (optional)
+                    Vendosni qiranë mujore për qiramarrësin (opsionale)
                   </p>
                 </div>
 
@@ -314,7 +309,7 @@ export default function CreateTenantPage() {
                     onClick={() => router.push("/property_manager/tenants")}
                     className="flex-1"
                   >
-                    Cancel
+                    Anulo
                   </Button>
                   <Button
                     type="submit"
@@ -322,11 +317,11 @@ export default function CreateTenantPage() {
                     className="flex-1 bg-indigo-600 hover:bg-indigo-700"
                   >
                     {isSubmitting ? (
-                      <>Creating...</>
+                      <>Duke krijuar...</>
                     ) : (
                       <>
                         <Save className="mr-2 h-4 w-4" />
-                        Create Tenant
+                        Krijo Qiramarrësin
                       </>
                     )}
                   </Button>

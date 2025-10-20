@@ -45,8 +45,8 @@ export default function CreatePropertyPage() {
     setSuccess(false);
 
     if (!formData.city_id) {
-      setError("Please select a city");
-      toast.error("Please select a city");
+      setError("Ju lutemi zgjidhni një qytet");
+      toast.error("Ju lutemi zgjidhni një qytet");
       return;
     }
 
@@ -63,24 +63,24 @@ export default function CreatePropertyPage() {
 
       if (result.success) {
         setSuccess(true);
-        toast.success("Property created successfully! Redirecting...");
+        toast.success("Prona u krijua me sukses! Duke ridrejtuar...");
         setTimeout(() => {
           router.push("/property_manager/properties");
         }, 1500);
       } else {
-        setError(result.message || "Failed to create property");
-        toast.error(result.message || "Failed to create property");
+        setError(result.message || "Dështoi krijimi i pronës");
+        toast.error(result.message || "Dështoi krijimi i pronës");
       }
     } catch (err) {
-      setError("Failed to connect to server");
-      toast.error("Failed to connect to server");
+      setError("Dështoi lidhja me serverin");
+      toast.error("Dështoi lidhja me serverin");
       console.error("Create property error:", err);
     }
   };
 
   return (
     <ProtectedRoute allowedRoles={["property_manager"]}>
-      <PropertyManagerLayout title="Create Property">
+      <PropertyManagerLayout title="Krijo Pronë">
         <div className="max-w-4xl mx-auto space-y-4 md:space-y-6">
           {/* Back Button */}
           <div className="flex items-center gap-3">
@@ -93,7 +93,7 @@ export default function CreatePropertyPage() {
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <p className="text-xs md:text-sm text-slate-600">
-              Add a new property to the system
+              Shto një pronë të re në sistem
             </p>
           </div>
 
@@ -101,7 +101,7 @@ export default function CreatePropertyPage() {
           {success && (
             <Alert className="border-green-200 bg-green-50">
               <AlertDescription className="text-green-800 text-xs md:text-sm">
-                Property created successfully! Redirecting...
+                Prona u krijua me sukses! Duke ridrejtuar...
               </AlertDescription>
             </Alert>
           )}
@@ -117,17 +117,17 @@ export default function CreatePropertyPage() {
             {/* Property Details Form */}
             <Card className="border-indigo-200">
               <CardHeader>
-                <CardTitle className="text-base md:text-lg">Property Details</CardTitle>
+                <CardTitle className="text-base md:text-lg">Detajet e Pronës</CardTitle>
                 <CardDescription className="text-xs md:text-sm">
-                  Enter the property information below
+                  Vendosni informacionin e pronës më poshtë
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 md:space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-xs md:text-sm">Property Name *</Label>
+                  <Label htmlFor="name" className="text-xs md:text-sm">Emri i Pronës *</Label>
                   <Input
                     id="name"
-                    placeholder="e.g., Greenwood Apartments"
+                    placeholder="p.sh., Apartamentet Greenwood"
                     value={formData.name}
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
@@ -139,10 +139,10 @@ export default function CreatePropertyPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="address" className="text-xs md:text-sm">Address *</Label>
+                  <Label htmlFor="address" className="text-xs md:text-sm">Adresa *</Label>
                   <Input
                     id="address"
-                    placeholder="e.g., 123 Main Street"
+                    placeholder="p.sh., Rruga Kryesore 123"
                     value={formData.address}
                     onChange={(e) =>
                       setFormData({ ...formData, address: e.target.value })
@@ -154,7 +154,7 @@ export default function CreatePropertyPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="city" className="text-xs md:text-sm">City *</Label>
+                  <Label htmlFor="city" className="text-xs md:text-sm">Qyteti *</Label>
                   <Select
                     value={formData.city_id ? formData.city_id.toString() : ""}
                     onValueChange={(value) =>
@@ -163,7 +163,7 @@ export default function CreatePropertyPage() {
                     disabled={createMutation.isPending}
                   >
                     <SelectTrigger id="city" className="text-sm md:text-base h-9 md:h-10">
-                      <SelectValue placeholder="Select a city" />
+                      <SelectValue placeholder="Zgjidhni një qytet" />
                     </SelectTrigger>
                     <SelectContent>
                       {cities.map((city) => (
@@ -176,10 +176,10 @@ export default function CreatePropertyPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-xs md:text-sm">Floor Range (Optional)</Label>
+                  <Label className="text-xs md:text-sm">Diapazoni i Kateve (Opsionale)</Label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="floors_from" className="text-xs text-slate-600">From</Label>
+                      <Label htmlFor="floors_from" className="text-xs text-slate-600">Nga</Label>
                       <Select
                         value={formData.floors_from !== null ? formData.floors_from.toString() : "none"}
                         onValueChange={(value) =>
@@ -188,20 +188,20 @@ export default function CreatePropertyPage() {
                         disabled={createMutation.isPending}
                       >
                         <SelectTrigger id="floors_from" className="text-sm md:text-base h-9 md:h-10">
-                          <SelectValue placeholder="Starting floor" />
+                          <SelectValue placeholder="Kati fillestar" />
                         </SelectTrigger>
                         <SelectContent className="max-h-[300px]">
-                          <SelectItem value="none" className="text-sm">Not specified</SelectItem>
+                          <SelectItem value="none" className="text-sm">Nuk është specifikuar</SelectItem>
                           {Array.from({ length: 221 }, (_, i) => i - 20).map((floor) => (
                             <SelectItem key={floor} value={floor.toString()} className="text-sm">
-                              {floor === 0 ? "Ground Level" : floor < 0 ? `B${Math.abs(floor)}` : `Floor ${floor}`}
+                              {floor === 0 ? "Niveli Përdhesë" : floor < 0 ? `B${Math.abs(floor)}` : `Kati ${floor}`}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="floors_to" className="text-xs text-slate-600">To</Label>
+                      <Label htmlFor="floors_to" className="text-xs text-slate-600">Në</Label>
                       <Select
                         value={formData.floors_to !== null ? formData.floors_to.toString() : "none"}
                         onValueChange={(value) =>
@@ -210,13 +210,13 @@ export default function CreatePropertyPage() {
                         disabled={createMutation.isPending}
                       >
                         <SelectTrigger id="floors_to" className="text-sm md:text-base h-9 md:h-10">
-                          <SelectValue placeholder="Ending floor" />
+                          <SelectValue placeholder="Kati përfundimtar" />
                         </SelectTrigger>
                         <SelectContent className="max-h-[300px]">
-                          <SelectItem value="none" className="text-sm">Not specified</SelectItem>
+                          <SelectItem value="none" className="text-sm">Nuk është specifikuar</SelectItem>
                           {Array.from({ length: 221 }, (_, i) => i - 20).map((floor) => (
                             <SelectItem key={floor} value={floor.toString()} className="text-sm">
-                              {floor === 0 ? "Ground Level" : floor < 0 ? `B${Math.abs(floor)}` : `Floor ${floor}`}
+                              {floor === 0 ? "Niveli Përdhesë" : floor < 0 ? `B${Math.abs(floor)}` : `Kati ${floor}`}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -224,7 +224,7 @@ export default function CreatePropertyPage() {
                     </div>
                   </div>
                   <p className="text-xs text-slate-600">
-                    Specify the floor range for this property (from -20 underground to 200 above ground)
+                    Specifikoni diapazonin e kateve për këtë pronë (nga -20 nëntokë deri në 200 mbi tokë)
                   </p>
                 </div>
               </CardContent>
@@ -246,7 +246,7 @@ export default function CreatePropertyPage() {
                 isLoading={createMutation.isPending}
               >
                 <Save className="h-4 w-4" />
-                Create Property
+                Krijo Pronën
               </Button>
               <Button
                 type="button"
@@ -255,7 +255,7 @@ export default function CreatePropertyPage() {
                 disabled={createMutation.isPending}
                 className="text-xs md:text-sm h-9 md:h-10"
               >
-                Cancel
+                Anulo
               </Button>
             </div>
           </form>

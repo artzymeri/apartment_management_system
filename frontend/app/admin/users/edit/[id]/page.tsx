@@ -72,14 +72,14 @@ export default function EditUserPage() {
 
     // Validation
     const newErrors: string[] = [];
-    if (!formData.name.trim()) newErrors.push("Name is required");
-    if (!formData.surname.trim()) newErrors.push("Surname is required");
-    if (!formData.email.trim()) newErrors.push("Email is required");
+    if (!formData.name.trim()) newErrors.push("Emri është i nevojshëm");
+    if (!formData.surname.trim()) newErrors.push("Mbiemri është i nevojshëm");
+    if (!formData.email.trim()) newErrors.push("Email është i nevojshëm");
     if (formData.password && formData.password.length < 6) {
-      newErrors.push("Password must be at least 6 characters");
+      newErrors.push("Fjalëkalimi duhet të jetë të paktën 6 karaktere");
     }
     if (formData.password !== formData.confirmPassword) {
-      newErrors.push("Passwords do not match");
+      newErrors.push("Fjalëkalimet nuk përputhen");
     }
 
     if (newErrors.length > 0) {
@@ -113,22 +113,22 @@ export default function EditUserPage() {
       });
 
       if (result.success) {
-        toast.success("User updated successfully");
+        toast.success("Përdoruesi u përditësua me sukses");
         router.push("/admin/users");
       } else {
-        setErrors([result.message || "Failed to update user"]);
-        toast.error(result.message || "Failed to update user");
+        setErrors([result.message || "Dështoi përditësimi i përdoruesit"]);
+        toast.error(result.message || "Dështoi përditësimi i përdoruesit");
       }
     } catch (err: any) {
-      setErrors([err.message || "Failed to update user"]);
-      toast.error(err.message || "Failed to update user");
+      setErrors([err.message || "Dështoi përditësimi i përdoruesit"]);
+      toast.error(err.message || "Dështoi përditësimi i përdoruesit");
     }
   };
 
   if (isLoading) {
     return (
       <ProtectedRoute allowedRoles={["admin"]}>
-        <AdminLayout title="Edit User">
+        <AdminLayout title="Modifiko Përdoruesin">
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600" />
           </div>
@@ -140,21 +140,21 @@ export default function EditUserPage() {
   if (!userData?.success || !userData?.data) {
     return (
       <ProtectedRoute allowedRoles={["admin"]}>
-        <AdminLayout title="Edit User">
+        <AdminLayout title="Modifiko Përdoruesin">
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
               <h2 className="text-2xl font-bold text-slate-900">
-                User Not Found
+                Përdoruesi Nuk u Gjet
               </h2>
               <p className="text-slate-600 mt-2">
-                The user you are trying to edit does not exist.
+                Përdoruesi që po përpiqeni të modifikoni nuk ekziston.
               </p>
               <Button
                 variant="outline"
                 className="mt-4"
                 onClick={() => router.push("/admin/users")}
               >
-                Back to Users
+                Kthehu te Përdoruesit
               </Button>
             </div>
           </div>
@@ -165,7 +165,7 @@ export default function EditUserPage() {
 
   return (
     <ProtectedRoute allowedRoles={["admin"]}>
-      <AdminLayout title="Edit User">
+      <AdminLayout title="Modifiko Përdoruesin">
         <div className="space-y-6 max-w-2xl">
 
           {/* Error Alert */}
@@ -190,7 +190,7 @@ export default function EditUserPage() {
                 </div>
                 <div className="ml-3">
                   <h3 className="text-sm font-medium text-red-800">
-                    Please fix the following errors:
+                    Ju lutem korrigjoni gabimet e mëposhtme:
                   </h3>
                   <div className="mt-2 text-sm text-red-700">
                     <ul className="list-disc list-inside">
@@ -209,10 +209,10 @@ export default function EditUserPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <UserCog className="h-5 w-5" />
-                User Information
+                Informacioni i Përdoruesit
               </CardTitle>
               <CardDescription>
-                Update the user details (leave password blank to keep current password)
+                Përditëso detajet e përdoruesit (lëre fjalëkalimin bosh për ta mbajtur aktualin)
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -220,7 +220,7 @@ export default function EditUserPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">
-                      Name <span className="text-red-600">*</span>
+                      Emri <span className="text-red-600">*</span>
                     </Label>
                     <Input
                       id="name"
@@ -228,13 +228,13 @@ export default function EditUserPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, name: e.target.value })
                       }
-                      placeholder="Enter first name"
+                      placeholder="Shkruaj emrin"
                     />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="surname">
-                      Surname <span className="text-red-600">*</span>
+                      Mbiemri <span className="text-red-600">*</span>
                     </Label>
                     <Input
                       id="surname"
@@ -242,7 +242,7 @@ export default function EditUserPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, surname: e.target.value })
                       }
-                      placeholder="Enter last name"
+                      placeholder="Shkruaj mbiemrin"
                     />
                   </div>
                 </div>
@@ -258,12 +258,12 @@ export default function EditUserPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, email: e.target.value })
                     }
-                    placeholder="Enter email address"
+                    placeholder="Shkruaj adresën e email-it"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="number">Phone Number</Label>
+                  <Label htmlFor="number">Numri i Telefonit</Label>
                   <Input
                     id="number"
                     type="tel"
@@ -271,13 +271,13 @@ export default function EditUserPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, number: e.target.value })
                     }
-                    placeholder="Enter phone number"
+                    placeholder="Shkruaj numrin e telefonit"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="role">
-                    Role <span className="text-red-600">*</span>
+                    Roli <span className="text-red-600">*</span>
                   </Label>
                   <Select
                     key={`role-${formData.role}`}
@@ -288,23 +288,23 @@ export default function EditUserPage() {
                     disabled
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a role" />
+                      <SelectValue placeholder="Zgjidh një rol" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="tenant">Tenant</SelectItem>
-                      <SelectItem value="property_manager">Property Manager</SelectItem>
-                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="tenant">Qiramarrës</SelectItem>
+                      <SelectItem value="property_manager">Menaxher Pronash</SelectItem>
+                      <SelectItem value="admin">Administrator</SelectItem>
                     </SelectContent>
                   </Select>
                   <p className="text-sm text-slate-500">
-                    Role cannot be changed after user creation
+                    Roli nuk mund të ndryshohet pas krijimit të përdoruesit
                   </p>
                 </div>
 
                 {/* Expiry Date for Property Manager Users */}
                 {formData.role === 'property_manager' && (
                   <div className="space-y-2 border-t pt-4">
-                    <Label htmlFor="expiry-date">Account Expiry Date</Label>
+                    <Label htmlFor="expiry-date">Data e Skadimit të Llogarisë</Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
@@ -315,7 +315,7 @@ export default function EditUserPage() {
                           )}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
-                          {expiryDate ? format(expiryDate, "PPP") : "Pick a date"}
+                          {expiryDate ? format(expiryDate, "PPP") : "Zgjidh një datë"}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
@@ -328,7 +328,7 @@ export default function EditUserPage() {
                       </PopoverContent>
                     </Popover>
                     <p className="text-sm text-slate-500">
-                      This user will not be able to log in after this date.
+                      Ky përdorues nuk do të mund të hyjë pas kësaj date.
                       {expiryDate && (
                         <Button
                           type="button"
@@ -336,7 +336,7 @@ export default function EditUserPage() {
                           className="h-auto p-0 ml-2 text-red-600"
                           onClick={() => setExpiryDate(undefined)}
                         >
-                          Clear date
+                          Fshi datën
                         </Button>
                       )}
                     </p>
@@ -345,11 +345,11 @@ export default function EditUserPage() {
 
                 <div className="border-t pt-4 mt-4">
                   <p className="text-sm text-slate-600 mb-4">
-                    Change Password (optional - leave blank to keep current password)
+                    Ndrysho Fjalëkalimin (opsionale - lëre bosh për ta mbajtur fjalëkalimin aktual)
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="password">New Password</Label>
+                      <Label htmlFor="password">Fjalëkalimi i Ri</Label>
                       <Input
                         id="password"
                         type="password"
@@ -357,12 +357,12 @@ export default function EditUserPage() {
                         onChange={(e) =>
                           setFormData({ ...formData, password: e.target.value })
                         }
-                        placeholder="Enter new password"
+                        placeholder="Shkruaj fjalëkalimin e ri"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                      <Label htmlFor="confirmPassword">Konfirmo Fjalëkalimin e Ri</Label>
                       <Input
                         id="confirmPassword"
                         type="password"
@@ -373,7 +373,7 @@ export default function EditUserPage() {
                             confirmPassword: e.target.value,
                           })
                         }
-                        placeholder="Re-enter new password"
+                        placeholder="Shkruaj përsëri fjalëkalimin e ri"
                       />
                     </div>
                   </div>
@@ -385,7 +385,7 @@ export default function EditUserPage() {
                     className="bg-red-600 hover:bg-red-700 w-full sm:w-auto"
                     isLoading={updateMutation.isPending}
                   >
-                    Update User
+                    Përditëso Përdoruesin
                   </Button>
                   <Button
                     type="button"
@@ -393,7 +393,7 @@ export default function EditUserPage() {
                     onClick={() => router.back()}
                     className="w-full sm:w-auto"
                   >
-                    Cancel
+                    Anulo
                   </Button>
                 </div>
               </form>

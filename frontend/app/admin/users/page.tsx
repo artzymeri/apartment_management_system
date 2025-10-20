@@ -117,7 +117,9 @@ export default function UsersPage() {
   };
 
   const capitalizeRole = (role: string) => {
-    if (role === "property_manager") return "Property Manager";
+    if (role === "property_manager") return "Menaxher Pronash";
+    if (role === "admin") return "Administrator";
+    if (role === "tenant") return "Qiramarrës";
     return role.charAt(0).toUpperCase() + role.slice(1);
   };
 
@@ -184,17 +186,17 @@ export default function UsersPage() {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Search className="h-5 w-5" />
-                Filter Users
+                Filtro Përdoruesit
               </CardTitle>
               <CardDescription>
-                Search by name, surname, email or filter by role
+                Kërko sipas emrit, mbiemrit, emailit ose filtro sipas rolit
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="flex-1">
                   <Input
-                    placeholder="Search by name, surname, or email..."
+                    placeholder="Kërko sipas emrit, mbiemrit ose emailit..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
@@ -202,7 +204,7 @@ export default function UsersPage() {
 
                 {/* Role Checkboxes */}
                 <div className="space-y-3 md:space-y-0 md:flex md:items-center md:gap-6 pt-2">
-                  <Label className="text-sm font-medium">Filter by Role:</Label>
+                  <Label className="text-sm font-medium">Filtro sipas Rolit:</Label>
                   <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
                     <div className="flex items-center space-x-2">
                       <Checkbox
@@ -214,7 +216,7 @@ export default function UsersPage() {
                         htmlFor="role-admin"
                         className="text-sm font-normal cursor-pointer"
                       >
-                        Admin
+                        Administrator
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -227,7 +229,7 @@ export default function UsersPage() {
                         htmlFor="role-property_manager"
                         className="text-sm font-normal cursor-pointer"
                       >
-                        Property Manager
+                        Menaxher Pronash
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -240,7 +242,7 @@ export default function UsersPage() {
                         htmlFor="role-tenant"
                         className="text-sm font-normal cursor-pointer"
                       >
-                        Tenant
+                        Qiramarrës
                       </Label>
                     </div>
                   </div>
@@ -259,21 +261,21 @@ export default function UsersPage() {
               ) : users.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-slate-500">
                   <Users className="h-12 w-12 mb-4 opacity-50" />
-                  <p className="text-lg font-medium">No users found</p>
-                  <p className="text-sm">Try adjusting your filters</p>
+                  <p className="text-lg font-medium">Nuk u gjetën përdorues</p>
+                  <p className="text-sm">Provo të ndryshosh filtrat</p>
                 </div>
               ) : (
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Name</TableHead>
+                      <TableHead>Emri</TableHead>
                       <TableHead>Email</TableHead>
-                      <TableHead>Phone</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead>Expiry Date</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Created</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead>Telefoni</TableHead>
+                      <TableHead>Roli</TableHead>
+                      <TableHead>Data e Skadimit</TableHead>
+                      <TableHead>Statusi</TableHead>
+                      <TableHead>Krijuar</TableHead>
+                      <TableHead className="text-right">Veprime</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -297,7 +299,7 @@ export default function UsersPage() {
                           {user.role === 'property_manager' && user.expiry_date ? (
                             <span className="text-sm">{formatDate(user.expiry_date)}</span>
                           ) : user.role === 'property_manager' ? (
-                            <span className="text-slate-400 text-sm">No expiry set</span>
+                            <span className="text-slate-400 text-sm">Nuk ka skadim</span>
                           ) : (
                             <span className="text-slate-400 text-sm">N/A</span>
                           )}
@@ -306,16 +308,16 @@ export default function UsersPage() {
                           {user.role === 'property_manager' && user.expiry_date ? (
                             isExpired(user.expiry_date) ? (
                               <Badge variant="destructive" className="w-fit">
-                                Expired
+                                Skaduar
                               </Badge>
                             ) : (
                               <Badge variant="outline" className="w-fit text-green-700 border-green-300">
-                                Active
+                                Aktiv
                               </Badge>
                             )
                           ) : user.role === 'property_manager' ? (
                             <Badge variant="outline" className="w-fit text-green-700 border-green-300">
-                              Active
+                              Aktiv
                             </Badge>
                           ) : (
                             <span className="text-slate-400 text-sm">N/A</span>
@@ -364,8 +366,8 @@ export default function UsersPage() {
                 <CardContent className="py-12">
                   <div className="flex flex-col items-center justify-center text-slate-500">
                     <Users className="h-12 w-12 mb-4 opacity-50" />
-                    <p className="text-lg font-medium">No users found</p>
-                    <p className="text-sm">Try adjusting your filters</p>
+                    <p className="text-lg font-medium">Nuk u gjetën përdorues</p>
+                    <p className="text-sm">Provo të ndryshosh filtrat</p>
                   </div>
                 </CardContent>
               </Card>
@@ -385,15 +387,15 @@ export default function UsersPage() {
                       </div>
                       {user.role === 'property_manager' && user.expiry_date ? (
                         isExpired(user.expiry_date) ? (
-                          <Badge variant="destructive">Expired</Badge>
+                          <Badge variant="destructive">Skaduar</Badge>
                         ) : (
                           <Badge variant="outline" className="text-green-700 border-green-300">
-                            Active
+                            Aktiv
                           </Badge>
                         )
                       ) : user.role === 'property_manager' ? (
                         <Badge variant="outline" className="text-green-700 border-green-300">
-                          Active
+                          Aktiv
                         </Badge>
                       ) : null}
                     </div>
@@ -416,12 +418,12 @@ export default function UsersPage() {
                     <div className="flex flex-wrap gap-4 text-sm text-slate-500 pt-2 border-t">
                       <div className="flex items-center gap-1">
                         <Calendar className="h-3.5 w-3.5" />
-                        <span>Created: {formatDate(user.created_at)}</span>
+                        <span>Krijuar: {formatDate(user.created_at)}</span>
                       </div>
                       {user.role === 'property_manager' && user.expiry_date && (
                         <div className="flex items-center gap-1">
                           <Calendar className="h-3.5 w-3.5" />
-                          <span>Expires: {formatDate(user.expiry_date)}</span>
+                          <span>Skadon: {formatDate(user.expiry_date)}</span>
                         </div>
                       )}
                     </div>
@@ -435,7 +437,7 @@ export default function UsersPage() {
                         onClick={() => router.push(`/admin/users/edit/${user.id}`)}
                       >
                         <Pencil className="h-4 w-4 mr-2" />
-                        Edit
+                        Edito
                       </Button>
                       <Button
                         size="sm"
@@ -445,7 +447,7 @@ export default function UsersPage() {
                         disabled={deleteMutation.isPending}
                       >
                         <Trash2 className="h-4 w-4 mr-2" />
-                        Delete
+                        Fshi
                       </Button>
                     </div>
                   </CardContent>
@@ -458,8 +460,8 @@ export default function UsersPage() {
           {!isLoading && users.length > 0 && (
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <p className="text-sm text-slate-600 text-center sm:text-left">
-                Page {currentPage} of {totalPages} • {data?.pagination?.total}{" "}
-                total users
+                Faqja {currentPage} nga {totalPages} • {data?.pagination?.total}{" "}
+                përdorues gjithsej
               </p>
               <div className="flex gap-2">
                 <Button
@@ -469,7 +471,7 @@ export default function UsersPage() {
                   disabled={currentPage === 1}
                 >
                   <ChevronLeft className="h-4 w-4 sm:mr-2" />
-                  <span className="hidden sm:inline">Previous</span>
+                  <span className="hidden sm:inline">Mëparshme</span>
                 </Button>
                 <Button
                   variant="outline"
@@ -477,7 +479,7 @@ export default function UsersPage() {
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
                 >
-                  <span className="hidden sm:inline">Next</span>
+                  <span className="hidden sm:inline">Tjetër</span>
                   <ChevronRight className="h-4 w-4 sm:ml-2" />
                 </Button>
               </div>
@@ -488,19 +490,19 @@ export default function UsersPage() {
           <AlertDialog open={!!userToDelete} onOpenChange={() => setUserToDelete(null)}>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
+                <AlertDialogTitle>Konfirmo Fshirjen</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Are you sure you want to delete user "{userToDelete?.name} {userToDelete?.surname}"? This action cannot be undone.
+                  Jeni i sigurt që dëshironi të fshini përdoruesin "{userToDelete?.name} {userToDelete?.surname}"? Ky veprim nuk mund të zhbëhet.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel>Anulo</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleDelete}
                   disabled={deleteMutation.isPending}
                   className="bg-red-600 hover:bg-red-700"
                 >
-                  {deleteMutation.isPending ? "Deleting..." : "Delete"}
+                  Fshi Përdoruesin
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

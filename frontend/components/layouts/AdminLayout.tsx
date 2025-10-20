@@ -33,11 +33,11 @@ import { Separator } from "@/components/ui/separator";
 import { useRegisterRequests } from "@/hooks/useRegisterRequests";
 
 const adminNavItems = [
-  { href: "/admin", icon: BarChart3, label: "Dashboard" },
-  { href: "/admin/properties", icon: Building2, label: "Properties" },
-  { href: "/admin/users", icon: Users, label: "Users" },
-  { href: "/admin/register-requests", icon: UserPlus, label: "Register Requests" },
-  { href: "/admin/configurations", icon: Cog, label: "Configurations" }
+  { href: "/admin", icon: BarChart3, label: "Paneli Kryesor" },
+  { href: "/admin/properties", icon: Building2, label: "Pronat" },
+  { href: "/admin/users", icon: Users, label: "Përdoruesit" },
+  { href: "/admin/register-requests", icon: UserPlus, label: "Kërkesa për Regjistrim" },
+  { href: "/admin/configurations", icon: Cog, label: "Konfigurimet" }
 ];
 
 export function AdminLayout({ children, title }: { children: React.ReactNode; title?: string }) {
@@ -128,11 +128,11 @@ export function AdminLayout({ children, title }: { children: React.ReactNode; ti
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent side="top" align="end" className="w-56">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>Llogaria Ime</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => router.push('/settings')}>
               <Settings className="mr-2 h-4 w-4" />
-              Profile Settings
+              Cilësimet e Profilit
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
@@ -140,7 +140,7 @@ export function AdminLayout({ children, title }: { children: React.ReactNode; ti
               onClick={handleLogout}
             >
               <LogOut className="mr-2 h-4 w-4" />
-              Logout
+              Dil
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

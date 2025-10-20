@@ -116,10 +116,10 @@ export default function PropertiesPage() {
                 <div>
                   <CardTitle className="text-lg flex items-center gap-2">
                     <Search className="h-5 w-5" />
-                    Filter Properties
+                    Filtro Pronat
                   </CardTitle>
                   <CardDescription className="mt-1">
-                    Search by name, address, or filter by city
+                    Kërko sipas emrit, adresës ose filtro sipas qytetit
                   </CardDescription>
                 </div>
                 <Button
@@ -127,7 +127,7 @@ export default function PropertiesPage() {
                   className="bg-red-600 hover:bg-red-700 gap-2 w-full sm:w-auto"
                 >
                   <Plus className="h-4 w-4" />
-                  Create Property
+                  Krijo Pronë
                 </Button>
               </div>
             </CardHeader>
@@ -135,14 +135,14 @@ export default function PropertiesPage() {
               <div className="flex flex-col gap-4 sm:flex-row">
                 <div className="flex-1">
                   <Input
-                    placeholder="Search by name or address..."
+                    placeholder="Kërko sipas emrit ose adresës..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
                 <div className="sm:w-64">
                   <Input
-                    placeholder="Filter by city..."
+                    placeholder="Filtro sipas qytetit..."
                     value={cityFilter}
                     onChange={(e) => setCityFilter(e.target.value)}
                   />
@@ -161,20 +161,20 @@ export default function PropertiesPage() {
               ) : properties.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-slate-500">
                   <Building2 className="h-12 w-12 mb-4 opacity-50" />
-                  <p className="text-lg font-medium">No properties found</p>
-                  <p className="text-sm">Try adjusting your filters or create a new property</p>
+                  <p className="text-lg font-medium">Nuk u gjetën prona</p>
+                  <p className="text-sm">Provo të ndryshosh filtrat ose krijo një pronë të re</p>
                 </div>
               ) : (
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Property Name</TableHead>
-                      <TableHead>Address</TableHead>
-                      <TableHead>City</TableHead>
-                      <TableHead>Floors</TableHead>
-                      <TableHead>Managers</TableHead>
-                      <TableHead>Created</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead>Emri i Pronës</TableHead>
+                      <TableHead>Adresa</TableHead>
+                      <TableHead>Qyteti</TableHead>
+                      <TableHead>Katet</TableHead>
+                      <TableHead>Menaxherët</TableHead>
+                      <TableHead>Krijuar</TableHead>
+                      <TableHead className="text-right">Veprime</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -191,7 +191,7 @@ export default function PropertiesPage() {
                           <TableCell>{property.address}</TableCell>
                           <TableCell>
                             <Badge variant="secondary">
-                              {property.cityDetails?.name || 'Unknown'}
+                              {property.cityDetails?.name || 'I panjohur'}
                             </Badge>
                           </TableCell>
                           <TableCell>
@@ -199,17 +199,17 @@ export default function PropertiesPage() {
                               <div className="text-sm">
                                 <span className="font-medium text-slate-900">{floorsCount}</span>
                                 <span className="text-slate-500 text-xs ml-1">
-                                  {floorsCount === 1 ? 'floor' : 'floors'}
+                                  {floorsCount === 1 ? 'kat' : 'kate'}
                                 </span>
                               </div>
                             ) : (
-                              <span className="text-slate-400 text-sm">Not specified</span>
+                              <span className="text-slate-400 text-sm">Nuk është specifikuar</span>
                             )}
                           </TableCell>
                           <TableCell>
                             {managerCount === 0 ? (
                               <span className="text-slate-400 text-sm">
-                                Not Assigned
+                                Nuk është caktuar
                               </span>
                             ) : managerCount === 1 ? (
                               <div className="text-sm">
@@ -228,7 +228,7 @@ export default function PropertiesPage() {
                                 className="gap-2"
                               >
                                 <Users className="h-4 w-4" />
-                                {managerCount} Managers
+                                {managerCount} Menaxherë
                               </Button>
                             )}
                           </TableCell>
@@ -246,7 +246,7 @@ export default function PropertiesPage() {
                                 className="gap-2"
                               >
                                 <Pencil className="h-3 w-3" />
-                                Edit
+                                Edito
                               </Button>
                               <Button
                                 variant="outline"
@@ -256,7 +256,7 @@ export default function PropertiesPage() {
                                 className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
                               >
                                 <Trash2 className="h-3 w-3" />
-                                Delete
+                                Fshi
                               </Button>
                             </div>
                           </TableCell>
@@ -281,8 +281,8 @@ export default function PropertiesPage() {
               <Card>
                 <CardContent className="flex flex-col items-center justify-center py-12 text-slate-500">
                   <Building2 className="h-12 w-12 mb-4 opacity-50" />
-                  <p className="text-lg font-medium">No properties found</p>
-                  <p className="text-sm text-center">Try adjusting your filters or create a new property</p>
+                  <p className="text-lg font-medium">Nuk u gjetën prona</p>
+                  <p className="text-sm text-center">Provo të ndryshosh filtrat ose krijo një pronë të re</p>
                 </CardContent>
               </Card>
             ) : (
@@ -304,7 +304,7 @@ export default function PropertiesPage() {
                           </CardDescription>
                         </div>
                         <Badge variant="secondary" className="flex-shrink-0">
-                          {property.cityDetails?.name || 'Unknown'}
+                          {property.cityDetails?.name || 'I panjohur'}
                         </Badge>
                       </div>
                     </CardHeader>
@@ -312,17 +312,17 @@ export default function PropertiesPage() {
                       {/* Property Details */}
                       <div className="grid grid-cols-2 gap-3 text-sm">
                         <div>
-                          <p className="text-slate-500 text-xs mb-1">Floors</p>
+                          <p className="text-slate-500 text-xs mb-1">Katet</p>
                           {floorsCount !== null ? (
                             <p className="font-medium">
-                              {floorsCount} {floorsCount === 1 ? 'floor' : 'floors'}
+                              {floorsCount} {floorsCount === 1 ? 'kat' : 'kate'}
                             </p>
                           ) : (
-                            <p className="text-slate-400">Not specified</p>
+                            <p className="text-slate-400">Nuk është specifikuar</p>
                           )}
                         </div>
                         <div>
-                          <p className="text-slate-500 text-xs mb-1">Created</p>
+                          <p className="text-slate-500 text-xs mb-1">Krijuar</p>
                           <p className="font-medium">
                             {new Date(property.created_at).toLocaleDateString()}
                           </p>
@@ -331,9 +331,9 @@ export default function PropertiesPage() {
 
                       {/* Managers */}
                       <div>
-                        <p className="text-slate-500 text-xs mb-2">Managers</p>
+                        <p className="text-slate-500 text-xs mb-2">Menaxherët</p>
                         {managerCount === 0 ? (
-                          <p className="text-slate-400 text-sm">Not Assigned</p>
+                          <p className="text-slate-400 text-sm">Nuk është caktuar</p>
                         ) : managerCount === 1 ? (
                           <div className="text-sm p-2 bg-slate-50 rounded-md">
                             <p className="font-medium">
@@ -351,7 +351,7 @@ export default function PropertiesPage() {
                             className="gap-2 w-full"
                           >
                             <Users className="h-4 w-4" />
-                            {managerCount} Managers
+                            {managerCount} Menaxherë
                           </Button>
                         )}
                       </div>
@@ -365,7 +365,7 @@ export default function PropertiesPage() {
                           className="flex-1 gap-2"
                         >
                           <Pencil className="h-3 w-3" />
-                          Edit
+                          Edito
                         </Button>
                         <Button
                           variant="outline"
@@ -375,7 +375,7 @@ export default function PropertiesPage() {
                           className="flex-1 gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
                         >
                           <Trash2 className="h-3 w-3" />
-                          Delete
+                          Fshi
                         </Button>
                       </div>
                     </CardContent>
@@ -389,7 +389,7 @@ export default function PropertiesPage() {
           {!isLoading && properties.length > 0 && (
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm text-slate-600 text-center sm:text-left">
-                Page {currentPage} of {totalPages}
+                Faqja {currentPage} nga {totalPages}
               </p>
               <div className="flex gap-2">
                 <Button
@@ -400,7 +400,7 @@ export default function PropertiesPage() {
                   className="flex-1 sm:flex-none gap-2"
                 >
                   <ChevronLeft className="h-4 w-4" />
-                  Previous
+                  Mëparshme
                 </Button>
                 <Button
                   variant="outline"
@@ -409,7 +409,7 @@ export default function PropertiesPage() {
                   disabled={currentPage === totalPages}
                   className="flex-1 sm:flex-none gap-2"
                 >
-                  Next
+                  Tjetër
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>
@@ -420,9 +420,9 @@ export default function PropertiesPage() {
           <Dialog open={isManagerDialogOpen} onOpenChange={setIsManagerDialogOpen}>
             <DialogContent className="max-w-md">
               <DialogHeader>
-                <DialogTitle>Assigned Managers</DialogTitle>
+                <DialogTitle>Menaxherët e Caktuar</DialogTitle>
                 <DialogDescription>
-                  Property managers assigned to this property
+                  Menaxherët e pronave të caktuar për këtë pronë
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-3 mt-4">
@@ -454,9 +454,9 @@ export default function PropertiesPage() {
           }}>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
+                <AlertDialogTitle>Konfirmo Fshirjen</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Are you sure you want to delete this property? This action cannot be undone.
+                  Jeni i sigurt që dëshironi të fshini këtë pronë? Ky veprim nuk mund të zhbëhet.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -464,7 +464,7 @@ export default function PropertiesPage() {
                   onClick={() => setPropertyToDelete(null)}
                   className="hover:bg-slate-100"
                 >
-                  Cancel
+                  Anulo
                 </AlertDialogCancel>
                 <AlertDialogAction
                   onClick={async () => {
@@ -473,21 +473,18 @@ export default function PropertiesPage() {
                         const result = await deleteMutation.mutateAsync(propertyToDelete.id);
                         if (result.success) {
                           setPropertyToDelete(null);
-                          // Optionally, refetch properties or update state to remove deleted property
                         } else {
-                          // setDeleteError(result.message || "Failed to delete property");
-                          toast.error(result.message || "Failed to delete property");
+                          toast.error(result.message || "Dështoi fshirja e pronës");
                         }
                       } catch (err) {
-                        // setDeleteError("Failed to delete property");
-                        toast.error("Failed to delete property");
+                        toast.error("Dështoi fshirja e pronës");
                         console.error("Delete error:", err);
                       }
                     }
                   }}
                   className="bg-red-600 text-white hover:bg-red-700"
                 >
-                  Delete Property
+                  Fshi Pronën
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

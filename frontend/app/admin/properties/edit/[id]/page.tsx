@@ -4,18 +4,30 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { AdminLayout } from "@/components/layouts/AdminLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { useProperty, useUpdateProperty, useManagers } from "@/hooks/useProperties";
+import { useProperty, useManagers, useUpdateProperty } from "@/hooks/useProperties";
 import { useCities } from "@/hooks/useCities";
-import { LocationPicker } from "@/components/maps/LocationPicker";
-import { MultiSelect } from "@/components/ui/multi-select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, Save } from "lucide-react";
 import { toast } from "sonner";
+import { MultiSelect } from "@/components/ui/multi-select";
+import { LocationPicker } from "@/components/maps/LocationPicker";
 
 export default function EditPropertyPage() {
   const router = useRouter();
@@ -32,6 +44,7 @@ export default function EditPropertyPage() {
     floors_to: null as number | null,
     manager_ids: [] as number[],
   });
+
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [isMapLocked, setIsMapLocked] = useState(false);
@@ -90,8 +103,8 @@ export default function EditPropertyPage() {
     setSuccess(false);
 
     if (!formData.city_id) {
-      setError("Please select a city");
-      toast.error("Please select a city");
+      setError("Ju lutem zgjidhni një qytet");
+      toast.error("Ju lutem zgjidhni një qytet");
       return;
     }
 
@@ -112,17 +125,17 @@ export default function EditPropertyPage() {
 
       if (result.success) {
         setSuccess(true);
-        toast.success("Property updated successfully! Redirecting...");
+        toast.success("Prona u përditësua me sukses! Duke ridrejtuar...");
         setTimeout(() => {
           router.push("/admin/properties");
         }, 1500);
       } else {
-        setError(result.message || "Failed to update property");
-        toast.error(result.message || "Failed to update property");
+        setError(result.message || "Dështoi përditësimi i pronës");
+        toast.error(result.message || "Dështoi përditësimi i pronës");
       }
     } catch (err) {
-      setError("Failed to connect to server");
-      toast.error("Failed to connect to server");
+      setError("Dështoi lidhja me serverin");
+      toast.error("Dështoi lidhja me serverin");
       console.error("Update property error:", err);
     }
   };
@@ -130,7 +143,7 @@ export default function EditPropertyPage() {
   if (isLoading) {
     return (
       <ProtectedRoute allowedRoles={["admin"]}>
-        <AdminLayout title="Edit Property">
+        <AdminLayout title="Modifiko Pronën">
           <div className="flex items-center justify-center h-96">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600" />
           </div>
@@ -141,7 +154,7 @@ export default function EditPropertyPage() {
 
   return (
     <ProtectedRoute allowedRoles={["admin"]}>
-      <AdminLayout title="Edit Property">
+      <AdminLayout title="Modifiko Pronën">
         <div className="w-full max-w-4xl mx-auto space-y-4 md:space-y-6">
           {/* Back Button - Mobile Friendly */}
           <div className="flex items-center gap-2">
@@ -152,8 +165,8 @@ export default function EditPropertyPage() {
               className="gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
-              <span className="hidden sm:inline">Back to Properties</span>
-              <span className="sm:hidden">Back</span>
+              <span className="hidden sm:inline">Kthehu te Pronat</span>
+              <span className="sm:hidden">Kthehu</span>
             </Button>
           </div>
 
@@ -161,7 +174,7 @@ export default function EditPropertyPage() {
           {success && (
             <Alert className="border-green-200 bg-green-50">
               <AlertDescription className="text-green-800">
-                Property updated successfully! Redirecting...
+                Prona u përditësua me sukses! Duke ridrejtuar...
               </AlertDescription>
             </Alert>
           )}
@@ -178,17 +191,17 @@ export default function EditPropertyPage() {
               {/* Property Details Form */}
               <Card className="border-red-200">
                 <CardHeader>
-                  <CardTitle className="text-lg md:text-xl">Property Details</CardTitle>
+                  <CardTitle className="text-lg md:text-xl">Detajet e Pronës</CardTitle>
                   <CardDescription className="text-sm">
-                    Update the property information below
+                    Përditëso informacionin e pronës më poshtë
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4 md:space-y-6">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Property Name *</Label>
+                    <Label htmlFor="name">Emri i Pronës *</Label>
                     <Input
                       id="name"
-                      placeholder="e.g., Greenwood Apartments"
+                      placeholder="p.sh., Apartamentet Greenwood"
                       value={formData.name}
                       onChange={(e) =>
                         setFormData({ ...formData, name: e.target.value })
@@ -199,10 +212,10 @@ export default function EditPropertyPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="address">Address *</Label>
+                    <Label htmlFor="address">Adresa *</Label>
                     <Input
                       id="address"
-                      placeholder="e.g., 123 Main Street"
+                      placeholder="p.sh., Rruga Kryesore 123"
                       value={formData.address}
                       onChange={(e) =>
                         setFormData({ ...formData, address: e.target.value })
@@ -213,7 +226,7 @@ export default function EditPropertyPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="city">City *</Label>
+                    <Label htmlFor="city">Qyteti *</Label>
                     <Select
                       value={formData.city_id.toString()}
                       onValueChange={(value) =>
@@ -222,7 +235,7 @@ export default function EditPropertyPage() {
                       disabled={updateMutation.isPending}
                     >
                       <SelectTrigger id="city">
-                        <SelectValue placeholder="Select a city" />
+                        <SelectValue placeholder="Zgjidh një qytet" />
                       </SelectTrigger>
                       <SelectContent>
                         {cities.map((city) => (
@@ -235,10 +248,10 @@ export default function EditPropertyPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Floor Range (Optional)</Label>
+                    <Label>Diapazoni i Kateve (Opsionale)</Label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="floors_from" className="text-sm text-slate-600">From</Label>
+                        <Label htmlFor="floors_from" className="text-sm text-slate-600">Nga</Label>
                         <Select
                           value={formData.floors_from !== null ? formData.floors_from.toString() : "none"}
                           onValueChange={(value) =>
@@ -247,20 +260,20 @@ export default function EditPropertyPage() {
                           disabled={updateMutation.isPending}
                         >
                           <SelectTrigger id="floors_from">
-                            <SelectValue placeholder="Starting floor" />
+                            <SelectValue placeholder="Kati fillestar" />
                           </SelectTrigger>
                           <SelectContent className="max-h-[300px]">
-                            <SelectItem value="none">Not specified</SelectItem>
+                            <SelectItem value="none">Nuk është specifikuar</SelectItem>
                             {Array.from({ length: 221 }, (_, i) => i - 20).map((floor) => (
                               <SelectItem key={floor} value={floor.toString()}>
-                                {floor === 0 ? "Ground Level" : floor < 0 ? `B${Math.abs(floor)}` : `Floor ${floor}`}
+                                {floor === 0 ? "Kati Përdhesë" : floor < 0 ? `B${Math.abs(floor)}` : `Kati ${floor}`}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="floors_to" className="text-sm text-slate-600">To</Label>
+                        <Label htmlFor="floors_to" className="text-sm text-slate-600">Deri</Label>
                         <Select
                           value={formData.floors_to !== null ? formData.floors_to.toString() : "none"}
                           onValueChange={(value) =>
@@ -269,13 +282,13 @@ export default function EditPropertyPage() {
                           disabled={updateMutation.isPending}
                         >
                           <SelectTrigger id="floors_to">
-                            <SelectValue placeholder="Ending floor" />
+                            <SelectValue placeholder="Kati përfundimtar" />
                           </SelectTrigger>
                           <SelectContent className="max-h-[300px]">
-                            <SelectItem value="none">Not specified</SelectItem>
+                            <SelectItem value="none">Nuk është specifikuar</SelectItem>
                             {Array.from({ length: 221 }, (_, i) => i - 20).map((floor) => (
                               <SelectItem key={floor} value={floor.toString()}>
-                                {floor === 0 ? "Ground Level" : floor < 0 ? `B${Math.abs(floor)}` : `Floor ${floor}`}
+                                {floor === 0 ? "Kati Përdhesë" : floor < 0 ? `B${Math.abs(floor)}` : `Kati ${floor}`}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -283,21 +296,21 @@ export default function EditPropertyPage() {
                       </div>
                     </div>
                     <p className="text-xs text-slate-600">
-                      Specify the floor range for this property (from -20 underground to 200 above ground)
+                      Specifikoni diapazonin e kateve për këtë pronë (nga -20 nëntokë deri në 200 mbi tokë)
                     </p>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="managers">Assign Managers</Label>
+                    <Label htmlFor="managers">Cakto Menaxherë</Label>
                     <MultiSelect
                       options={managerOptions}
                       selected={formData.manager_ids.map((id) => id.toString())}
                       onChange={handleManagersChange}
-                      placeholder="Select managers..."
+                      placeholder="Zgjidh menaxherë..."
                       disabled={updateMutation.isPending}
                     />
                     <p className="text-xs text-slate-600">
-                      Assign property managers to manage this property
+                      Cakto menaxherë pronash për të menaxhuar këtë pronë
                     </p>
                   </div>
                 </CardContent>
@@ -321,7 +334,7 @@ export default function EditPropertyPage() {
                   isLoading={updateMutation.isPending}
                 >
                   <Save className="h-4 w-4" />
-                  Update Property
+                  Përditëso Pronën
                 </Button>
                 <Button
                   type="button"
@@ -330,7 +343,7 @@ export default function EditPropertyPage() {
                   disabled={updateMutation.isPending}
                   className="w-full sm:w-auto"
                 >
-                  Cancel
+                  Anulo
                 </Button>
               </div>
             </form>

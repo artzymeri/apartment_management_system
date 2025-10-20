@@ -34,9 +34,11 @@ export default function AdminDashboard() {
   const { data: pendingRequests, isLoading: requestsLoading } = useRegisterRequests({ status: 'pending' });
   const { data: citiesData, isLoading: citiesLoading } = useCities();
 
-  // Helper function to format role names
+  // Helper function to format role names in Albanian
   const formatRole = (role: string) => {
-    if (role === 'property_manager') return 'Property Manager';
+    if (role === 'property_manager') return 'Menaxher Pronash';
+    if (role === 'admin') return 'Administrator';
+    if (role === 'tenant') return 'Qiramarrës';
     return role.charAt(0).toUpperCase() + role.slice(1);
   };
 
@@ -95,7 +97,7 @@ export default function AdminDashboard() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <Card className="border-red-200 bg-red-50/50 hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Properties</CardTitle>
+                <CardTitle className="text-sm font-medium">Totali i Pronave</CardTitle>
                 <Building2 className="h-4 w-4 text-red-600" />
               </CardHeader>
               <CardContent>
@@ -103,14 +105,14 @@ export default function AdminDashboard() {
                   {isLoading ? "..." : stats.totalProperties}
                 </div>
                 <p className="text-xs text-slate-600 mt-1">
-                  {isLoading ? "Loading..." : `${stats.propertiesWithManagers} with assigned managers`}
+                  {isLoading ? "Duke u ngarkuar..." : `${stats.propertiesWithManagers} me menaxherë të caktuar`}
                 </p>
               </CardContent>
             </Card>
 
             <Card className="border-blue-200 bg-blue-50/50 hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+                <CardTitle className="text-sm font-medium">Totali i Përdoruesve</CardTitle>
                 <Users className="h-4 w-4 text-blue-600" />
               </CardHeader>
               <CardContent>
@@ -118,14 +120,14 @@ export default function AdminDashboard() {
                   {isLoading ? "..." : stats.totalUsers}
                 </div>
                 <p className="text-xs text-slate-600 mt-1">
-                  {isLoading ? "Loading..." : `+${stats.recentUsers} in last 7 days`}
+                  {isLoading ? "Duke u ngarkuar..." : `+${stats.recentUsers} në 7 ditët e fundit`}
                 </p>
               </CardContent>
             </Card>
 
             <Card className="border-amber-200 bg-amber-50/50 hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Pending Requests</CardTitle>
+                <CardTitle className="text-sm font-medium">Kërkesa në Pritje</CardTitle>
                 <Clock className="h-4 w-4 text-amber-600" />
               </CardHeader>
               <CardContent>
@@ -133,14 +135,14 @@ export default function AdminDashboard() {
                   {isLoading ? "..." : stats.pendingRequestsCount}
                 </div>
                 <p className="text-xs text-slate-600 mt-1">
-                  {stats.pendingRequestsCount > 0 ? "Awaiting approval" : "All caught up!"}
+                  {stats.pendingRequestsCount > 0 ? "Në pritje të miratimit" : "Gjithçka në rregull!"}
                 </p>
               </CardContent>
             </Card>
 
             <Card className="border-green-200 bg-green-50/50 hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Active Cities</CardTitle>
+                <CardTitle className="text-sm font-medium">Qytete Aktive</CardTitle>
                 <MapPin className="h-4 w-4 text-green-600" />
               </CardHeader>
               <CardContent>
@@ -148,7 +150,7 @@ export default function AdminDashboard() {
                   {isLoading ? "..." : stats.totalCities}
                 </div>
                 <p className="text-xs text-slate-600 mt-1">
-                  {isLoading ? "Loading..." : "Locations configured"}
+                  {isLoading ? "Duke u ngarkuar..." : "Vendndodhje të konfiguruara"}
                 </p>
               </CardContent>
             </Card>
@@ -157,31 +159,31 @@ export default function AdminDashboard() {
           {/* Role Distribution */}
           <Card>
             <CardHeader>
-              <CardTitle>User Distribution by Role</CardTitle>
-              <CardDescription>Breakdown of users across different access levels</CardDescription>
+              <CardTitle>Shpërndarja e Përdoruesve sipas Rolit</CardTitle>
+              <CardDescription>Ndarja e përdoruesve në nivele të ndryshme akses</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 md:grid-cols-3">
                 <div className="flex items-center justify-between p-4 border border-slate-200 rounded-lg bg-slate-50/50">
                   <div>
-                    <p className="text-sm font-medium text-slate-600">Administrators</p>
+                    <p className="text-sm font-medium text-slate-600">Administratorë</p>
                     <p className="text-2xl font-bold text-slate-900">{isLoading ? "..." : stats.adminCount}</p>
                   </div>
                   <Badge variant="secondary" className="bg-red-100 text-red-700">Admin</Badge>
                 </div>
                 <div className="flex items-center justify-between p-4 border border-slate-200 rounded-lg bg-slate-50/50">
                   <div>
-                    <p className="text-sm font-medium text-slate-600">Property Managers</p>
+                    <p className="text-sm font-medium text-slate-600">Menaxherë Pronash</p>
                     <p className="text-2xl font-bold text-slate-900">{isLoading ? "..." : stats.propertyManagerCount}</p>
                   </div>
-                  <Badge variant="secondary" className="bg-blue-100 text-blue-700">Manager</Badge>
+                  <Badge variant="secondary" className="bg-blue-100 text-blue-700">Menaxher</Badge>
                 </div>
                 <div className="flex items-center justify-between p-4 border border-slate-200 rounded-lg bg-slate-50/50">
                   <div>
-                    <p className="text-sm font-medium text-slate-600">Tenants</p>
+                    <p className="text-sm font-medium text-slate-600">Qiramarrës</p>
                     <p className="text-2xl font-bold text-slate-900">{isLoading ? "..." : stats.tenantCount}</p>
                   </div>
-                  <Badge variant="secondary" className="bg-green-100 text-green-700">Tenant</Badge>
+                  <Badge variant="secondary" className="bg-green-100 text-green-700">Qiramarrës</Badge>
                 </div>
               </div>
             </CardContent>
@@ -194,15 +196,15 @@ export default function AdminDashboard() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <UserPlus className="h-5 w-5 text-blue-600" />
-                  Recent Users
+                  Përdorues të Fundit
                 </CardTitle>
-                <CardDescription>Latest user registrations</CardDescription>
+                <CardDescription>Regjistrimet e fundit të përdoruesve</CardDescription>
               </CardHeader>
               <CardContent>
                 {isLoading ? (
-                  <p className="text-sm text-slate-500">Loading...</p>
+                  <p className="text-sm text-slate-500">Duke u ngarkuar...</p>
                 ) : recentUsers.length === 0 ? (
-                  <p className="text-sm text-slate-500">No users yet</p>
+                  <p className="text-sm text-slate-500">Nuk ka përdorues ende</p>
                 ) : (
                   <div className="space-y-3">
                     {recentUsers.map((user: User) => (
@@ -231,7 +233,7 @@ export default function AdminDashboard() {
                 )}
                 <Link href="/admin/users">
                   <Button variant="outline" className="w-full mt-4 border-slate-200 hover:bg-slate-50">
-                    View All Users
+                    Shiko të Gjithë Përdoruesit
                   </Button>
                 </Link>
               </CardContent>
@@ -242,9 +244,9 @@ export default function AdminDashboard() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <TrendingUp className="h-5 w-5 text-red-600" />
-                  Quick Actions
+                  Veprime të Shpejta
                 </CardTitle>
-                <CardDescription>Common administrative tasks</CardDescription>
+                <CardDescription>Detyra të zakonshme administrative</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -255,9 +257,9 @@ export default function AdminDashboard() {
                           <Clock className="h-4 w-4 text-amber-700" />
                         </div>
                         <div>
-                          <p className="font-medium text-sm">Registration Requests</p>
+                          <p className="font-medium text-sm">Kërkesa për Regjistrim</p>
                           <p className="text-xs text-slate-500">
-                            {stats.pendingRequestsCount} pending approval{stats.pendingRequestsCount !== 1 ? 's' : ''}
+                            {stats.pendingRequestsCount} në pritje të miratimit
                           </p>
                         </div>
                       </div>
@@ -276,8 +278,8 @@ export default function AdminDashboard() {
                           <Building2 className="h-4 w-4 text-red-700" />
                         </div>
                         <div>
-                          <p className="font-medium text-sm">Manage Properties</p>
-                          <p className="text-xs text-slate-500">View and edit all properties</p>
+                          <p className="font-medium text-sm">Menaxho Pronat</p>
+                          <p className="text-xs text-slate-500">Shiko dhe edito të gjitha pronat</p>
                         </div>
                       </div>
                     </div>
@@ -290,8 +292,8 @@ export default function AdminDashboard() {
                           <Users className="h-4 w-4 text-blue-700" />
                         </div>
                         <div>
-                          <p className="font-medium text-sm">Manage Users</p>
-                          <p className="text-xs text-slate-500">View and manage all users</p>
+                          <p className="font-medium text-sm">Menaxho Përdoruesit</p>
+                          <p className="text-xs text-slate-500">Shiko dhe menaxho të gjithë përdoruesit</p>
                         </div>
                       </div>
                     </div>
@@ -304,8 +306,8 @@ export default function AdminDashboard() {
                           <MapPin className="h-4 w-4 text-green-700" />
                         </div>
                         <div>
-                          <p className="font-medium text-sm">System Configuration</p>
-                          <p className="text-xs text-slate-500">Manage cities and settings</p>
+                          <p className="font-medium text-sm">Konfigurimet e Sistemit</p>
+                          <p className="text-xs text-slate-500">Menaxho qytetet dhe cilësimet</p>
                         </div>
                       </div>
                     </div>

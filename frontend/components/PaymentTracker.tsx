@@ -76,7 +76,7 @@ export default function PaymentTracker({
       setPayments(data);
     } catch (error) {
       console.error("Error fetching payments:", error);
-      toast.error("Failed to load payment history");
+      toast.error("Dështoi ngarkimi i historisë së pagesave");
     } finally {
       setLoading(false);
     }
@@ -87,31 +87,31 @@ export default function PaymentTracker({
 
     try {
       await updatePaymentStatus(selectedPayment.id, newStatus, notes);
-      toast.success("Payment status updated successfully");
+      toast.success("Statusi i pagesës u përditësua me sukses");
       setStatusDialogOpen(false);
       setSelectedPayment(null);
       setNotes("");
       fetchPayments();
     } catch (error) {
       console.error("Error updating payment:", error);
-      toast.error("Failed to update payment status");
+      toast.error("Dështoi përditësimi i statusit të pagesës");
     }
   };
 
   const handleGenerateFuturePayments = async () => {
     if (!propertyId) {
-      toast.error("Property ID is required");
+      toast.error("ID-ja e pronës është e nevojshme");
       return;
     }
 
     try {
       await generateFuturePayments(tenantId, propertyId, monthsAhead);
-      toast.success(`Generated ${monthsAhead} months of future payment records`);
+      toast.success(`U gjeneruan ${monthsAhead} muaj me të dhëna të pagesave të ardhshme`);
       setFutureMonthsDialogOpen(false);
       fetchPayments();
     } catch (error: any) {
       console.error("Error generating future payments:", error);
-      toast.error(error.message || "Failed to generate future payments");
+      toast.error(error.message || "Dështoi gjenerimi i pagesave të ardhshme");
     }
   };
 
@@ -121,21 +121,21 @@ export default function PaymentTracker({
         return (
           <Badge className="bg-green-500 hover:bg-green-600">
             <CheckCircle className="w-3 h-3 mr-1" />
-            Paid
+            Paguar
           </Badge>
         );
       case "pending":
         return (
           <Badge className="bg-yellow-500 hover:bg-yellow-600">
             <Clock className="w-3 h-3 mr-1" />
-            Pending
+            Në pritje
           </Badge>
         );
       case "overdue":
         return (
           <Badge className="bg-red-500 hover:bg-red-600">
             <AlertCircle className="w-3 h-3 mr-1" />
-            Overdue
+            Vonuar
           </Badge>
         );
       default:
@@ -148,7 +148,7 @@ export default function PaymentTracker({
     // This avoids timezone conversion issues
     const [year, month] = dateString.split('-').map(Number);
     const date = new Date(year, month - 1, 1); // month is 0-indexed in JS Date
-    return date.toLocaleDateString("en-US", { year: "numeric", month: "long" });
+    return date.toLocaleDateString("sq-AL", { year: "numeric", month: "long" });
   };
 
   const formatAmount = (amount: string) => {
@@ -199,7 +199,7 @@ export default function PaymentTracker({
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-xs md:text-sm font-medium text-green-600">
-              Paid
+              Paguar
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -212,7 +212,7 @@ export default function PaymentTracker({
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-xs md:text-sm font-medium text-yellow-600">
-              Pending
+              Në pritje
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -225,7 +225,7 @@ export default function PaymentTracker({
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-xs md:text-sm font-medium text-red-600">
-              Overdue
+              Vonuar
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -243,7 +243,7 @@ export default function PaymentTracker({
           <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3 md:gap-0">
             <CardTitle className="flex items-center gap-2 text-base md:text-lg">
               <Calendar className="w-4 h-4 md:w-5 md:h-5" />
-              Payment History
+              Historiku i Pagesave
             </CardTitle>
             <div className="flex gap-2">
               <Select
@@ -261,29 +261,17 @@ export default function PaymentTracker({
                   ))}
                 </SelectContent>
               </Select>
-              {editable && monthlyRate && monthlyRate > 0 && (
-                <Button
-                  onClick={() => setFutureMonthsDialogOpen(true)}
-                  size="sm"
-                  variant="outline"
-                  className="h-9 text-xs md:text-sm"
-                >
-                  <Plus className="w-3 h-3 md:w-4 md:h-4 md:mr-2" />
-                  <span className="hidden md:inline">Add Future Payments</span>
-                  <span className="md:hidden">Add</span>
-                </Button>
-              )}
             </div>
           </div>
         </CardHeader>
         <CardContent>
           {loading ? (
             <div className="text-center py-8 text-muted-foreground text-xs md:text-sm">
-              Loading payment history...
+              Duke ngarkuar historikun e pagesave...
             </div>
           ) : payments.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground text-xs md:text-sm">
-              No payment records found for {yearFilter}
+              Nuk u gjetën të dhëna të pagesave për vitin {yearFilter}
             </div>
           ) : (
             <>
@@ -305,10 +293,10 @@ export default function PaymentTracker({
                       </div>
                       <div className="flex justify-between items-center text-xs text-muted-foreground pt-2 border-t">
                         <div>
-                          <span className="font-medium">Payment Date:</span>{" "}
+                          <span className="font-medium">Data e Pagesës:</span>{" "}
                           {payment.payment_date
-                            ? new Date(payment.payment_date).toLocaleDateString()
-                            : "Not paid"}
+                            ? new Date(payment.payment_date).toLocaleDateString("sq-AL")
+                            : "Nuk është paguar"}
                         </div>
                         {editable && (
                           <Button
@@ -322,7 +310,7 @@ export default function PaymentTracker({
                               setStatusDialogOpen(true);
                             }}
                           >
-                            Update
+                            Përditëso
                           </Button>
                         )}
                       </div>
@@ -336,11 +324,11 @@ export default function PaymentTracker({
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Month</TableHead>
-                      <TableHead>Amount</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Payment Date</TableHead>
-                      {editable && <TableHead>Actions</TableHead>}
+                      <TableHead>Muaji</TableHead>
+                      <TableHead>Shuma</TableHead>
+                      <TableHead>Statusi</TableHead>
+                      <TableHead>Data e Pagesës</TableHead>
+                      {editable && <TableHead>Veprime</TableHead>}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -353,7 +341,7 @@ export default function PaymentTracker({
                         <TableCell>{getStatusBadge(payment.status)}</TableCell>
                         <TableCell>
                           {payment.payment_date
-                            ? new Date(payment.payment_date).toLocaleDateString()
+                            ? new Date(payment.payment_date).toLocaleDateString("sq-AL")
                             : "-"}
                         </TableCell>
                         {editable && (
@@ -368,7 +356,7 @@ export default function PaymentTracker({
                                 setStatusDialogOpen(true);
                               }}
                             >
-                              Update
+                              Përditëso
                             </Button>
                           </TableCell>
                         )}
@@ -386,15 +374,15 @@ export default function PaymentTracker({
       <Dialog open={statusDialogOpen} onOpenChange={setStatusDialogOpen}>
         <DialogContent className="w-[95vw] max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-base md:text-lg">Update Payment Status</DialogTitle>
+            <DialogTitle className="text-base md:text-lg">Përditëso Statusin e Pagesës</DialogTitle>
             <DialogDescription className="text-xs md:text-sm">
-              Change the payment status for{" "}
+              Ndrysho statusin e pagesës për{" "}
               {selectedPayment && formatMonth(selectedPayment.payment_month)}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="status" className="text-xs md:text-sm">Status</Label>
+              <Label htmlFor="status" className="text-xs md:text-sm">Statusi</Label>
               <Select
                 value={newStatus}
                 onValueChange={(value: any) => setNewStatus(value)}
@@ -403,17 +391,17 @@ export default function PaymentTracker({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="paid" className="text-xs md:text-sm">Paid</SelectItem>
-                  <SelectItem value="pending" className="text-xs md:text-sm">Pending</SelectItem>
-                  <SelectItem value="overdue" className="text-xs md:text-sm">Overdue</SelectItem>
+                  <SelectItem value="paid" className="text-xs md:text-sm">Paguar</SelectItem>
+                  <SelectItem value="pending" className="text-xs md:text-sm">Në pritje</SelectItem>
+                  <SelectItem value="overdue" className="text-xs md:text-sm">Vonuar</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="notes" className="text-xs md:text-sm">Notes (Optional)</Label>
+              <Label htmlFor="notes" className="text-xs md:text-sm">Shënime (Opsionale)</Label>
               <Textarea
                 id="notes"
-                placeholder="Add any notes about this payment..."
+                placeholder="Shto shënime për këtë pagesë..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={3}
@@ -423,9 +411,9 @@ export default function PaymentTracker({
           </div>
           <DialogFooter className="flex-col sm:flex-row gap-2">
             <Button variant="outline" onClick={() => setStatusDialogOpen(false)} className="h-9 text-xs md:text-sm">
-              Cancel
+              Anulo
             </Button>
-            <Button onClick={handleStatusChange} className="h-9 text-xs md:text-sm">Update Status</Button>
+            <Button onClick={handleStatusChange} className="h-9 text-xs md:text-sm">Përditëso Statusin</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -437,15 +425,15 @@ export default function PaymentTracker({
       >
         <DialogContent className="w-[95vw] max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-base md:text-lg">Add Future Payment Records</DialogTitle>
+            <DialogTitle className="text-base md:text-lg">Shto Të Dhëna Pagesash të Ardhshme</DialogTitle>
             <DialogDescription className="text-xs md:text-sm">
-              Generate payment records in advance for this tenant. This is useful
-              when a tenant pays for multiple months upfront.
+              Gjeneroni të dhëna pagesash paraprakisht për këtë qiramarrës. Kjo është e dobishme
+              kur një qiramarrës paguan për disa muaj përpara.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="months" className="text-xs md:text-sm">Number of Months</Label>
+              <Label htmlFor="months" className="text-xs md:text-sm">Numri i Muajve</Label>
               <Input
                 id="months"
                 type="number"
@@ -456,8 +444,8 @@ export default function PaymentTracker({
                 className="h-9 md:h-10 text-xs md:text-sm"
               />
               <p className="text-xs md:text-sm text-muted-foreground">
-                This will create payment records for the next {monthsAhead} months
-                starting from the current month.
+                Kjo do të krijojë të dhëna pagesash për {monthsAhead} muajt e ardhshëm
+                duke filluar nga muaji aktual.
               </p>
             </div>
           </div>
@@ -467,9 +455,9 @@ export default function PaymentTracker({
               onClick={() => setFutureMonthsDialogOpen(false)}
               className="h-9 text-xs md:text-sm"
             >
-              Cancel
+              Anulo
             </Button>
-            <Button onClick={handleGenerateFuturePayments} className="h-9 text-xs md:text-sm">Generate</Button>
+            <Button onClick={handleGenerateFuturePayments} className="h-9 text-xs md:text-sm">Gjeneroni</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

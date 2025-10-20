@@ -51,7 +51,7 @@ export default function ConfigurationsPage() {
     e.preventDefault();
 
     if (!newCityName.trim()) {
-      toast.error("City name is required");
+      toast.error("Emri i qytetit është i nevojshëm");
       return;
     }
 
@@ -61,13 +61,13 @@ export default function ConfigurationsPage() {
       if (result.success) {
         setNewCityName("");
         setIsAddCityDialogOpen(false);
-        toast.success("City added successfully!");
+        toast.success("Qyteti u shtua me sukses!");
       } else {
-        toast.error(result.message || "Failed to add city");
+        toast.error(result.message || "Dështoi shtimi i qytetit");
       }
     } catch (err) {
       console.error("Create city error:", err);
-      toast.error("Failed to connect to server");
+      toast.error("Dështoi lidhja me serverin");
     }
   };
 
@@ -79,15 +79,15 @@ export default function ConfigurationsPage() {
 
       if (result.success) {
         setCityToDelete(null);
-        toast.success("City deleted successfully!");
+        toast.success("Qyteti u fshi me sukses!");
       } else {
         setCityToDelete(null);
-        toast.error(result.message || "Failed to delete city");
+        toast.error(result.message || "Dështoi fshirja e qytetit");
       }
     } catch (err) {
       console.error("Delete city error:", err);
       setCityToDelete(null);
-      toast.error("Failed to connect to server");
+      toast.error("Dështoi lidhja me serverin");
     }
   };
 
@@ -95,12 +95,12 @@ export default function ConfigurationsPage() {
     e.preventDefault();
 
     if (!editCityName.trim()) {
-      toast.error("City name is required");
+      toast.error("Emri i qytetit është i nevojshëm");
       return;
     }
 
     if (!cityToEdit) {
-      toast.error("No city selected for editing");
+      toast.error("Nuk është zgjedhur qytet për editim");
       return;
     }
 
@@ -111,13 +111,13 @@ export default function ConfigurationsPage() {
         setEditCityName("");
         setCityToEdit(null);
         setIsEditDialogOpen(false);
-        toast.success("City updated successfully!");
+        toast.success("Qyteti u përditësua me sukses!");
       } else {
-        toast.error(result.message || "Failed to update city");
+        toast.error(result.message || "Dështoi përditësimi i qytetit");
       }
     } catch (err) {
       console.error("Update city error:", err);
-      toast.error("Failed to connect to server");
+      toast.error("Dështoi lidhja me serverin");
     }
   };
 
@@ -135,16 +135,16 @@ export default function ConfigurationsPage() {
                     <MapPin className="h-6 w-6 text-red-600" />
                   </div>
                   <div>
-                    <CardTitle className="text-lg">Cities</CardTitle>
+                    <CardTitle className="text-lg">Qytetet</CardTitle>
                     <CardDescription className="text-sm">
-                      {isLoading ? "Loading..." : `${cities.length} cities`}
+                      {isLoading ? "Duke u ngarkuar..." : `${cities.length} qytete`}
                     </CardDescription>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-slate-600">
-                  Manage the list of available cities for properties
+                  Menaxho listën e qyteteve të disponueshme për pronat
                 </p>
                 <Button
                   className="w-full mt-4 bg-red-600 hover:bg-red-700"
@@ -154,13 +154,10 @@ export default function ConfigurationsPage() {
                   }}
                 >
                   <Settings className="h-4 w-4 mr-2" />
-                  Manage Cities
+                  Menaxho Qytetet
                 </Button>
               </CardContent>
             </Card>
-
-            {/* Placeholder for future configuration cards */}
-            {/* Add more configuration cards here as needed */}
           </div>
 
           {/* Cities Management Dialog */}
@@ -169,10 +166,10 @@ export default function ConfigurationsPage() {
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   <MapPin className="h-5 w-5 text-red-600" />
-                  Cities Management
+                  Menaxhimi i Qyteteve
                 </DialogTitle>
                 <DialogDescription>
-                  Manage the list of available cities for properties
+                  Menaxho listën e qyteteve të disponueshme për pronat
                 </DialogDescription>
               </DialogHeader>
 
@@ -182,22 +179,22 @@ export default function ConfigurationsPage() {
                     <DialogTrigger asChild>
                       <Button className="bg-red-600 hover:bg-red-700 gap-2">
                         <Plus className="h-4 w-4" />
-                        Add City
+                        Shto Qytet
                       </Button>
                     </DialogTrigger>
                     <DialogContent>
                       <form onSubmit={handleCreateCity}>
                         <DialogHeader>
-                          <DialogTitle>Add New City</DialogTitle>
+                          <DialogTitle>Shto Qytet të Ri</DialogTitle>
                           <DialogDescription>
-                            Enter the name of the city you want to add to the system.
+                            Vendos emrin e qytetit që dëshiron të shtosh në sistem.
                           </DialogDescription>
                         </DialogHeader>
                         <div className="py-4">
-                          <Label htmlFor="cityName">City Name</Label>
+                          <Label htmlFor="cityName">Emri i Qytetit</Label>
                           <Input
                             id="cityName"
-                            placeholder="e.g., Prishtina"
+                            placeholder="p.sh., Prishtina"
                             value={newCityName}
                             onChange={(e) => setNewCityName(e.target.value)}
                             className="mt-2"
@@ -211,14 +208,14 @@ export default function ConfigurationsPage() {
                             onClick={() => setIsAddCityDialogOpen(false)}
                             disabled={createMutation.isPending}
                           >
-                            Cancel
+                            Anulo
                           </Button>
                           <Button
                             type="submit"
                             className="bg-red-600 hover:bg-red-700"
-                            isLoading={createMutation.isPending}
+                            disabled={createMutation.isPending}
                           >
-                            Add City
+                            Shto Qytet
                           </Button>
                         </DialogFooter>
                       </form>
@@ -232,7 +229,7 @@ export default function ConfigurationsPage() {
                   </div>
                 ) : cities.length === 0 ? (
                   <div className="text-center py-8 text-slate-500">
-                    No cities found. Add your first city to get started.
+                    Nuk u gjetën qytete. Shto qytetin e parë për të filluar.
                   </div>
                 ) : (
                   <div className="rounded-md border">
@@ -240,8 +237,8 @@ export default function ConfigurationsPage() {
                       <TableHeader>
                         <TableRow>
                           <TableHead className="w-[100px]">ID</TableHead>
-                          <TableHead>City Name</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
+                          <TableHead>Emri i Qytetit</TableHead>
+                          <TableHead className="text-right">Veprime</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -288,15 +285,15 @@ export default function ConfigurationsPage() {
           <AlertDialog open={!!cityToDelete} onOpenChange={() => setCityToDelete(null)}>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogTitle>Jeni i sigurt?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This will permanently delete the city &quot;{cityToDelete?.name}&quot;.
-                  This action cannot be undone.
+                  Ky veprim do të fshijë përgjithmonë qytetin &quot;{cityToDelete?.name}&quot;.
+                  Ky veprim nuk mund të zhbëhet.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel disabled={deleteMutation.isPending}>
-                  Cancel
+                  Anulo
                 </AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleDeleteCity}
@@ -306,10 +303,10 @@ export default function ConfigurationsPage() {
                   {deleteMutation.isPending ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Deleting...
+                      Duke fshirë...
                     </>
                   ) : (
-                    "Delete"
+                    "Fshi"
                   )}
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -321,16 +318,16 @@ export default function ConfigurationsPage() {
             <DialogContent>
               <form onSubmit={handleUpdateCity}>
                 <DialogHeader>
-                  <DialogTitle>Edit City</DialogTitle>
+                  <DialogTitle>Edito Qytetin</DialogTitle>
                   <DialogDescription>
-                    Update the name of the city in the system.
+                    Përditëso emrin e qytetit në sistem.
                   </DialogDescription>
                 </DialogHeader>
                 <div className="py-4">
-                  <Label htmlFor="editCityName">City Name</Label>
+                  <Label htmlFor="editCityName">Emri i Qytetit</Label>
                   <Input
                     id="editCityName"
-                    placeholder="e.g., Prishtina"
+                    placeholder="p.sh., Prishtina"
                     value={editCityName}
                     onChange={(e) => setEditCityName(e.target.value)}
                     className="mt-2"
@@ -344,14 +341,14 @@ export default function ConfigurationsPage() {
                     onClick={() => setIsEditDialogOpen(false)}
                     disabled={updateMutation.isPending}
                   >
-                    Cancel
+                    Anulo
                   </Button>
                   <Button
                     type="submit"
                     className="bg-blue-600 hover:bg-blue-700"
-                    isLoading={updateMutation.isPending}
+                    disabled={updateMutation.isPending}
                   >
-                    Update City
+                    Përditëso Qytetin
                   </Button>
                 </DialogFooter>
               </form>

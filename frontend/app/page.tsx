@@ -83,12 +83,12 @@ export default function Home() {
                   variant="ghost"
                   className="text-white hover:text-white hover:bg-white/10 text-sm sm:text-base px-3 sm:px-4"
                 >
-                  Sign In
+                  Hyni
                 </Button>
               </Link>
               <Link href="/register">
                 <Button className="bg-white text-black hover:bg-gray-100 text-sm sm:text-base px-3 sm:px-4">
-                  Get Started
+                  Filloni
                 </Button>
               </Link>
             </div>
@@ -106,7 +106,7 @@ export default function Home() {
             >
               <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-purple-400" />
               <span className="text-xs sm:text-sm text-gray-300">
-                Next-generation property management
+                Menaxhimi i pronave i gjeneratës së ardhshme
               </span>
             </motion.div>
 
@@ -117,11 +117,11 @@ export default function Home() {
               className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-4 sm:mb-6 leading-tight"
             >
               <span className="bg-gradient-to-r from-white via-gray-100 to-gray-400 bg-clip-text text-transparent">
-                Manage smarter.
+                Menaxhoni më mirë.
               </span>
               <br />
               <span className="bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Live better.
+                Jetoni më mirë.
               </span>
             </motion.h1>
 
@@ -131,9 +131,10 @@ export default function Home() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="text-base sm:text-xl md:text-2xl text-gray-400 mb-8 sm:mb-12 max-w-3xl mx-auto leading-relaxed px-4"
             >
-              Streamline property operations and enhance tenant experiences with intelligent
-              automation, seamless communication, and comprehensive management tools. From maintenance
-              tracking to payment management, everything you need in one elegant platform.
+              Thjeshtoni operacionet e pronës dhe përmirësoni përvojën e qiramarrësve me automatizim
+              inteligjent, komunikim të pandërprerë dhe mjete gjithëpërfshirëse menaxhimi. Nga
+              ndjekja e mirëmbajtjes deri te menaxhimi i pagesave, gjithçka që ju nevojitet në një
+              platformë elegante.
             </motion.p>
 
             <motion.div
@@ -147,7 +148,7 @@ export default function Home() {
                   size="lg"
                   className="w-full sm:w-auto bg-white text-black hover:bg-gray-100 text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 rounded-full font-semibold shadow-2xl shadow-white/20 group"
                 >
-                  Start Your Journey
+                  Filloni Udhëtimin Tuaj
                   <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
@@ -157,7 +158,7 @@ export default function Home() {
                   variant="outline"
                   className="w-full sm:w-auto bg-white text-black border-white/20 hover:bg-gray-100 text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 rounded-full font-semibold"
                 >
-                  Sign In
+                  Hyni
                 </Button>
               </Link>
             </motion.div>
@@ -192,25 +193,25 @@ export default function Home() {
                     </div>
 
                     <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">
-                      Property Manager
+                      Menaxher Prone
                     </h3>
                     <p className="text-sm sm:text-base text-gray-400 mb-4 sm:mb-6 leading-relaxed">
-                      Streamline operations with intelligent property and tenant
-                      management tools.
+                      Thjeshtoni operacionet me mjete inteligjente për menaxhimin e
+                      pronave dhe qiramarrësve.
                     </p>
 
                     <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6">
                       <div className="flex items-center gap-2">
                         <div className="w-1 h-1 rounded-full bg-blue-400" />
-                        <span>Property oversight</span>
+                        <span>Mbikëqyrje e pronave</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-1 h-1 rounded-full bg-blue-400" />
-                        <span>Maintenance tracking</span>
+                        <span>Ndjekje e mirëmbajtjes</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-1 h-1 rounded-full bg-blue-400" />
-                        <span>Tenant communication</span>
+                        <span>Komunikim me qiramarrësit</span>
                       </div>
                     </div>
                   </div>
@@ -237,25 +238,25 @@ export default function Home() {
                     </div>
 
                     <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">
-                      Tenant Portal
+                      Portal për Qiramarrës
                     </h3>
                     <p className="text-sm sm:text-base text-gray-400 mb-4 sm:mb-6 leading-relaxed">
-                      Your personalized space for seamless living and instant
-                      support.
+                      Hapësira juaj e personalizuar për jetesë të pandërprerë dhe
+                      mbështetje të menjëhershme.
                     </p>
 
                     <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6">
                       <div className="flex items-center gap-2">
                         <div className="w-1 h-1 rounded-full bg-purple-400" />
-                        <span>Payment tracking</span>
+                        <span>Ndjekje e pagesave</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-1 h-1 rounded-full bg-purple-400" />
-                        <span>Service requests</span>
+                        <span>Kërkesa për shërbime</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-1 h-1 rounded-full bg-purple-400" />
-                        <span>Document access</span>
+                        <span>Qasje në dokumente</span>
                       </div>
                     </div>
                   </div>
@@ -277,7 +278,7 @@ export default function Home() {
                 className="invert opacity-60"
               />
               <span className="text-sm text-gray-500">
-                © 2025 BllokuSync. All rights reserved.
+                © 2025 BllokuSync. Të gjitha të drejtat e rezervuara.
               </span>
             </div>
             <div className="flex gap-4 sm:gap-6 text-sm text-gray-500">
@@ -285,13 +286,13 @@ export default function Home() {
                 onClick={() => setPrivacyOpen(true)}
                 className="hover:text-white transition-colors cursor-pointer"
               >
-                Privacy
+                Privatësia
               </button>
               <button
                 onClick={() => setContactOpen(true)}
                 className="hover:text-white transition-colors cursor-pointer"
               >
-                Contact
+                Kontakti
               </button>
             </div>
           </div>
@@ -303,24 +304,24 @@ export default function Home() {
         <DialogContent className="sm:max-w-[500px] bg-gradient-to-br from-slate-900 to-slate-800 text-white border-white/10">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
-              Privacy Policy
+              Politika e Privatësisë
             </DialogTitle>
             <DialogDescription className="text-gray-300 pt-4 leading-relaxed">
-              At BllokuSync, we are committed to protecting your privacy and ensuring the security of your personal information.
+              Në BllokuSync, jemi të përkushtuar për të mbrojtur privatësinë tuaj dhe për të siguruar sigurinë e informacionit tuaj personal.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 text-gray-300 text-sm leading-relaxed">
             <p>
-              This application preserves the privacy of each user by implementing industry-standard security measures and data protection protocols.
+              Ky aplikacion ruan privatësinë e çdo përdoruesi duke implementuar masa të sigurisë standarde të industrisë dhe protokolle të mbrojtjes së të dhënave.
             </p>
             <p>
-              We collect only the necessary information required to provide our property management services, and we never share your personal data with third parties without your explicit consent.
+              Ne mbledhim vetëm informacionin e nevojshëm për të ofruar shërbimet tona të menaxhimit të pronave, dhe nuk e ndajmë kurrë informacionin tuaj personal me palë të treta pa pëlqimin tuaj të qartë.
             </p>
             <p>
-              Your data is encrypted both in transit and at rest, ensuring that your information remains confidential and secure at all times.
+              Të dhënat tuaja janë të koduara si gjatë transferimit ashtu edhe në regjim të qetësisë, duke siguruar që informacioni juaj të mbetet konfidencial dhe i sigurt në çdo kohë.
             </p>
             <p className="text-xs text-gray-400 pt-2">
-              For more information about how we handle your data, please contact our support team.
+              Për më shumë informacion rreth mënyrës se si i trajtojmë të dhënat tuaja, ju lutemi kontaktoni ekipin tonë të mbështetjes.
             </p>
           </div>
           <div className="flex justify-end pt-4">
@@ -328,7 +329,7 @@ export default function Home() {
               onClick={() => setPrivacyOpen(false)}
               className="bg-white text-black hover:bg-gray-100"
             >
-              Close
+              Mbyll
             </Button>
           </div>
         </DialogContent>
@@ -339,10 +340,10 @@ export default function Home() {
         <DialogContent className="sm:max-w-[400px] bg-gradient-to-br from-slate-900 to-slate-800 text-white border-white/10">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
-              Contact Us
+              Kontaktoni
             </DialogTitle>
             <DialogDescription className="text-gray-300 pt-4">
-              Get in touch with our team
+              Lidhuni me ekipin tonë
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-6 py-4">
@@ -351,7 +352,7 @@ export default function Home() {
                 <Phone className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-xs text-gray-400 mb-1">Phone Number</p>
+                <p className="text-xs text-gray-400 mb-1">Numri i Telefonit</p>
                 <a
                   href="tel:+38346131908"
                   className="text-lg font-semibold text-white hover:text-purple-400 transition-colors"
@@ -361,7 +362,7 @@ export default function Home() {
               </div>
             </div>
             <p className="text-sm text-gray-400 text-center">
-              Our support team is available to assist you with any questions or concerns.
+              Ekipi ynë i mbështetjes është i disponueshëm për t'ju ndihmuar me çdo pyetje apo shqetësim.
             </p>
           </div>
           <div className="flex justify-end pt-2">
@@ -369,7 +370,7 @@ export default function Home() {
               onClick={() => setContactOpen(false)}
               className="bg-white text-black hover:bg-gray-100"
             >
-              Close
+              Mbyll
             </Button>
           </div>
         </DialogContent>

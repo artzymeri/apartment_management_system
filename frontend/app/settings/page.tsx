@@ -66,15 +66,15 @@ export default function SettingsPage() {
       // Validate password fields if changing password
       if (formData.newPassword || formData.confirmPassword) {
         if (!formData.currentPassword) {
-          toast.error("Current password is required to change password");
+          toast.error("Fjalëkalimi aktual është i nevojshëm për të ndryshuar fjalëkalimin");
           return;
         }
         if (formData.newPassword !== formData.confirmPassword) {
-          toast.error("New passwords do not match");
+          toast.error("Fjalëkalimet e reja nuk përputhen");
           return;
         }
         if (formData.newPassword.length < 6) {
-          toast.error("New password must be at least 6 characters");
+          toast.error("Fjalëkalimi i ri duhet të jetë të paktën 6 karaktere");
           return;
         }
       }
@@ -102,7 +102,7 @@ export default function SettingsPage() {
 
       updateProfileMutation.mutate(updateData, {
         onSuccess: () => {
-          toast.success("Profile updated successfully");
+          toast.success("Profili u përditësua me sukses");
 
           // Clear password fields
           setFormData((prev) => ({
@@ -116,7 +116,7 @@ export default function SettingsPage() {
           updateProfile();
         },
         onError: (error: Error) => {
-          toast.error(error.message || "Failed to update profile");
+          toast.error(error.message || "Dështoi përditësimi i profilit");
         },
       });
     },
@@ -130,9 +130,9 @@ export default function SettingsPage() {
           {/* Personal Information Form */}
           <Card>
             <CardHeader>
-              <CardTitle>Personal Information</CardTitle>
+              <CardTitle>Informacioni Personal</CardTitle>
               <CardDescription>
-                Update your personal details
+                Përditëso detajet e tua personale
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -141,14 +141,14 @@ export default function SettingsPage() {
                   <div className="space-y-2">
                     <Label htmlFor="name">
                       <User className="inline h-4 w-4 mr-1" />
-                      First Name
+                      Emri
                     </Label>
                     <Input
                       id="name"
                       name="name"
                       value={formData.name}
                       onChange={handleInputChange}
-                      placeholder="Enter your first name"
+                      placeholder="Shkruaj emrin tënd"
                       required
                       disabled={updateProfileMutation.isPending}
                     />
@@ -157,14 +157,14 @@ export default function SettingsPage() {
                   <div className="space-y-2">
                     <Label htmlFor="surname">
                       <User className="inline h-4 w-4 mr-1" />
-                      Last Name
+                      Mbiemri
                     </Label>
                     <Input
                       id="surname"
                       name="surname"
                       value={formData.surname}
                       onChange={handleInputChange}
-                      placeholder="Enter your last name"
+                      placeholder="Shkruaj mbiemrin tënd"
                       required
                       disabled={updateProfileMutation.isPending}
                     />
@@ -182,7 +182,7 @@ export default function SettingsPage() {
                     type="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    placeholder="Enter your email"
+                    placeholder="Shkruaj email-in tënd"
                     required
                     disabled={updateProfileMutation.isPending}
                   />
@@ -191,7 +191,7 @@ export default function SettingsPage() {
                 <div className="space-y-2">
                   <Label htmlFor="number">
                     <Phone className="inline h-4 w-4 mr-1" />
-                    Phone Number
+                    Numri i Telefonit
                   </Label>
                   <Input
                     id="number"
@@ -199,7 +199,7 @@ export default function SettingsPage() {
                     type="tel"
                     value={formData.number}
                     onChange={handleInputChange}
-                    placeholder="Enter your phone number"
+                    placeholder="Shkruaj numrin e telefonit"
                     disabled={updateProfileMutation.isPending}
                   />
                 </div>
@@ -209,48 +209,48 @@ export default function SettingsPage() {
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold flex items-center gap-2">
                     <Lock className="h-5 w-5" />
-                    Change Password
+                    Ndrysho Fjalëkalimin
                   </h3>
                   <p className="text-sm text-slate-600">
-                    Leave blank if you don't want to change your password
+                    Lëre bosh nëse nuk dëshiron të ndryshosh fjalëkalimin
                   </p>
 
                   <div className="space-y-2">
-                    <Label htmlFor="currentPassword">Current Password</Label>
+                    <Label htmlFor="currentPassword">Fjalëkalimi Aktual</Label>
                     <Input
                       id="currentPassword"
                       name="currentPassword"
                       type="password"
                       value={formData.currentPassword}
                       onChange={handleInputChange}
-                      placeholder="Enter current password"
+                      placeholder="Shkruaj fjalëkalimin aktual"
                       disabled={updateProfileMutation.isPending}
                     />
                   </div>
 
                   <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
                     <div className="space-y-2">
-                      <Label htmlFor="newPassword">New Password</Label>
+                      <Label htmlFor="newPassword">Fjalëkalimi i Ri</Label>
                       <Input
                         id="newPassword"
                         name="newPassword"
                         type="password"
                         value={formData.newPassword}
                         onChange={handleInputChange}
-                        placeholder="Enter new password"
+                        placeholder="Shkruaj fjalëkalimin e ri"
                         disabled={updateProfileMutation.isPending}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="confirmPassword">Confirm Password</Label>
+                      <Label htmlFor="confirmPassword">Konfirmo Fjalëkalimin</Label>
                       <Input
                         id="confirmPassword"
                         name="confirmPassword"
                         type="password"
                         value={formData.confirmPassword}
                         onChange={handleInputChange}
-                        placeholder="Confirm new password"
+                        placeholder="Konfirmo fjalëkalimin e ri"
                         disabled={updateProfileMutation.isPending}
                       />
                     </div>
@@ -265,11 +265,11 @@ export default function SettingsPage() {
                     disabled={updateProfileMutation.isPending}
                     className="w-full sm:w-auto"
                   >
-                    Cancel
+                    Anulo
                   </Button>
                   <Button type="submit" isLoading={updateProfileMutation.isPending} className="w-full sm:w-auto">
                     {!updateProfileMutation.isPending && <Save className="mr-2 h-4 w-4" />}
-                    Save Changes
+                    Ruaj Ndryshimet
                   </Button>
                 </div>
               </form>
@@ -288,7 +288,7 @@ export default function SettingsPage() {
 
   if (user.role === "admin") {
     return (
-      <AdminLayout title="Profile Settings">
+      <AdminLayout title="Cilësimet e Profilit">
         {SettingsContent}
       </AdminLayout>
     );
@@ -296,14 +296,14 @@ export default function SettingsPage() {
 
   if (user.role === "property_manager") {
     return (
-      <PropertyManagerLayout title="Profile Settings">
+      <PropertyManagerLayout title="Cilësimet e Profilit">
         {SettingsContent}
       </PropertyManagerLayout>
     );
   }
 
   return (
-    <TenantLayout title="Profile Settings">
+    <TenantLayout title="Cilësimet e Profilit">
       {SettingsContent}
     </TenantLayout>
   );

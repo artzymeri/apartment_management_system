@@ -104,13 +104,13 @@ export default function PropertyManagerPropertiesPage() {
   const handleDeleteProperty = (propertyId: number) => {
     deleteMutation.mutate(propertyId, {
       onSuccess: () => {
-        toast.success("Property deleted successfully");
+        toast.success("Prona u fshi me sukses");
         // Refetch properties after deletion
         setAppliedFilters((prev) => ({ ...prev, page: 1 }));
         setCurrentPage(1);
       },
       onError: () => {
-        toast.error("Failed to delete property");
+        toast.error("Dështoi fshirja e pronës");
       },
     });
   };
@@ -129,10 +129,10 @@ export default function PropertyManagerPropertiesPage() {
                 <div>
                   <CardTitle className="text-base md:text-lg flex items-center gap-2">
                     <Search className="h-4 w-4 md:h-5 md:w-5" />
-                    Filter Properties
+                    Filtro Pronat
                   </CardTitle>
                   <CardDescription className="text-xs md:text-sm mt-1">
-                    Search by name, address, or filter by city
+                    Kërko sipas emrit, adresës, ose filtro sipas qytetit
                   </CardDescription>
                 </div>
                 <Button
@@ -140,7 +140,7 @@ export default function PropertyManagerPropertiesPage() {
                   className="bg-indigo-600 hover:bg-indigo-700 gap-2 w-full sm:w-auto text-xs md:text-sm h-9 md:h-10"
                 >
                   <Plus className="h-4 w-4" />
-                  Create Property
+                  Krijo Pronë
                 </Button>
               </div>
             </CardHeader>
@@ -148,7 +148,7 @@ export default function PropertyManagerPropertiesPage() {
               <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
                 <div className="flex-1">
                   <Input
-                    placeholder="Search by name or address..."
+                    placeholder="Kërko sipas emrit ose adresës..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="text-sm md:text-base h-9 md:h-10"
@@ -156,7 +156,7 @@ export default function PropertyManagerPropertiesPage() {
                 </div>
                 <div className="w-full sm:w-48 md:w-64">
                   <Input
-                    placeholder="Filter by city..."
+                    placeholder="Filtro sipas qytetit..."
                     value={cityFilter}
                     onChange={(e) => setCityFilter(e.target.value)}
                     className="text-sm md:text-base h-9 md:h-10"
@@ -169,7 +169,7 @@ export default function PropertyManagerPropertiesPage() {
           {/* Error Alert */}
           {error && (
             <Alert variant="destructive">
-              <AlertDescription className="text-xs md:text-sm">Failed to load properties</AlertDescription>
+              <AlertDescription className="text-xs md:text-sm">Dështoi ngarkimi i pronave</AlertDescription>
             </Alert>
           )}
 
@@ -183,20 +183,20 @@ export default function PropertyManagerPropertiesPage() {
               ) : properties.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-slate-500">
                   <Building2 className="h-12 w-12 mb-4 opacity-50" />
-                  <p className="text-lg font-medium">No properties found</p>
-                  <p className="text-sm">Try adjusting your filters</p>
+                  <p className="text-lg font-medium">Asnjë pronë nuk u gjet</p>
+                  <p className="text-sm">Provoni të rregulloni filtrat tuaj</p>
                 </div>
               ) : (
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Property Name</TableHead>
-                      <TableHead>Address</TableHead>
-                      <TableHead>City</TableHead>
-                      <TableHead>Floors</TableHead>
-                      <TableHead>Location</TableHead>
-                      <TableHead>Created</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead>Emri i Pronës</TableHead>
+                      <TableHead>Adresa</TableHead>
+                      <TableHead>Qyteti</TableHead>
+                      <TableHead>Katet</TableHead>
+                      <TableHead>Lokacioni</TableHead>
+                      <TableHead>Krijuar</TableHead>
+                      <TableHead className="text-right">Veprimet</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -219,7 +219,7 @@ export default function PropertyManagerPropertiesPage() {
                           </TableCell>
                           <TableCell onClick={() => handleRowClick(property.id)} className="cursor-pointer">
                             <Badge variant="secondary" className="bg-indigo-100 text-indigo-700">
-                              {property.cityDetails?.name || 'Unknown'}
+                              {property.cityDetails?.name || 'I panjohur'}
                             </Badge>
                           </TableCell>
                           <TableCell onClick={() => handleRowClick(property.id)} className="cursor-pointer">
@@ -227,11 +227,11 @@ export default function PropertyManagerPropertiesPage() {
                               <div className="text-sm">
                                 <span className="font-medium text-slate-900">{floorsCount}</span>
                                 <span className="text-slate-500 text-xs ml-1">
-                                  {floorsCount === 1 ? 'floor' : 'floors'}
+                                  {floorsCount === 1 ? 'kat' : 'kate'}
                                 </span>
                               </div>
                             ) : (
-                              <span className="text-slate-400 text-sm">Not specified</span>
+                              <span className="text-slate-400 text-sm">Nuk është specifikuar</span>
                             )}
                           </TableCell>
                           <TableCell onClick={() => handleRowClick(property.id)} className="cursor-pointer">
@@ -243,7 +243,7 @@ export default function PropertyManagerPropertiesPage() {
                                 </span>
                               </div>
                             ) : (
-                              <span className="text-slate-400 text-sm">Not set</span>
+                              <span className="text-slate-400 text-sm">Nuk është vendosur</span>
                             )}
                           </TableCell>
                           <TableCell onClick={() => handleRowClick(property.id)} className="cursor-pointer text-sm text-slate-600">
@@ -261,7 +261,7 @@ export default function PropertyManagerPropertiesPage() {
                                 className="gap-2"
                               >
                                 <Pencil className="h-3 w-3" />
-                                Edit
+                                Ndrysho
                               </Button>
                               <Button
                                 variant="outline"
@@ -274,7 +274,7 @@ export default function PropertyManagerPropertiesPage() {
                                 className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
                               >
                                 <Trash2 className="h-3 w-3" />
-                                Delete
+                                Fshi
                               </Button>
                             </div>
                           </TableCell>
@@ -302,8 +302,8 @@ export default function PropertyManagerPropertiesPage() {
                 <CardContent className="py-12">
                   <div className="flex flex-col items-center justify-center text-slate-500">
                     <Building2 className="h-12 w-12 mb-4 opacity-50" />
-                    <p className="text-base md:text-lg font-medium">No properties found</p>
-                    <p className="text-xs md:text-sm">Try adjusting your filters</p>
+                    <p className="text-base md:text-lg font-medium">Asnjë pronë nuk u gjet</p>
+                    <p className="text-xs md:text-sm">Provoni të rregulloni filtrat tuaj</p>
                   </div>
                 </CardContent>
               </Card>
@@ -335,24 +335,24 @@ export default function PropertyManagerPropertiesPage() {
                             </div>
                           </div>
                           <Badge variant="secondary" className="bg-indigo-100 text-indigo-700 text-xs flex-shrink-0">
-                            {property.cityDetails?.name || 'Unknown'}
+                            {property.cityDetails?.name || 'I panjohur'}
                           </Badge>
                         </div>
 
                         {/* Details Grid */}
                         <div className="grid grid-cols-2 gap-3 pt-2 border-t">
                           <div>
-                            <p className="text-xs text-slate-500">Floors</p>
+                            <p className="text-xs text-slate-500">Katet</p>
                             <p className="text-sm font-medium text-slate-900 mt-0.5">
                               {floorsCount !== null ? (
-                                <span>{floorsCount} {floorsCount === 1 ? 'floor' : 'floors'}</span>
+                                <span>{floorsCount} {floorsCount === 1 ? 'kat' : 'kate'}</span>
                               ) : (
-                                <span className="text-slate-400">Not specified</span>
+                                <span className="text-slate-400">Nuk është specifikuar</span>
                               )}
                             </p>
                           </div>
                           <div>
-                            <p className="text-xs text-slate-500">Created</p>
+                            <p className="text-xs text-slate-500">Krijuar</p>
                             <p className="text-sm font-medium text-slate-900 mt-0.5">
                               {new Date(property.created_at).toLocaleDateString()}
                             </p>
@@ -383,7 +383,7 @@ export default function PropertyManagerPropertiesPage() {
                             className="flex-1 gap-2 text-xs h-8"
                           >
                             <Pencil className="h-3 w-3" />
-                            Edit
+                            Ndrysho
                           </Button>
                           <Button
                             variant="outline"
@@ -396,7 +396,7 @@ export default function PropertyManagerPropertiesPage() {
                             className="flex-1 gap-2 text-xs h-8 text-red-600 hover:text-red-700 hover:bg-red-50"
                           >
                             <Trash2 className="h-3 w-3" />
-                            Delete
+                            Fshi
                           </Button>
                         </div>
                       </div>
@@ -411,7 +411,7 @@ export default function PropertyManagerPropertiesPage() {
           {!isLoading && properties.length > 0 && (
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 md:gap-4">
               <p className="text-xs md:text-sm text-slate-600">
-                Page {currentPage} of {totalPages}
+                Faqja {currentPage} nga {totalPages}
               </p>
               <div className="flex gap-2 w-full sm:w-auto">
                 <Button
@@ -422,7 +422,7 @@ export default function PropertyManagerPropertiesPage() {
                   className="gap-2 flex-1 sm:flex-initial text-xs md:text-sm h-8 md:h-9"
                 >
                   <ChevronLeft className="h-3 w-3 md:h-4 md:w-4" />
-                  Previous
+                  E mëparshme
                 </Button>
                 <Button
                   variant="outline"
@@ -431,7 +431,7 @@ export default function PropertyManagerPropertiesPage() {
                   disabled={currentPage === totalPages}
                   className="gap-2 flex-1 sm:flex-initial text-xs md:text-sm h-8 md:h-9"
                 >
-                  Next
+                  Tjetër
                   <ChevronRight className="h-3 w-3 md:h-4 md:w-4" />
                 </Button>
               </div>
@@ -442,10 +442,10 @@ export default function PropertyManagerPropertiesPage() {
           <AlertDialog open={!!propertyToDelete} onOpenChange={(open) => { if (!open) setPropertyToDelete(null); }}>
             <AlertDialogContent className="max-w-[90vw] sm:max-w-lg">
               <AlertDialogHeader>
-                <AlertDialogTitle className="text-base md:text-lg">Confirm Deletion</AlertDialogTitle>
+                <AlertDialogTitle className="text-base md:text-lg">Konfirmo Fshirjen</AlertDialogTitle>
                 <AlertDialogDescription className="text-xs md:text-sm">
-                  Are you sure you want to delete the property{" "}
-                  <span className="font-medium">{propertyToDelete?.name}</span>? This action cannot be undone.
+                  Jeni i sigurt që dëshironi të fshini pronën{" "}
+                  <span className="font-medium">{propertyToDelete?.name}</span>? Ky veprim nuk mund të zhbëhet.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter className="flex-col sm:flex-row gap-2">
@@ -453,7 +453,7 @@ export default function PropertyManagerPropertiesPage() {
                   onClick={() => setPropertyToDelete(null)}
                   className="hover:bg-slate-100 text-xs md:text-sm h-9 w-full sm:w-auto"
                 >
-                  Cancel
+                  Anulo
                 </AlertDialogCancel>
                 <AlertDialogAction
                   onClick={() => {
@@ -464,7 +464,7 @@ export default function PropertyManagerPropertiesPage() {
                   }}
                   className="bg-red-600 text-white hover:bg-red-700 text-xs md:text-sm h-9 w-full sm:w-auto"
                 >
-                  Delete Property
+                  Fshi Pronën
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

@@ -158,11 +158,6 @@ export function TenantLayout({ children, title = "My Apartment" }: { children: R
               {title}
             </h1>
           </div>
-
-          <Button variant="ghost" size="icon" className="relative h-9 w-9 sm:h-10 sm:w-10 flex-shrink-0">
-            <Bell className="h-4 w-4 sm:h-5 sm:w-5" />
-            <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-emerald-600" />
-          </Button>
         </header>
 
         {/* Page Content */}

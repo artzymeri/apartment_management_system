@@ -395,7 +395,6 @@ exports.getPropertyManagerDashboardData = async (req, res) => {
             id: p.id,
             name: p.name,
             address: p.address,
-            city: p.city,
             floors: floorsCount,
             totalApartments: (p.floors || []).reduce((sum, floor) =>
               sum + (floor.apartments || []).length, 0),
@@ -479,6 +478,220 @@ exports.getSidebarCounts = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error fetching sidebar counts',
+      error: error.message
+    });
+  }
+};
+
+// Get detailed payments data for property manager
+exports.getPropertyManagerPayments = async (req, res) => {
+  try {
+    const property_manager_id = req.user.id;
+    const { status, month } = req.query;
+
+    // Get all properties managed by this property manager
+    const propertyManagerRecords = await PropertyManager.findAll({
+      where: { user_id: property_manager_id },
+      attributes: ['property_id']
+    });
+
+    const propertyIds = propertyManagerRecords.map(pm => pm.property_id);
+
+    if (propertyIds.length === 0) {
+      return res.json({
+        success: true,
+        data: {
+          currentMonth: {
+            paid: 0,
+            unpaid: 0,
+            total: 0,
+            revenue: 0,
+            collectionRate: '0'
+          },
+          payments: [],
+          stats: {
+            totalRevenue: 0,
+            averagePayment: 0,
+            onTimePayments: 0,
+            latePayments: 0
+          }
+        }
+      });
+    }
+
+    // Calculate date range based on month filter
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+
+    let dateFilter = {};
+    let statsDateFilter = {};
+
+    if (month === 'current') {
+      const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+      const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+      dateFilter = {
+        payment_month: {
+          [Op.gte]: firstDayOfMonth,
+          [Op.lte]: lastDayOfMonth
+        }
+      };
+      statsDateFilter = dateFilter;
+    } else if (month === 'last3') {
+      const threeMonthsAgo = new Date(currentYear, currentMonth - 3, 1);
+      dateFilter = {
+        payment_month: {
+          [Op.gte]: threeMonthsAgo
+        }
+      };
+      statsDateFilter = {
+        payment_month: {
+          [Op.gte]: new Date(currentYear, currentMonth, 1),
+          [Op.lte]: new Date(currentYear, currentMonth + 1, 0)
+        }
+      };
+    } else if (month === 'last6') {
+      const sixMonthsAgo = new Date(currentYear, currentMonth - 6, 1);
+      dateFilter = {
+        payment_month: {
+          [Op.gte]: sixMonthsAgo
+        }
+      };
+      statsDateFilter = {
+        payment_month: {
+          [Op.gte]: new Date(currentYear, currentMonth, 1),
+          [Op.lte]: new Date(currentYear, currentMonth + 1, 0)
+        }
+      };
+    }
+
+    // Build where clause for payments query
+    const whereClause = {
+      property_id: { [Op.in]: propertyIds },
+      ...dateFilter
+    };
+
+    if (status && status !== 'all') {
+      whereClause.status = status;
+    }
+
+    // Get all payments
+    const payments = await TenantPayment.findAll({
+      where: whereClause,
+      include: [
+        {
+          model: Property,
+          as: 'property',
+          attributes: ['id', 'name', 'address']
+        },
+        {
+          model: User,
+          as: 'tenant',
+          attributes: ['id', 'name', 'surname', 'email', 'number']
+        }
+      ],
+      order: [['payment_month', 'DESC'], ['created_at', 'DESC']]
+    });
+
+    // Get current month stats
+    const currentMonthPayments = await TenantPayment.findAll({
+      where: {
+        property_id: { [Op.in]: propertyIds },
+        ...statsDateFilter
+      }
+    });
+
+    const paidCount = currentMonthPayments.filter(p => p.status === 'paid').length;
+    const unpaidCount = currentMonthPayments.filter(p => p.status !== 'paid').length;
+    const totalRevenue = currentMonthPayments
+      .filter(p => p.status === 'paid')
+      .reduce((sum, p) => sum + parseFloat(p.amount || 0), 0);
+
+    // Calculate overall stats
+    const allPayments = await TenantPayment.findAll({
+      where: {
+        property_id: { [Op.in]: propertyIds }
+      }
+    });
+
+    const totalPaidRevenue = allPayments
+      .filter(p => p.status === 'paid')
+      .reduce((sum, p) => sum + parseFloat(p.amount || 0), 0);
+
+    const averagePayment = allPayments.length > 0
+      ? totalPaidRevenue / allPayments.filter(p => p.status === 'paid').length
+      : 0;
+
+    const onTimePayments = allPayments.filter(p => {
+      if (p.status === 'paid' && p.payment_date && p.payment_month) {
+        const paymentMonth = new Date(p.payment_month);
+        const paymentDate = new Date(p.payment_date);
+        const dueDate = new Date(paymentMonth.getFullYear(), paymentMonth.getMonth() + 1, 5);
+        return paymentDate <= dueDate;
+      }
+      return false;
+    }).length;
+
+    const latePayments = allPayments.filter(p => p.status === 'overdue' || p.status === 'unpaid').length;
+
+    // Format payments for response
+    const formattedPayments = payments.map(p => {
+      let daysOverdue = null;
+      if (p.status === 'overdue' || (p.status === 'unpaid' && new Date(p.payment_month) < new Date())) {
+        const paymentMonth = new Date(p.payment_month);
+        const dueDate = new Date(paymentMonth.getFullYear(), paymentMonth.getMonth() + 1, 5);
+        const today = new Date();
+        daysOverdue = Math.floor((today - dueDate) / (1000 * 60 * 60 * 24));
+      }
+
+      return {
+        id: p.id,
+        tenant: p.tenant ? {
+          id: p.tenant.id,
+          name: `${p.tenant.name} ${p.tenant.surname}`,
+          email: p.tenant.email,
+          phone: p.tenant.number
+        } : null,
+        property: p.property ? {
+          id: p.property.id,
+          name: p.property.name,
+          address: p.property.address
+        } : null,
+        amount: parseFloat(p.amount || 0),
+        paymentMonth: p.payment_month,
+        paymentDate: p.payment_date,
+        status: p.status,
+        notes: p.notes,
+        daysOverdue
+      };
+    });
+
+    res.json({
+      success: true,
+      data: {
+        currentMonth: {
+          paid: paidCount,
+          unpaid: unpaidCount,
+          total: currentMonthPayments.length,
+          revenue: parseFloat(totalRevenue.toFixed(2)),
+          collectionRate: currentMonthPayments.length > 0
+            ? ((paidCount / currentMonthPayments.length) * 100).toFixed(1)
+            : '0'
+        },
+        payments: formattedPayments,
+        stats: {
+          totalRevenue: parseFloat(totalPaidRevenue.toFixed(2)),
+          averagePayment: parseFloat(averagePayment.toFixed(2)),
+          onTimePayments,
+          latePayments
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching property manager payments:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching payments data',
       error: error.message
     });
   }

@@ -37,15 +37,15 @@ import Image from "next/image";
 import { usePropertyManagerSidebarCounts } from "@/hooks/usePropertyManagerSidebarCounts";
 
 const propertyManagerNavItems = [
-  { href: "/property_manager", icon: ClipboardList, label: "Dashboard" },
-  { href: "/property_manager/properties", icon: Building2, label: "Properties" },
-  { href: "/property_manager/tenants", icon: Users, label: "Tenants" },
-  { href: "/property_manager/payments", icon: Euro, label: "Payments" },
-  { href: "/property_manager/monthly-reports", icon: BarChart3, label: "Monthly Reports" },
-  { href: "/property_manager/reports", icon: FileText, label: "Reports" },
-  { href: "/property_manager/complaints", icon: MessageSquare, label: "Complaints" },
-  { href: "/property_manager/suggestions", icon: Lightbulb, label: "Suggestions" },
-  { href: "/property_manager/configurations", icon: SettingsIcon, label: "Configurations" },
+  { href: "/property_manager", icon: ClipboardList, label: "Paneli" },
+  { href: "/property_manager/properties", icon: Building2, label: "Pronat" },
+  { href: "/property_manager/tenants", icon: Users, label: "Qiramarrësit" },
+  { href: "/property_manager/payments", icon: Euro, label: "Pagesat" },
+  { href: "/property_manager/monthly-reports", icon: BarChart3, label: "Raportet Mujore" },
+  { href: "/property_manager/reports", icon: FileText, label: "Raportet" },
+  { href: "/property_manager/complaints", icon: MessageSquare, label: "Ankesat" },
+  { href: "/property_manager/suggestions", icon: Lightbulb, label: "Sugjerimet" },
+  { href: "/property_manager/configurations", icon: SettingsIcon, label: "Konfigurimet" },
 ];
 
 // Helper function to get page title
@@ -54,16 +54,16 @@ const getPageTitle = (pathname: string) => {
   if (navItem) return navItem.label;
 
   // For nested routes
-  if (pathname.startsWith("/property_manager/properties")) return "Properties";
-  if (pathname.startsWith("/property_manager/tenants")) return "Tenants";
-  if (pathname.startsWith("/property_manager/payments")) return "Payments";
-  if (pathname.startsWith("/property_manager/monthly-reports")) return "Monthly Reports";
-  if (pathname.startsWith("/property_manager/reports")) return "Reports";
-  if (pathname.startsWith("/property_manager/complaints")) return "Complaints";
-  if (pathname.startsWith("/property_manager/suggestions")) return "Suggestions";
-  if (pathname.startsWith("/property_manager/configurations")) return "Configurations";
+  if (pathname.startsWith("/property_manager/properties")) return "Pronat";
+  if (pathname.startsWith("/property_manager/tenants")) return "Qiramarrësit";
+  if (pathname.startsWith("/property_manager/payments")) return "Pagesat";
+  if (pathname.startsWith("/property_manager/monthly-reports")) return "Raportet Mujore";
+  if (pathname.startsWith("/property_manager/reports")) return "Raportet";
+  if (pathname.startsWith("/property_manager/complaints")) return "Ankesat";
+  if (pathname.startsWith("/property_manager/suggestions")) return "Sugjerimet";
+  if (pathname.startsWith("/property_manager/configurations")) return "Konfigurimet";
 
-  return "Manager Dashboard";
+  return "Paneli i Menaxherit";
 };
 
 export function PropertyManagerLayout({ children, title }: { children: React.ReactNode; title?: string }) {
@@ -86,7 +86,7 @@ export function PropertyManagerLayout({ children, title }: { children: React.Rea
           <h3 className="text-sm md:text-base">BllokuSync</h3>
         </div>
         <Badge variant="secondary" className="ml-auto bg-amber-500 text-slate-900 text-xs">
-          Manager
+          Menaxher
         </Badge>
       </div>
       <ScrollArea className="flex-1 px-2 md:px-3 py-3 md:py-4">
@@ -160,11 +160,11 @@ export function PropertyManagerLayout({ children, title }: { children: React.Rea
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent side="top" align="end" className="w-56">
-            <DropdownMenuLabel>Manager Account</DropdownMenuLabel>
+            <DropdownMenuLabel>Llogaria e Menaxherit</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => router.push('/settings')}>
               <Settings className="mr-2 h-4 w-4" />
-              Profile Settings
+              Cilësimet e Profilit
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
@@ -172,7 +172,7 @@ export function PropertyManagerLayout({ children, title }: { children: React.Rea
               onClick={handleLogout}
             >
               <LogOut className="mr-2 h-4 w-4" />
-              Logout
+              Dil
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
