@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Home as HomeIcon } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
 
@@ -120,12 +119,8 @@ export default function RegisterPage() {
         <div className="text-center mb-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 mb-4"
+            className="inline-flex justify-center items-center mb-4 gap-2 hover:opacity-80 transition-opacity cursor-pointer"
           >
-            <HomeIcon className="h-5 w-5" />
-            <span>Back to Home</span>
-          </Link>
-          <div className="flex justify-center items-center mb-2 gap-2">
             <Image
               src="/favicon.svg"
               alt="BllokuSync"
@@ -135,8 +130,8 @@ export default function RegisterPage() {
               priority
               style={{ filter: "brightness(0%)" }}
             />
-            <h1 className="font-bold">BllokuSync</h1>
-          </div>
+            <h1 className="font-bold text-xl">BllokuSync</h1>
+          </Link>
           <h1 className="text-4xl font-bold text-slate-900 mb-2">
             Create Account
           </h1>
@@ -264,13 +259,6 @@ export default function RegisterPage() {
             </form>
           </CardContent>
         </Card>
-
-        <div className="mt-6 p-4 bg-emerald-50 rounded-lg border border-emerald-200">
-          <p className="text-sm text-slate-700 text-center">
-            <strong>Note:</strong> Your registration will be reviewed by an
-            administrator. You'll be able to log in once approved.
-          </p>
-        </div>
       </div>
     </div>
   );

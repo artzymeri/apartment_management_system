@@ -85,12 +85,8 @@ export default function LoginPage() {
         <div className="text-center mb-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-4"
+            className="inline-flex justify-center items-center mb-4 gap-2 hover:opacity-80 transition-opacity cursor-pointer"
           >
-            <HomeIcon className="h-5 w-5" />
-            <span>Back to Home</span>
-          </Link>
-          <div className="flex justify-center items-center mb-2 gap-2">
             <Image
               src="/favicon.svg"
               alt="BllokuSync"
@@ -98,10 +94,10 @@ export default function LoginPage() {
               height={10}
               className="h-8 w-auto"
               priority
-              style={{filter: 'brightness(0%)'}}
+              style={{ filter: "brightness(0%)" }}
             />
-            <h1 className="font-bold">BllokuSync</h1>
-          </div>
+            <h1 className="font-bold text-xl">BllokuSync</h1>
+          </Link>
           <h1 className="text-4xl font-bold text-slate-900 mb-2">
             Welcome Back
           </h1>
@@ -217,13 +213,6 @@ export default function LoginPage() {
             </form>
           </CardContent>
         </Card>
-
-        <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <p className="text-sm text-slate-700 text-center">
-            <strong>Note:</strong> Your account must be approved by an
-            administrator before you can log in.
-          </p>
-        </div>
       </div>
     </div>
   );
