@@ -195,15 +195,15 @@ export default function PaymentTracker({
   return (
     <div className="space-y-4">
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-green-600">
+            <CardTitle className="text-xs md:text-sm font-medium text-green-600">
               Paid
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.paid}</div>
+            <div className="text-xl md:text-2xl font-bold">{stats.paid}</div>
             <p className="text-xs text-muted-foreground">
               {formatAmount(stats.totalPaid.toString())}
             </p>
@@ -211,12 +211,12 @@ export default function PaymentTracker({
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-yellow-600">
+            <CardTitle className="text-xs md:text-sm font-medium text-yellow-600">
               Pending
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.pending}</div>
+            <div className="text-xl md:text-2xl font-bold">{stats.pending}</div>
             <p className="text-xs text-muted-foreground">
               {formatAmount(stats.totalPending.toString())}
             </p>
@@ -224,12 +224,12 @@ export default function PaymentTracker({
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-red-600">
+            <CardTitle className="text-xs md:text-sm font-medium text-red-600">
               Overdue
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.overdue}</div>
+            <div className="text-xl md:text-2xl font-bold">{stats.overdue}</div>
             <p className="text-xs text-muted-foreground">
               {formatAmount(stats.totalOverdue.toString())}
             </p>
@@ -240,9 +240,9 @@ export default function PaymentTracker({
       {/* Payment History */}
       <Card>
         <CardHeader>
-          <div className="flex justify-between items-center">
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="w-5 h-5" />
+          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3 md:gap-0">
+            <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+              <Calendar className="w-4 h-4 md:w-5 md:h-5" />
               Payment History
             </CardTitle>
             <div className="flex gap-2">
@@ -250,12 +250,12 @@ export default function PaymentTracker({
                 value={yearFilter.toString()}
                 onValueChange={(value) => setYearFilter(parseInt(value))}
               >
-                <SelectTrigger className="w-32">
+                <SelectTrigger className="w-24 md:w-32 h-9 text-xs md:text-sm">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {availableYears.map((year) => (
-                    <SelectItem key={year} value={year.toString()}>
+                    <SelectItem key={year} value={year.toString()} className="text-xs md:text-sm">
                       {year}
                     </SelectItem>
                   ))}
@@ -266,9 +266,11 @@ export default function PaymentTracker({
                   onClick={() => setFutureMonthsDialogOpen(true)}
                   size="sm"
                   variant="outline"
+                  className="h-9 text-xs md:text-sm"
                 >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Future Payments
+                  <Plus className="w-3 h-3 md:w-4 md:h-4 md:mr-2" />
+                  <span className="hidden md:inline">Add Future Payments</span>
+                  <span className="md:hidden">Add</span>
                 </Button>
               )}
             </div>
@@ -276,43 +278,43 @@ export default function PaymentTracker({
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-center py-8 text-muted-foreground">
+            <div className="text-center py-8 text-muted-foreground text-xs md:text-sm">
               Loading payment history...
             </div>
           ) : payments.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
+            <div className="text-center py-8 text-muted-foreground text-xs md:text-sm">
               No payment records found for {yearFilter}
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Month</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Payment Date</TableHead>
-                    {editable && <TableHead>Actions</TableHead>}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {payments.map((payment) => (
-                    <TableRow key={payment.id}>
-                      <TableCell>{formatMonth(payment.payment_month)}</TableCell>
-                      <TableCell className="font-medium">
-                        {formatAmount(payment.amount)}
-                      </TableCell>
-                      <TableCell>{getStatusBadge(payment.status)}</TableCell>
-                      <TableCell>
-                        {payment.payment_date
-                          ? new Date(payment.payment_date).toLocaleDateString()
-                          : "-"}
-                      </TableCell>
-                      {editable && (
-                        <TableCell>
+            <>
+              {/* Mobile Card Layout */}
+              <div className="md:hidden space-y-3">
+                {payments.map((payment) => (
+                  <Card key={payment.id} className="border-l-4 border-l-indigo-500">
+                    <CardContent className="p-4 space-y-2">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <div className="font-medium text-sm">
+                            {formatMonth(payment.payment_month)}
+                          </div>
+                          <div className="text-lg font-bold text-indigo-600">
+                            {formatAmount(payment.amount)}
+                          </div>
+                        </div>
+                        <div>{getStatusBadge(payment.status)}</div>
+                      </div>
+                      <div className="flex justify-between items-center text-xs text-muted-foreground pt-2 border-t">
+                        <div>
+                          <span className="font-medium">Payment Date:</span>{" "}
+                          {payment.payment_date
+                            ? new Date(payment.payment_date).toLocaleDateString()
+                            : "Not paid"}
+                        </div>
+                        {editable && (
                           <Button
                             size="sm"
                             variant="outline"
+                            className="h-8 text-xs"
                             onClick={() => {
                               setSelectedPayment(payment);
                               setNewStatus(payment.status);
@@ -322,60 +324,108 @@ export default function PaymentTracker({
                           >
                             Update
                           </Button>
-                        </TableCell>
-                      )}
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {/* Desktop Table Layout */}
+              <div className="hidden md:block overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Month</TableHead>
+                      <TableHead>Amount</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Payment Date</TableHead>
+                      {editable && <TableHead>Actions</TableHead>}
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                  </TableHeader>
+                  <TableBody>
+                    {payments.map((payment) => (
+                      <TableRow key={payment.id}>
+                        <TableCell>{formatMonth(payment.payment_month)}</TableCell>
+                        <TableCell className="font-medium">
+                          {formatAmount(payment.amount)}
+                        </TableCell>
+                        <TableCell>{getStatusBadge(payment.status)}</TableCell>
+                        <TableCell>
+                          {payment.payment_date
+                            ? new Date(payment.payment_date).toLocaleDateString()
+                            : "-"}
+                        </TableCell>
+                        {editable && (
+                          <TableCell>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                setSelectedPayment(payment);
+                                setNewStatus(payment.status);
+                                setNotes(payment.notes || "");
+                                setStatusDialogOpen(true);
+                              }}
+                            >
+                              Update
+                            </Button>
+                          </TableCell>
+                        )}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </>
           )}
         </CardContent>
       </Card>
 
       {/* Update Status Dialog */}
       <Dialog open={statusDialogOpen} onOpenChange={setStatusDialogOpen}>
-        <DialogContent>
+        <DialogContent className="w-[95vw] max-w-md">
           <DialogHeader>
-            <DialogTitle>Update Payment Status</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-base md:text-lg">Update Payment Status</DialogTitle>
+            <DialogDescription className="text-xs md:text-sm">
               Change the payment status for{" "}
               {selectedPayment && formatMonth(selectedPayment.payment_month)}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
+              <Label htmlFor="status" className="text-xs md:text-sm">Status</Label>
               <Select
                 value={newStatus}
                 onValueChange={(value: any) => setNewStatus(value)}
               >
-                <SelectTrigger id="status">
+                <SelectTrigger id="status" className="h-9 md:h-10 text-xs md:text-sm">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="paid">Paid</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="overdue">Overdue</SelectItem>
+                  <SelectItem value="paid" className="text-xs md:text-sm">Paid</SelectItem>
+                  <SelectItem value="pending" className="text-xs md:text-sm">Pending</SelectItem>
+                  <SelectItem value="overdue" className="text-xs md:text-sm">Overdue</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="notes">Notes (Optional)</Label>
+              <Label htmlFor="notes" className="text-xs md:text-sm">Notes (Optional)</Label>
               <Textarea
                 id="notes"
                 placeholder="Add any notes about this payment..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={3}
+                className="text-xs md:text-sm"
               />
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setStatusDialogOpen(false)}>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={() => setStatusDialogOpen(false)} className="h-9 text-xs md:text-sm">
               Cancel
             </Button>
-            <Button onClick={handleStatusChange}>Update Status</Button>
+            <Button onClick={handleStatusChange} className="h-9 text-xs md:text-sm">Update Status</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -385,17 +435,17 @@ export default function PaymentTracker({
         open={futureMonthsDialogOpen}
         onOpenChange={setFutureMonthsDialogOpen}
       >
-        <DialogContent>
+        <DialogContent className="w-[95vw] max-w-md">
           <DialogHeader>
-            <DialogTitle>Add Future Payment Records</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-base md:text-lg">Add Future Payment Records</DialogTitle>
+            <DialogDescription className="text-xs md:text-sm">
               Generate payment records in advance for this tenant. This is useful
               when a tenant pays for multiple months upfront.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="months">Number of Months</Label>
+              <Label htmlFor="months" className="text-xs md:text-sm">Number of Months</Label>
               <Input
                 id="months"
                 type="number"
@@ -403,21 +453,23 @@ export default function PaymentTracker({
                 max="24"
                 value={monthsAhead}
                 onChange={(e) => setMonthsAhead(parseInt(e.target.value))}
+                className="h-9 md:h-10 text-xs md:text-sm"
               />
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs md:text-sm text-muted-foreground">
                 This will create payment records for the next {monthsAhead} months
                 starting from the current month.
               </p>
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
             <Button
               variant="outline"
               onClick={() => setFutureMonthsDialogOpen(false)}
+              className="h-9 text-xs md:text-sm"
             >
               Cancel
             </Button>
-            <Button onClick={handleGenerateFuturePayments}>Generate</Button>
+            <Button onClick={handleGenerateFuturePayments} className="h-9 text-xs md:text-sm">Generate</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

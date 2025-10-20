@@ -191,48 +191,50 @@ export default function PropertyManagerTenantsPage() {
   return (
     <ProtectedRoute allowedRoles={["property_manager"]}>
       <PropertyManagerLayout>
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6">
           {/* Filters */}
           <Card className="border-indigo-200">
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Search className="h-5 w-5" />
-                    Filter Tenants
-                  </CardTitle>
-                  <CardDescription>
-                    Search by name, email, phone number or filter by property, floor, and monthly rate
-                  </CardDescription>
-                </div>
-                <div className="flex items-center gap-2">
-                  {(selectedProperty !== "all" || selectedFloor !== "all" || monthlyRateFilter || searchTerm) && (
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <CardTitle className="text-base md:text-lg flex items-center gap-2">
+                      <Search className="h-4 w-4 md:h-5 md:w-5" />
+                      Filter Tenants
+                    </CardTitle>
+                    <CardDescription className="text-xs md:text-sm mt-1">
+                      Search by name, email, phone number or filter by property, floor, and monthly rate
+                    </CardDescription>
+                  </div>
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                    {(selectedProperty !== "all" || selectedFloor !== "all" || monthlyRateFilter || searchTerm) && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSearchTerm("");
+                          setSelectedProperty("all");
+                          setSelectedFloor("all");
+                          setMonthlyRateFilter("");
+                        }}
+                        className="text-slate-600 text-xs md:text-sm h-8 md:h-9"
+                      >
+                        Clear All Filters
+                      </Button>
+                    )}
                     <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setSearchTerm("");
-                        setSelectedProperty("all");
-                        setSelectedFloor("all");
-                        setMonthlyRateFilter("");
-                      }}
-                      className="text-slate-600"
+                      onClick={() => router.push("/property_manager/tenants/create")}
+                      className="bg-indigo-600 hover:bg-indigo-700 gap-2 text-xs md:text-sm h-8 md:h-9"
                     >
-                      Clear All Filters
+                      <Plus className="h-4 w-4" />
+                      Add Tenant
                     </Button>
-                  )}
-                  <Button
-                    onClick={() => router.push("/property_manager/tenants/create")}
-                    className="bg-indigo-600 hover:bg-indigo-700 gap-2"
-                  >
-                    <Plus className="h-4 w-4" />
-                    Add Tenant
-                  </Button>
+                  </div>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="space-y-3 md:space-y-4">
                 {/* Search Input */}
                 <div className="flex gap-4">
                   <div className="flex-1">
@@ -240,21 +242,21 @@ export default function PropertyManagerTenantsPage() {
                       placeholder="Search by name, email, or phone number..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full"
+                      className="w-full text-sm md:text-base h-9 md:h-10"
                     />
                   </div>
                 </div>
 
                 {/* Filter Dropdowns and Input */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                   <div>
-                    <label className="text-sm font-medium text-slate-700 mb-1 block">
+                    <label className="text-xs md:text-sm font-medium text-slate-700 mb-1 block">
                       Property
                     </label>
                     <select
                       value={selectedProperty}
                       onChange={(e) => setSelectedProperty(e.target.value)}
-                      className="w-full h-10 px-3 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white"
+                      className="w-full h-9 md:h-10 px-3 py-2 text-xs md:text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white"
                     >
                       <option value="all">All Properties</option>
                       {managedProperties.map((property: any) => (
@@ -266,14 +268,14 @@ export default function PropertyManagerTenantsPage() {
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-slate-700 mb-1 block">
+                    <label className="text-xs md:text-sm font-medium text-slate-700 mb-1 block">
                       Floor
                     </label>
                     <select
                       value={selectedFloor}
                       onChange={(e) => setSelectedFloor(e.target.value)}
                       disabled={selectedProperty === "all"}
-                      className={`w-full h-10 px-3 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent ${
+                      className={`w-full h-9 md:h-10 px-3 py-2 text-xs md:text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent ${
                         selectedProperty === "all" 
                           ? "bg-slate-100 text-slate-400 cursor-not-allowed" 
                           : "bg-white"
@@ -291,7 +293,7 @@ export default function PropertyManagerTenantsPage() {
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-slate-700 mb-1 block">
+                    <label className="text-xs md:text-sm font-medium text-slate-700 mb-1 block">
                       Monthly Rate
                     </label>
                     <div className="relative">
@@ -300,11 +302,11 @@ export default function PropertyManagerTenantsPage() {
                         placeholder="Filter by rate..."
                         value={monthlyRateFilter}
                         onChange={(e) => setMonthlyRateFilter(e.target.value)}
-                        className="w-full pr-8"
+                        className="w-full pr-8 text-sm md:text-base h-9 md:h-10"
                         min="0"
                         step="0.01"
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-medium text-sm">
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-medium text-xs md:text-sm">
                         €
                       </span>
                     </div>
@@ -314,21 +316,21 @@ export default function PropertyManagerTenantsPage() {
             </CardContent>
           </Card>
 
-          {/* Tenants Table */}
-          <Card>
+          {/* Tenants Table - Desktop */}
+          <Card className="hidden lg:block">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-lg">
                 <Users className="h-5 w-5" />
                 Tenants List
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-sm">
                 {tenants.length} {(selectedProperty !== "all" || selectedFloor !== "all" || monthlyRateFilter || searchTerm) ? "filtered" : "total"} tenants
               </CardDescription>
             </CardHeader>
             <CardContent>
               {error && (
                 <Alert variant="destructive" className="mb-4">
-                  <AlertDescription>
+                  <AlertDescription className="text-sm">
                     Error loading tenants. Please try again.
                   </AlertDescription>
                 </Alert>
@@ -339,7 +341,7 @@ export default function PropertyManagerTenantsPage() {
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
                 </div>
               ) : tenants.length === 0 ? (
-                <div className="text-center py-8 text-slate-500">
+                <div className="text-center py-8 text-slate-500 text-sm">
                   {(selectedProperty !== "all" || selectedFloor !== "all" || monthlyRateFilter || searchTerm)
                     ? "No tenants found matching the selected filters."
                     : "No tenants found."}
@@ -447,23 +449,187 @@ export default function PropertyManagerTenantsPage() {
               )}
             </CardContent>
           </Card>
+
+          {/* Tenants Cards - Mobile & Tablet */}
+          <div className="lg:hidden space-y-4">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Users className="h-4 w-4" />
+                  Tenants List
+                </CardTitle>
+                <CardDescription className="text-xs">
+                  {tenants.length} {(selectedProperty !== "all" || selectedFloor !== "all" || monthlyRateFilter || searchTerm) ? "filtered" : "total"} tenants
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            {error && (
+              <Alert variant="destructive">
+                <AlertDescription className="text-xs md:text-sm">
+                  Error loading tenants. Please try again.
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {isLoading ? (
+              <Card>
+                <CardContent className="py-12">
+                  <div className="flex justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : tenants.length === 0 ? (
+              <Card>
+                <CardContent className="py-12">
+                  <div className="text-center text-slate-500 text-xs md:text-sm">
+                    {(selectedProperty !== "all" || selectedFloor !== "all" || monthlyRateFilter || searchTerm)
+                      ? "No tenants found matching the selected filters."
+                      : "No tenants found."}
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <>
+                <div className="space-y-3">
+                  {tenants.map((tenant: User) => (
+                    <Card key={tenant.id} className="hover:shadow-md transition-shadow">
+                      <CardContent className="p-4">
+                        <div className="space-y-3">
+                          {/* Header */}
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-semibold text-slate-900 text-sm md:text-base">
+                                {tenant.name} {tenant.surname}
+                              </h3>
+                              <p className="text-xs md:text-sm text-slate-600 mt-0.5 truncate">
+                                {tenant.email}
+                              </p>
+                            </div>
+                            {tenant.monthly_rate !== null && tenant.monthly_rate !== undefined && (
+                              <div className="text-right flex-shrink-0">
+                                <p className="text-xs text-slate-500">Monthly Rate</p>
+                                <p className="text-base md:text-lg font-bold text-indigo-600">
+                                  €{Number(tenant.monthly_rate).toFixed(2)}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Details Grid */}
+                          <div className="grid grid-cols-2 gap-3 pt-2 border-t">
+                            <div>
+                              <p className="text-xs text-slate-500">Phone</p>
+                              <p className="text-sm font-medium text-slate-900 mt-0.5">
+                                {tenant.number || "N/A"}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-slate-500">Floor</p>
+                              <p className="text-sm font-medium text-slate-900 mt-0.5">
+                                {tenant.floor_assigned !== null && tenant.floor_assigned !== undefined ? (
+                                  <Badge variant="outline" className="gap-1 text-xs h-6">
+                                    <Building className="h-3 w-3" />
+                                    Floor {tenant.floor_assigned}
+                                  </Badge>
+                                ) : (
+                                  <span className="text-slate-400">Not assigned</span>
+                                )}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Property */}
+                          <div className="pt-2 border-t">
+                            <p className="text-xs text-slate-500">Property</p>
+                            <p className="text-sm font-medium text-slate-900 mt-0.5">
+                              {getPropertyName(tenant.property_ids)}
+                            </p>
+                          </div>
+
+                          {/* Actions */}
+                          <div className="flex gap-2 pt-2 border-t">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => router.push(`/property_manager/tenants/edit/${tenant.id}`)}
+                              className="flex-1 gap-2 text-xs h-8"
+                            >
+                              <Pencil className="h-3 w-3" />
+                              Edit
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                setTenantToDelete({
+                                  id: tenant.id,
+                                  name: `${tenant.name} ${tenant.surname}`,
+                                })
+                              }
+                              className="flex-1 gap-2 text-xs h-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                              Delete
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <div className="text-xs md:text-sm text-slate-600">
+                      Page {currentPage} of {totalPages}
+                    </div>
+                    <div className="flex gap-2 w-full sm:w-auto">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className="flex-1 sm:flex-initial text-xs md:text-sm h-8 md:h-9"
+                      >
+                        <ChevronLeft className="h-3 w-3 md:h-4 md:w-4" />
+                        Previous
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className="flex-1 sm:flex-initial text-xs md:text-sm h-8 md:h-9"
+                      >
+                        Next
+                        <ChevronRight className="h-3 w-3 md:h-4 md:w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         </div>
 
         {/* Delete Confirmation Dialog */}
         <AlertDialog open={!!tenantToDelete} onOpenChange={() => setTenantToDelete(null)}>
-          <AlertDialogContent>
+          <AlertDialogContent className="max-w-[90vw] sm:max-w-lg">
             <AlertDialogHeader>
-              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-              <AlertDialogDescription>
+              <AlertDialogTitle className="text-base md:text-lg">Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription className="text-xs md:text-sm">
                 This will permanently delete the tenant <strong>{tenantToDelete?.name}</strong>.
                 This action cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+              <AlertDialogCancel className="text-xs md:text-sm h-9 w-full sm:w-auto">Cancel</AlertDialogCancel>
               <AlertDialogAction
                 onClick={() => tenantToDelete && handleDeleteTenant(tenantToDelete.id)}
-                className="bg-red-600 hover:bg-red-700"
+                className="bg-red-600 hover:bg-red-700 text-xs md:text-sm h-9 w-full sm:w-auto"
               >
                 Delete
               </AlertDialogAction>

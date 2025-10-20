@@ -307,7 +307,7 @@ export default function ConfigurationsPage() {
           {/* Problem Options Section */}
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-4">
                 <div>
                   <CardTitle>Problem Options</CardTitle>
                   <CardDescription>
@@ -316,12 +316,12 @@ export default function ConfigurationsPage() {
                 </div>
                 <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
                   <DialogTrigger asChild>
-                    <Button className="bg-indigo-600 hover:bg-indigo-700">
+                    <Button className="bg-indigo-600 hover:bg-indigo-700 w-full sm:w-auto">
                       <Plus className="mr-2 h-4 w-4" />
                       Add Problem Option
                     </Button>
                   </DialogTrigger>
-                  <DialogContent>
+                  <DialogContent className="max-w-[95vw] sm:max-w-[500px]">
                     <DialogHeader>
                       <DialogTitle>Create Problem Option</DialogTitle>
                       <DialogDescription>
@@ -353,17 +353,18 @@ export default function ConfigurationsPage() {
                         />
                       </div>
                     </div>
-                    <DialogFooter>
+                    <DialogFooter className="flex-col sm:flex-row gap-2">
                       <Button
                         variant="outline"
                         onClick={() => {
                           setIsCreateOpen(false);
                           setFormData({ title: "", description: "" });
                         }}
+                        className="w-full sm:w-auto"
                       >
                         Cancel
                       </Button>
-                      <Button onClick={handleCreate} className="bg-indigo-600 hover:bg-indigo-700">
+                      <Button onClick={handleCreate} className="bg-indigo-600 hover:bg-indigo-700 w-full sm:w-auto">
                         Create
                       </Button>
                     </DialogFooter>
@@ -381,7 +382,7 @@ export default function ConfigurationsPage() {
                   </p>
                 </div>
               ) : (
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {problemOptions.map((option) => (
                     <Card key={option.id} className="border-slate-200">
                       <CardHeader>
@@ -425,7 +426,7 @@ export default function ConfigurationsPage() {
           {/* Spending Configurations Section */}
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-4">
                 <div>
                   <CardTitle>Spending Configurations</CardTitle>
                   <CardDescription>
@@ -434,12 +435,12 @@ export default function ConfigurationsPage() {
                 </div>
                 <Dialog open={isCreateSpendingOpen} onOpenChange={setIsCreateSpendingOpen}>
                   <DialogTrigger asChild>
-                    <Button className="bg-indigo-600 hover:bg-indigo-700">
+                    <Button className="bg-indigo-600 hover:bg-indigo-700 w-full sm:w-auto">
                       <Plus className="mr-2 h-4 w-4" />
                       Add Spending Config
                     </Button>
                   </DialogTrigger>
-                  <DialogContent>
+                  <DialogContent className="max-w-[95vw] sm:max-w-[500px]">
                     <DialogHeader>
                       <DialogTitle>Create Spending Config</DialogTitle>
                       <DialogDescription>
@@ -471,17 +472,18 @@ export default function ConfigurationsPage() {
                         />
                       </div>
                     </div>
-                    <DialogFooter>
+                    <DialogFooter className="flex-col sm:flex-row gap-2">
                       <Button
                         variant="outline"
                         onClick={() => {
                           setIsCreateSpendingOpen(false);
                           setSpendingFormData({ title: "", description: "" });
                         }}
+                        className="w-full sm:w-auto"
                       >
                         Cancel
                       </Button>
-                      <Button onClick={handleCreateSpendingConfig} className="bg-indigo-600 hover:bg-indigo-700">
+                      <Button onClick={handleCreateSpendingConfig} className="bg-indigo-600 hover:bg-indigo-700 w-full sm:w-auto">
                         Create
                       </Button>
                     </DialogFooter>
@@ -499,7 +501,7 @@ export default function ConfigurationsPage() {
                   </p>
                 </div>
               ) : (
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {spendingConfigs.map((config) => (
                     <Card key={config.id} className="border-slate-200">
                       <CardHeader>
@@ -552,26 +554,26 @@ export default function ConfigurationsPage() {
               {properties.length === 0 ? (
                 <p className="text-center text-slate-600 py-8">No properties available</p>
               ) : (
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-4 sm:grid-cols-2">
                   {properties.map((property) => (
                     <Card key={property.id} className="border-slate-200">
                       <CardHeader>
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
+                        <div className="flex flex-col gap-3">
+                          <div>
                             <CardTitle className="text-base flex items-center gap-2">
-                              <Building2 className="h-4 w-4" />
-                              {property.name}
+                              <Building2 className="h-4 w-4 flex-shrink-0" />
+                              <span className="truncate">{property.name}</span>
                             </CardTitle>
-                            <CardDescription className="text-sm">
+                            <CardDescription className="text-sm mt-1">
                               {property.address}
                             </CardDescription>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex flex-col gap-2">
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() => openAssignDialog(property.id)}
-                              className="border-indigo-200 text-indigo-700 hover:bg-indigo-50"
+                              className="border-indigo-200 text-indigo-700 hover:bg-indigo-50 w-full"
                             >
                               Problem Options
                             </Button>
@@ -579,7 +581,7 @@ export default function ConfigurationsPage() {
                               variant="outline"
                               size="sm"
                               onClick={() => openAssignSpendingDialog(property.id)}
-                              className="border-green-200 text-green-700 hover:bg-green-50"
+                              className="border-green-200 text-green-700 hover:bg-green-50 w-full"
                             >
                               <Euro className="h-4 w-4 mr-1" />
                               Spending
@@ -596,7 +598,7 @@ export default function ConfigurationsPage() {
 
           {/* Edit Dialog */}
           <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-            <DialogContent>
+            <DialogContent className="max-w-[95vw] sm:max-w-[500px]">
               <DialogHeader>
                 <DialogTitle>Edit Problem Option</DialogTitle>
                 <DialogDescription>
@@ -626,7 +628,7 @@ export default function ConfigurationsPage() {
                   />
                 </div>
               </div>
-              <DialogFooter>
+              <DialogFooter className="flex-col sm:flex-row gap-2">
                 <Button
                   variant="outline"
                   onClick={() => {
@@ -634,10 +636,11 @@ export default function ConfigurationsPage() {
                     setSelectedProblemOption(null);
                     setFormData({ title: "", description: "" });
                   }}
+                  className="w-full sm:w-auto"
                 >
                   Cancel
                 </Button>
-                <Button onClick={handleUpdate} className="bg-indigo-600 hover:bg-indigo-700">
+                <Button onClick={handleUpdate} className="bg-indigo-600 hover:bg-indigo-700 w-full sm:w-auto">
                   Update
                 </Button>
               </DialogFooter>
@@ -646,7 +649,7 @@ export default function ConfigurationsPage() {
 
           {/* Assign Dialog */}
           <Dialog open={isAssignOpen} onOpenChange={setIsAssignOpen}>
-            <DialogContent className="max-w-md">
+            <DialogContent className="max-w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Assign Problem Options</DialogTitle>
                 <DialogDescription>
@@ -675,7 +678,7 @@ export default function ConfigurationsPage() {
                             }
                           }}
                         />
-                        <div className="grid gap-1.5 leading-none">
+                        <div className="grid gap-1.5 leading-none flex-1">
                           <label
                             htmlFor={`option-${option.id}`}
                             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
@@ -693,7 +696,7 @@ export default function ConfigurationsPage() {
                   </div>
                 )}
               </div>
-              <DialogFooter>
+              <DialogFooter className="flex-col sm:flex-row gap-2">
                 <Button
                   variant="outline"
                   onClick={() => {
@@ -701,12 +704,13 @@ export default function ConfigurationsPage() {
                     setSelectedProperty(null);
                     setSelectedProblemIds([]);
                   }}
+                  className="w-full sm:w-auto"
                 >
                   Cancel
                 </Button>
                 <Button
                   onClick={handleAssignToProperty}
-                  className="bg-indigo-600 hover:bg-indigo-700"
+                  className="bg-indigo-600 hover:bg-indigo-700 w-full sm:w-auto"
                 >
                   Save Assignment
                 </Button>
@@ -717,7 +721,7 @@ export default function ConfigurationsPage() {
 
           {/* Edit Spending Config Dialog */}
           <Dialog open={isEditSpendingOpen} onOpenChange={setIsEditSpendingOpen}>
-            <DialogContent>
+            <DialogContent className="max-w-[95vw] sm:max-w-[500px]">
               <DialogHeader>
                 <DialogTitle>Edit Spending Config</DialogTitle>
                 <DialogDescription>
@@ -747,7 +751,7 @@ export default function ConfigurationsPage() {
                   />
                 </div>
               </div>
-              <DialogFooter>
+              <DialogFooter className="flex-col sm:flex-row gap-2">
                 <Button
                   variant="outline"
                   onClick={() => {
@@ -755,10 +759,11 @@ export default function ConfigurationsPage() {
                     setSelectedSpendingConfig(null);
                     setSpendingFormData({ title: "", description: "" });
                   }}
+                  className="w-full sm:w-auto"
                 >
                   Cancel
                 </Button>
-                <Button onClick={handleUpdateSpendingConfig} className="bg-indigo-600 hover:bg-indigo-700">
+                <Button onClick={handleUpdateSpendingConfig} className="bg-indigo-600 hover:bg-indigo-700 w-full sm:w-auto">
                   Update
                 </Button>
               </DialogFooter>
@@ -767,7 +772,7 @@ export default function ConfigurationsPage() {
 
           {/* Assign Spending Config Dialog */}
           <Dialog open={isAssignSpendingOpen} onOpenChange={setIsAssignSpendingOpen}>
-            <DialogContent className="max-w-md">
+            <DialogContent className="max-w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Assign Spending Configurations</DialogTitle>
                 <DialogDescription>
@@ -796,7 +801,7 @@ export default function ConfigurationsPage() {
                             }
                           }}
                         />
-                        <div className="grid gap-1.5 leading-none">
+                        <div className="grid gap-1.5 leading-none flex-1">
                           <label
                             htmlFor={`spending-config-${config.id}`}
                             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
@@ -814,7 +819,7 @@ export default function ConfigurationsPage() {
                   </div>
                 )}
               </div>
-              <DialogFooter>
+              <DialogFooter className="flex-col sm:flex-row gap-2">
                 <Button
                   variant="outline"
                   onClick={() => {
@@ -822,12 +827,13 @@ export default function ConfigurationsPage() {
                     setSelectedSpendingProperty(null);
                     setSelectedSpendingIds([]);
                   }}
+                  className="w-full sm:w-auto"
                 >
                   Cancel
                 </Button>
                 <Button
                   onClick={handleAssignSpendingToProperty}
-                  className="bg-indigo-600 hover:bg-indigo-700"
+                  className="bg-indigo-600 hover:bg-indigo-700 w-full sm:w-auto"
                 >
                   Save Assignment
                 </Button>

@@ -38,8 +38,8 @@ export function MonthlyReportsList({ propertyId, year }: MonthlyReportsListProps
   if (isLoading) {
     return (
       <Card>
-        <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <CardContent className="flex items-center justify-center py-8 md:py-12">
+          <Loader2 className="h-6 w-6 md:h-8 md:w-8 animate-spin text-muted-foreground" />
         </CardContent>
       </Card>
     );
@@ -50,10 +50,10 @@ export function MonthlyReportsList({ propertyId, year }: MonthlyReportsListProps
   if (reports.length === 0) {
     return (
       <Card>
-        <CardContent className="flex flex-col items-center justify-center py-12">
-          <FileText className="h-12 w-12 text-muted-foreground mb-4" />
-          <p className="text-lg font-medium text-muted-foreground">No reports found</p>
-          <p className="text-sm text-muted-foreground">No reports generated for this property in {year}</p>
+        <CardContent className="flex flex-col items-center justify-center py-8 md:py-12">
+          <FileText className="h-10 w-10 md:h-12 md:w-12 text-muted-foreground mb-3 md:mb-4" />
+          <p className="text-base md:text-lg font-medium text-muted-foreground">No reports found</p>
+          <p className="text-xs md:text-sm text-muted-foreground">No reports generated for this property in {year}</p>
         </CardContent>
       </Card>
     );
@@ -110,23 +110,23 @@ export function MonthlyReportsList({ propertyId, year }: MonthlyReportsListProps
 
   return (
     <>
-      <div className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="space-y-3 md:space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
           {sortedReports.map((report) => (
             <Card key={report.id} className="hover:shadow-md transition-shadow">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
+              <CardHeader className="pb-3 space-y-2">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
                   <div className="space-y-1 flex-1">
-                    <CardTitle className="text-lg">{getMonthName(report.report_month)}</CardTitle>
+                    <CardTitle className="text-base md:text-lg">{getMonthName(report.report_month)}</CardTitle>
                     <CardDescription className="flex items-center gap-2 text-xs text-muted-foreground">
                       <TrendingUp className="h-3 w-3" />
                       <span>{report.paid_tenants} of {report.total_tenants} tenants paid ({collectionRate(report)}%)</span>
                     </CardDescription>
                   </div>
                   {report.property && (
-                    <Badge variant="secondary" className="ml-2 flex items-center gap-1">
+                    <Badge variant="secondary" className="flex items-center gap-1 w-fit text-xs">
                       <Building2 className="h-3 w-3" />
-                      {report.property.name}
+                      <span className="truncate max-w-[120px]">{report.property.name}</span>
                     </Badge>
                   )}
                 </div>
@@ -135,17 +135,12 @@ export function MonthlyReportsList({ propertyId, year }: MonthlyReportsListProps
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
                     <p className="text-muted-foreground text-xs">Total Budget</p>
-                    <p className="font-semibold text-base">€{parseFloat(report.total_budget).toFixed(2)}</p>
+                    <p className="font-semibold text-sm md:text-base">€{parseFloat(report.total_budget).toFixed(2)}</p>
                   </div>
                   <div>
                     <p className="text-muted-foreground text-xs">Pending</p>
-                    <p className="font-semibold text-base text-orange-600">€{parseFloat(report.pending_amount).toFixed(2)}</p>
+                    <p className="font-semibold text-sm md:text-base text-orange-600">€{parseFloat(report.pending_amount).toFixed(2)}</p>
                   </div>
-                </div>
-
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <TrendingUp className="h-3 w-3" />
-                  <span>{report.paid_tenants} of {report.total_tenants} tenants paid</span>
                 </div>
 
                 {report.spending_breakdown && report.spending_breakdown.length > 0 && (
@@ -153,9 +148,9 @@ export function MonthlyReportsList({ propertyId, year }: MonthlyReportsListProps
                     <p className="text-xs text-muted-foreground mb-2">Budget Allocation</p>
                     <div className="space-y-1">
                       {report.spending_breakdown.slice(0, 2).map((item: any, idx: number) => (
-                        <div key={idx} className="flex justify-between text-xs">
-                          <span className="truncate">{item.config_title}</span>
-                          <span className="font-medium">€{parseFloat(item.allocated_amount).toFixed(2)}</span>
+                        <div key={idx} className="flex justify-between text-xs gap-2">
+                          <span className="truncate flex-1">{item.config_title}</span>
+                          <span className="font-medium whitespace-nowrap">€{parseFloat(item.allocated_amount).toFixed(2)}</span>
                         </div>
                       ))}
                       {report.spending_breakdown.length > 2 && (
@@ -171,25 +166,28 @@ export function MonthlyReportsList({ propertyId, year }: MonthlyReportsListProps
                   <Button
                     variant="outline"
                     size="sm"
-                    className="flex-1"
+                    className="flex-1 h-8 text-xs"
                     onClick={() => handleDownload(report)}
                     disabled={downloadingReportId === report.id}
                   >
                     {downloadingReportId === report.id ? (
                       <>
                         <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                        Generating...
+                        <span className="hidden sm:inline">Generating...</span>
+                        <span className="sm:hidden">...</span>
                       </>
                     ) : (
                       <>
                         <Download className="h-3 w-3 mr-1" />
-                        Download
+                        <span className="hidden sm:inline">Download</span>
+                        <span className="sm:hidden">PDF</span>
                       </>
                     )}
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
+                    className="h-8 px-3"
                     onClick={() => handleEdit(report)}
                   >
                     <Edit className="h-3 w-3" />
@@ -197,6 +195,7 @@ export function MonthlyReportsList({ propertyId, year }: MonthlyReportsListProps
                   <Button
                     variant="outline"
                     size="sm"
+                    className="h-8 px-3"
                     onClick={() => setDeleteReportId(report.id)}
                   >
                     <Trash2 className="h-3 w-3" />
@@ -217,16 +216,16 @@ export function MonthlyReportsList({ propertyId, year }: MonthlyReportsListProps
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteReportId !== null} onOpenChange={(open) => !open && setDeleteReportId(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="w-[95vw] max-w-md">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Report</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-base md:text-lg">Delete Report</AlertDialogTitle>
+            <AlertDialogDescription className="text-xs md:text-sm">
               Are you sure you want to delete this monthly report? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <AlertDialogCancel className="h-9 text-xs md:text-sm">Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90 h-9 text-xs md:text-sm">
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

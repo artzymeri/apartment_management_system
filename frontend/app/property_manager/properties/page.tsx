@@ -121,23 +121,23 @@ export default function PropertyManagerPropertiesPage() {
   return (
     <ProtectedRoute allowedRoles={["property_manager"]}>
       <PropertyManagerLayout>
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6">
           {/* Filters */}
           <Card className="border-indigo-200">
             <CardHeader>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Search className="h-5 w-5" />
+                  <CardTitle className="text-base md:text-lg flex items-center gap-2">
+                    <Search className="h-4 w-4 md:h-5 md:w-5" />
                     Filter Properties
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-xs md:text-sm mt-1">
                     Search by name, address, or filter by city
                   </CardDescription>
                 </div>
                 <Button
                   onClick={() => router.push("/property_manager/properties/create")}
-                  className="bg-indigo-600 hover:bg-indigo-700 gap-2"
+                  className="bg-indigo-600 hover:bg-indigo-700 gap-2 w-full sm:w-auto text-xs md:text-sm h-9 md:h-10"
                 >
                   <Plus className="h-4 w-4" />
                   Create Property
@@ -145,19 +145,21 @@ export default function PropertyManagerPropertiesPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
                 <div className="flex-1">
                   <Input
                     placeholder="Search by name or address..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
+                    className="text-sm md:text-base h-9 md:h-10"
                   />
                 </div>
-                <div className="w-64">
+                <div className="w-full sm:w-48 md:w-64">
                   <Input
                     placeholder="Filter by city..."
                     value={cityFilter}
                     onChange={(e) => setCityFilter(e.target.value)}
+                    className="text-sm md:text-base h-9 md:h-10"
                   />
                 </div>
               </div>
@@ -167,12 +169,12 @@ export default function PropertyManagerPropertiesPage() {
           {/* Error Alert */}
           {error && (
             <Alert variant="destructive">
-              <AlertDescription>Failed to load properties</AlertDescription>
+              <AlertDescription className="text-xs md:text-sm">Failed to load properties</AlertDescription>
             </Alert>
           )}
 
-          {/* Properties Table */}
-          <Card>
+          {/* Properties Table - Desktop */}
+          <Card className="hidden lg:block">
             <CardContent className="p-0">
               {isLoading ? (
                 <div className="flex items-center justify-center py-12">
@@ -285,21 +287,141 @@ export default function PropertyManagerPropertiesPage() {
             </CardContent>
           </Card>
 
+          {/* Properties Cards - Mobile & Tablet */}
+          <div className="lg:hidden space-y-3">
+            {isLoading ? (
+              <Card>
+                <CardContent className="py-12">
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" />
+                  </div>
+                </CardContent>
+              </Card>
+            ) : properties.length === 0 ? (
+              <Card>
+                <CardContent className="py-12">
+                  <div className="flex flex-col items-center justify-center text-slate-500">
+                    <Building2 className="h-12 w-12 mb-4 opacity-50" />
+                    <p className="text-base md:text-lg font-medium">No properties found</p>
+                    <p className="text-xs md:text-sm">Try adjusting your filters</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              properties.map((property: Property) => {
+                const floorsCount = calculateFloorsCount(property.floors_from, property.floors_to);
+
+                return (
+                  <Card
+                    key={property.id}
+                    className="hover:shadow-md transition-shadow cursor-pointer"
+                    onClick={() => handleRowClick(property.id)}
+                  >
+                    <CardContent className="p-4">
+                      <div className="space-y-3">
+                        {/* Header */}
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start gap-3 flex-1 min-w-0">
+                            <div className="p-2 bg-indigo-100 rounded-lg flex-shrink-0">
+                              <Building2 className="h-5 w-5 text-indigo-600" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-semibold text-slate-900 text-sm md:text-base truncate">
+                                {property.name}
+                              </h3>
+                              <p className="text-xs md:text-sm text-slate-600 mt-0.5">
+                                {property.address}
+                              </p>
+                            </div>
+                          </div>
+                          <Badge variant="secondary" className="bg-indigo-100 text-indigo-700 text-xs flex-shrink-0">
+                            {property.cityDetails?.name || 'Unknown'}
+                          </Badge>
+                        </div>
+
+                        {/* Details Grid */}
+                        <div className="grid grid-cols-2 gap-3 pt-2 border-t">
+                          <div>
+                            <p className="text-xs text-slate-500">Floors</p>
+                            <p className="text-sm font-medium text-slate-900 mt-0.5">
+                              {floorsCount !== null ? (
+                                <span>{floorsCount} {floorsCount === 1 ? 'floor' : 'floors'}</span>
+                              ) : (
+                                <span className="text-slate-400">Not specified</span>
+                              )}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-slate-500">Created</p>
+                            <p className="text-sm font-medium text-slate-900 mt-0.5">
+                              {new Date(property.created_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Location */}
+                        {property.latitude && property.longitude && (
+                          <div className="pt-2 border-t">
+                            <div className="flex items-center gap-2 text-xs text-slate-600">
+                              <MapPin className="h-3 w-3 flex-shrink-0" />
+                              <span className="truncate">
+                                {Number(property.latitude).toFixed(4)}, {Number(property.longitude).toFixed(4)}
+                              </span>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Actions */}
+                        <div className="flex gap-2 pt-2 border-t">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              router.push(`/property_manager/properties/edit/${property.id}`);
+                            }}
+                            className="flex-1 gap-2 text-xs h-8"
+                          >
+                            <Pencil className="h-3 w-3" />
+                            Edit
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setPropertyToDelete({ id: property.id, name: property.name });
+                            }}
+                            disabled={deleteMutation.isPending}
+                            className="flex-1 gap-2 text-xs h-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                            Delete
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })
+            )}
+          </div>
+
           {/* Pagination */}
           {!isLoading && properties.length > 0 && (
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-slate-600">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 md:gap-4">
+              <p className="text-xs md:text-sm text-slate-600">
                 Page {currentPage} of {totalPages}
               </p>
-              <div className="flex gap-2">
+              <div className="flex gap-2 w-full sm:w-auto">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="gap-2"
+                  className="gap-2 flex-1 sm:flex-initial text-xs md:text-sm h-8 md:h-9"
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-3 w-3 md:h-4 md:w-4" />
                   Previous
                 </Button>
                 <Button
@@ -307,10 +429,10 @@ export default function PropertyManagerPropertiesPage() {
                   size="sm"
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className="gap-2"
+                  className="gap-2 flex-1 sm:flex-initial text-xs md:text-sm h-8 md:h-9"
                 >
                   Next
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="h-3 w-3 md:h-4 md:w-4" />
                 </Button>
               </div>
             </div>
@@ -318,18 +440,18 @@ export default function PropertyManagerPropertiesPage() {
 
           {/* Delete Property Confirmation */}
           <AlertDialog open={!!propertyToDelete} onOpenChange={(open) => { if (!open) setPropertyToDelete(null); }}>
-            <AlertDialogContent>
+            <AlertDialogContent className="max-w-[90vw] sm:max-w-lg">
               <AlertDialogHeader>
-                <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
-                <AlertDialogDescription>
+                <AlertDialogTitle className="text-base md:text-lg">Confirm Deletion</AlertDialogTitle>
+                <AlertDialogDescription className="text-xs md:text-sm">
                   Are you sure you want to delete the property{" "}
                   <span className="font-medium">{propertyToDelete?.name}</span>? This action cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
-              <AlertDialogFooter>
+              <AlertDialogFooter className="flex-col sm:flex-row gap-2">
                 <AlertDialogCancel
                   onClick={() => setPropertyToDelete(null)}
-                  className="hover:bg-slate-100"
+                  className="hover:bg-slate-100 text-xs md:text-sm h-9 w-full sm:w-auto"
                 >
                   Cancel
                 </AlertDialogCancel>
@@ -340,7 +462,7 @@ export default function PropertyManagerPropertiesPage() {
                       setPropertyToDelete(null);
                     }
                   }}
-                  className="bg-red-600 text-white hover:bg-red-700"
+                  className="bg-red-600 text-white hover:bg-red-700 text-xs md:text-sm h-9 w-full sm:w-auto"
                 >
                   Delete Property
                 </AlertDialogAction>

@@ -221,10 +221,10 @@ export default function PropertyManagerSuggestionsPage() {
       <PropertyManagerLayout title="Suggestions">
         <div className="space-y-6">
           {/* Stats Cards */}
-          <div className="grid gap-4 md:grid-cols-5">
+          <div className="grid gap-4 grid-cols-2 md:grid-cols-5">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Suggestions</CardTitle>
+                <CardTitle className="text-sm font-medium">Total</CardTitle>
                 <Lightbulb className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -272,16 +272,16 @@ export default function PropertyManagerSuggestionsPage() {
           {/* Filters and Table */}
           <Card>
             <CardHeader>
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div className="flex flex-col gap-4">
                 <div>
                   <CardTitle>Suggestions Overview</CardTitle>
                   <CardDescription>
                     Review tenant suggestions for your properties
                   </CardDescription>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-2">
+                <div className="flex flex-col gap-2">
                   <Select value={selectedProperty} onValueChange={setSelectedProperty}>
-                    <SelectTrigger className="w-full sm:w-[200px]">
+                    <SelectTrigger className="w-full">
                       <SelectValue placeholder="All Properties" />
                     </SelectTrigger>
                     <SelectContent>
@@ -294,7 +294,7 @@ export default function PropertyManagerSuggestionsPage() {
                     </SelectContent>
                   </Select>
                   <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-                    <SelectTrigger className="w-full sm:w-[180px]">
+                    <SelectTrigger className="w-full">
                       <SelectValue placeholder="All Statuses" />
                     </SelectTrigger>
                     <SelectContent>
@@ -321,84 +321,155 @@ export default function PropertyManagerSuggestionsPage() {
                   </AlertDescription>
                 </Alert>
               ) : (
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Title</TableHead>
-                        <TableHead>Property</TableHead>
-                        <TableHead>Tenant</TableHead>
-                        <TableHead>Floor</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {suggestions.map((suggestion) => (
-                        <TableRow key={suggestion.id}>
-                          <TableCell className="font-medium">
-                            <div className="max-w-[200px]">
-                              <div className="font-medium truncate">{suggestion.title}</div>
-                              {suggestion.description && (
-                                <div className="text-xs text-muted-foreground truncate mt-1">
-                                  {suggestion.description}
+                <>
+                  {/* Desktop Table View */}
+                  <div className="hidden md:block overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Title</TableHead>
+                          <TableHead>Property</TableHead>
+                          <TableHead>Tenant</TableHead>
+                          <TableHead>Floor</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Date</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {suggestions.map((suggestion) => (
+                          <TableRow key={suggestion.id}>
+                            <TableCell className="font-medium">
+                              <div className="max-w-[200px]">
+                                <div className="font-medium truncate">{suggestion.title}</div>
+                                {suggestion.description && (
+                                  <div className="text-xs text-muted-foreground truncate mt-1">
+                                    {suggestion.description}
+                                  </div>
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Building2 className="h-4 w-4 text-muted-foreground" />
+                                <div className="max-w-[150px] truncate">
+                                  {suggestion.property.name}
                                 </div>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <User className="h-4 w-4 text-muted-foreground" />
+                                <div>
+                                  <div className="font-medium">
+                                    {suggestion.tenant.name} {suggestion.tenant.surname}
+                                  </div>
+                                  <div className="text-xs text-muted-foreground">
+                                    {suggestion.tenant.email}
+                                  </div>
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              {suggestion.tenant.floor_assigned !== null
+                                ? suggestion.tenant.floor_assigned
+                                : "N/A"}
+                            </TableCell>
+                            <TableCell>{getStatusBadge(suggestion.status)}</TableCell>
+                            <TableCell>
+                              <div className="text-sm">
+                                {format(new Date(suggestion.created_at), "PP")}
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                {format(new Date(suggestion.created_at), "p")}
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedSuggestion(suggestion);
+                                  setNewStatus(suggestion.status);
+                                }}
+                              >
+                                Update Status
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+
+                  {/* Mobile Card View */}
+                  <div className="md:hidden space-y-4">
+                    {suggestions.map((suggestion) => (
+                      <Card key={suggestion.id} className="overflow-hidden">
+                        <CardHeader className="pb-3">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1 min-w-0">
+                              <CardTitle className="text-base truncate">
+                                {suggestion.title}
+                              </CardTitle>
+                              {suggestion.description && (
+                                <CardDescription className="text-sm mt-1 line-clamp-2">
+                                  {suggestion.description}
+                                </CardDescription>
                               )}
                             </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Building2 className="h-4 w-4 text-muted-foreground" />
-                              <div className="max-w-[150px] truncate">
-                                {suggestion.property.name}
+                            {getStatusBadge(suggestion.status)}
+                          </div>
+                        </CardHeader>
+                        <CardContent className="space-y-3 pb-3">
+                          <div className="flex items-center gap-2 text-sm">
+                            <Building2 className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                            <span className="truncate">{suggestion.property.name}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <User className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <div className="font-medium truncate">
+                                {suggestion.tenant.name} {suggestion.tenant.surname}
+                              </div>
+                              <div className="text-xs text-muted-foreground truncate">
+                                {suggestion.tenant.email}
                               </div>
                             </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <User className="h-4 w-4 text-muted-foreground" />
-                              <div>
-                                <div className="font-medium">
-                                  {suggestion.tenant.name} {suggestion.tenant.surname}
-                                </div>
-                                <div className="text-xs text-muted-foreground">
-                                  {suggestion.tenant.email}
-                                </div>
+                          </div>
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-muted-foreground">Floor:</span>
+                            <span className="font-medium">
+                              {suggestion.tenant.floor_assigned !== null
+                                ? suggestion.tenant.floor_assigned
+                                : "N/A"}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-muted-foreground">Date:</span>
+                            <div className="text-right">
+                              <div>{format(new Date(suggestion.created_at), "PP")}</div>
+                              <div className="text-xs text-muted-foreground">
+                                {format(new Date(suggestion.created_at), "p")}
                               </div>
                             </div>
-                          </TableCell>
-                          <TableCell>
-                            {suggestion.tenant.floor_assigned !== null
-                              ? suggestion.tenant.floor_assigned
-                              : "N/A"}
-                          </TableCell>
-                          <TableCell>{getStatusBadge(suggestion.status)}</TableCell>
-                          <TableCell>
-                            <div className="text-sm">
-                              {format(new Date(suggestion.created_at), "PP")}
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              {format(new Date(suggestion.created_at), "p")}
-                            </div>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => {
-                                setSelectedSuggestion(suggestion);
-                                setNewStatus(suggestion.status);
-                              }}
-                            >
-                              Update Status
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full"
+                            onClick={() => {
+                              setSelectedSuggestion(suggestion);
+                              setNewStatus(suggestion.status);
+                            }}
+                          >
+                            Update Status
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </>
               )}
             </CardContent>
           </Card>
@@ -406,7 +477,7 @@ export default function PropertyManagerSuggestionsPage() {
 
         {/* Status Update Dialog */}
         <Dialog open={!!selectedSuggestion} onOpenChange={(open) => !open && setSelectedSuggestion(null)}>
-          <DialogContent>
+          <DialogContent className="max-w-[95vw] md:max-w-[500px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Update Suggestion Status</DialogTitle>
               <DialogDescription>
@@ -418,13 +489,13 @@ export default function PropertyManagerSuggestionsPage() {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <div className="text-sm font-medium">Suggestion Details</div>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-sm text-muted-foreground space-y-1">
                     <div><strong>Title:</strong> {selectedSuggestion.title}</div>
                     {selectedSuggestion.description && (
-                      <div className="mt-1"><strong>Description:</strong> {selectedSuggestion.description}</div>
+                      <div><strong>Description:</strong> {selectedSuggestion.description}</div>
                     )}
-                    <div className="mt-1"><strong>Property:</strong> {selectedSuggestion.property.name}</div>
-                    <div className="mt-1">
+                    <div><strong>Property:</strong> {selectedSuggestion.property.name}</div>
+                    <div>
                       <strong>Tenant:</strong> {selectedSuggestion.tenant.name} {selectedSuggestion.tenant.surname}
                     </div>
                   </div>
@@ -457,11 +528,11 @@ export default function PropertyManagerSuggestionsPage() {
               </div>
             )}
 
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setSelectedSuggestion(null)} disabled={isUpdating}>
+            <DialogFooter className="flex-col sm:flex-row gap-2">
+              <Button variant="outline" onClick={() => setSelectedSuggestion(null)} disabled={isUpdating} className="w-full sm:w-auto">
                 Cancel
               </Button>
-              <Button onClick={handleStatusUpdate} disabled={isUpdating || !newStatus}>
+              <Button onClick={handleStatusUpdate} disabled={isUpdating || !newStatus} className="w-full sm:w-auto">
                 {isUpdating ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

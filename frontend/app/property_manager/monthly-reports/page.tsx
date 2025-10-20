@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { PropertyManagerLayout } from "@/components/layouts/PropertyManagerLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { MonthlyReportsList } from "@/components/MonthlyReportsList";
@@ -27,35 +27,38 @@ export default function MonthlyReportsPage() {
   return (
     <ProtectedRoute allowedRoles={["property_manager"]}>
       <PropertyManagerLayout>
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6">
           {/* Filters Card */}
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Filter className="h-5 w-5" />
-                  <div>
-                    <CardTitle>Filter Reports</CardTitle>
-                    <CardDescription>Select a property and year to view reports</CardDescription>
+              <div className="flex flex-col gap-4">
+                <div className="flex items-start gap-2 md:gap-3">
+                  <Filter className="h-4 w-4 md:h-5 md:w-5 mt-1" />
+                  <div className="flex-1">
+                    <CardTitle className="text-base md:text-lg">Filter Reports</CardTitle>
+                    <CardDescription className="text-xs md:text-sm">Select a property and year to view reports</CardDescription>
                   </div>
                 </div>
-                <Button onClick={() => setIsGenerateModalOpen(true)} size="lg">
-                  <Plus className="h-5 w-5 mr-2" />
+                <Button
+                  onClick={() => setIsGenerateModalOpen(true)}
+                  className="w-full sm:w-auto h-9 md:h-10 text-xs md:text-sm"
+                >
+                  <Plus className="h-3 w-3 md:h-5 md:w-5 mr-2" />
                   Generate New Report
                 </Button>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Property</label>
+                  <label className="text-xs md:text-sm font-medium">Property</label>
                   <Select value={selectedProperty} onValueChange={setSelectedProperty}>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-9 md:h-10 text-xs md:text-sm">
                       <SelectValue placeholder="Select a property" />
                     </SelectTrigger>
                     <SelectContent>
                       {properties.map((property: Property) => (
-                        <SelectItem key={property.id} value={property.id.toString()}>
+                        <SelectItem key={property.id} value={property.id.toString()} className="text-xs md:text-sm">
                           {property.name}
                         </SelectItem>
                       ))}
@@ -64,14 +67,14 @@ export default function MonthlyReportsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Year</label>
+                  <label className="text-xs md:text-sm font-medium">Year</label>
                   <Select value={selectedYear} onValueChange={setSelectedYear}>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-9 md:h-10 text-xs md:text-sm">
                       <SelectValue placeholder="Select a year" />
                     </SelectTrigger>
                     <SelectContent>
                       {years.map((year) => (
-                        <SelectItem key={year} value={year.toString()}>
+                        <SelectItem key={year} value={year.toString()} className="text-xs md:text-sm">
                           {year}
                         </SelectItem>
                       ))}
@@ -90,10 +93,10 @@ export default function MonthlyReportsPage() {
             />
           ) : (
             <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <FileText className="h-12 w-12 text-muted-foreground mb-4" />
-                <p className="text-lg font-medium text-muted-foreground">Select filters to view reports</p>
-                <p className="text-sm text-muted-foreground">Please select both a property and year above</p>
+              <CardContent className="flex flex-col items-center justify-center py-8 md:py-12">
+                <FileText className="h-10 w-10 md:h-12 md:w-12 text-muted-foreground mb-3 md:mb-4" />
+                <p className="text-base md:text-lg font-medium text-muted-foreground">Select filters to view reports</p>
+                <p className="text-xs md:text-sm text-muted-foreground">Please select both a property and year above</p>
               </CardContent>
             </Card>
           )}

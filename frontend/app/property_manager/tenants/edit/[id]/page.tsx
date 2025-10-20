@@ -153,7 +153,7 @@ export default function EditTenantPage() {
   if (isLoading || propertiesLoading || isRefetching) {
     return (
       <ProtectedRoute allowedRoles={["property_manager"]}>
-        <PropertyManagerLayout>
+        <PropertyManagerLayout title="Edit Tenant">
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
           </div>
@@ -165,9 +165,9 @@ export default function EditTenantPage() {
   if (!tenantData?.data || tenantData.data.role !== "tenant") {
     return (
       <ProtectedRoute allowedRoles={["property_manager"]}>
-        <PropertyManagerLayout>
+        <PropertyManagerLayout title="Edit Tenant">
           <Alert variant="destructive">
-            <AlertDescription>
+            <AlertDescription className="text-xs md:text-sm">
               Tenant not found or invalid tenant ID.
             </AlertDescription>
           </Alert>
@@ -179,37 +179,41 @@ export default function EditTenantPage() {
   return (
     <ProtectedRoute allowedRoles={["property_manager"]}>
       <PropertyManagerLayout title="Edit Tenant">
-        <div className="max-w-2xl space-y-6">
+        <div className="max-w-2xl mx-auto space-y-4 md:space-y-6">
           {/* Back button */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <Button
               variant="outline"
               size="icon"
               onClick={() => router.push("/property_manager/tenants")}
+              className="h-9 w-9 md:h-10 md:w-10"
             >
               <ArrowLeft className="h-4 w-4" />
             </Button>
+            <p className="text-xs md:text-sm text-slate-600">
+              Update the details for this tenant
+            </p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit}>
             <Card>
               <CardHeader>
-                <CardTitle>Tenant Information</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-base md:text-lg">Tenant Information</CardTitle>
+                <CardDescription className="text-xs md:text-sm">
                   Update the details for this tenant
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-4 md:space-y-6">
                 {error && (
                   <Alert variant="destructive">
-                    <AlertDescription>{error}</AlertDescription>
+                    <AlertDescription className="text-xs md:text-sm">{error}</AlertDescription>
                   </Alert>
                 )}
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">First Name *</Label>
+                    <Label htmlFor="name" className="text-xs md:text-sm">First Name *</Label>
                     <Input
                       id="name"
                       value={formData.name}
@@ -218,11 +222,12 @@ export default function EditTenantPage() {
                       }
                       required
                       placeholder="John"
+                      className="text-sm md:text-base h-9 md:h-10"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="surname">Last Name *</Label>
+                    <Label htmlFor="surname" className="text-xs md:text-sm">Last Name *</Label>
                     <Input
                       id="surname"
                       value={formData.surname}
@@ -231,12 +236,13 @@ export default function EditTenantPage() {
                       }
                       required
                       placeholder="Doe"
+                      className="text-sm md:text-base h-9 md:h-10"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email *</Label>
+                  <Label htmlFor="email" className="text-xs md:text-sm">Email *</Label>
                   <Input
                     id="email"
                     type="email"
@@ -246,11 +252,12 @@ export default function EditTenantPage() {
                     }
                     required
                     placeholder="john.doe@example.com"
+                    className="text-sm md:text-base h-9 md:h-10"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password">New Password</Label>
+                  <Label htmlFor="password" className="text-xs md:text-sm">New Password</Label>
                   <Input
                     id="password"
                     type="password"
@@ -260,14 +267,15 @@ export default function EditTenantPage() {
                     }
                     placeholder="Leave blank to keep current password"
                     minLength={6}
+                    className="text-sm md:text-base h-9 md:h-10"
                   />
-                  <p className="text-sm text-slate-500">
+                  <p className="text-xs text-slate-500">
                     Only fill this if you want to change the password
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="number">Phone Number</Label>
+                  <Label htmlFor="number" className="text-xs md:text-sm">Phone Number</Label>
                   <Input
                     id="number"
                     type="tel"
@@ -276,11 +284,12 @@ export default function EditTenantPage() {
                       setFormData((prev) => ({ ...prev, number: e.target.value }))
                     }
                     placeholder="+1234567890"
+                    className="text-sm md:text-base h-9 md:h-10"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="property_id">Select Property</Label>
+                  <Label htmlFor="property_id" className="text-xs md:text-sm">Select Property</Label>
                   <Select
                     key={formData.property_id || 'no-selection'}
                     value={formData.property_id}
@@ -289,29 +298,29 @@ export default function EditTenantPage() {
                     }
                     required
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="text-sm md:text-base h-9 md:h-10">
                       <SelectValue placeholder="Select a property" />
                     </SelectTrigger>
                     <SelectContent>
                       {managedProperties.length === 0 && (
-                        <SelectItem value="no-properties" disabled>
+                        <SelectItem value="no-properties" disabled className="text-sm">
                           No properties found
                         </SelectItem>
                       )}
                       {managedProperties.map((property: any) => (
-                        <SelectItem key={property.id} value={property.id.toString()}>
+                        <SelectItem key={property.id} value={property.id.toString()} className="text-sm md:text-base">
                           {property.name} - {property.location}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-xs text-slate-500">
                     Assign the tenant to a property
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="floor_assigned">Floor Number</Label>
+                  <Label htmlFor="floor_assigned" className="text-xs md:text-sm">Floor Number</Label>
                   <select
                     id="floor_assigned"
                     value={formData.floor_assigned}
@@ -319,7 +328,7 @@ export default function EditTenantPage() {
                       setFormData((prev) => ({ ...prev, floor_assigned: e.target.value }))
                     }
                     disabled={!formData.property_id || availableFloors.length === 0}
-                    className={`w-full h-10 px-3 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent ${
+                    className={`w-full h-9 md:h-10 px-3 py-2 text-xs md:text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent ${
                       !formData.property_id || availableFloors.length === 0
                         ? "bg-slate-100 text-slate-400 cursor-not-allowed"
                         : "bg-white"
@@ -338,13 +347,13 @@ export default function EditTenantPage() {
                       </option>
                     ))}
                   </select>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-xs text-slate-500">
                     Assign the tenant to a specific floor (optional)
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="monthly_rate">Monthly Rate</Label>
+                  <Label htmlFor="monthly_rate" className="text-xs md:text-sm">Monthly Rate</Label>
                   <div className="relative">
                     <Input
                       id="monthly_rate"
@@ -356,30 +365,30 @@ export default function EditTenantPage() {
                       placeholder="e.g., 500, 1000, 1500..."
                       min="0"
                       step="0.01"
-                      className="pr-8"
+                      className="pr-8 text-sm md:text-base h-9 md:h-10"
                     />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-medium">
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-medium text-xs md:text-sm">
                       €
                     </span>
                   </div>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-xs text-slate-500">
                     Set the monthly rent for the tenant
                   </p>
                 </div>
 
-                <div className="flex gap-4 pt-4">
+                <div className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-4">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => router.push("/property_manager/tenants")}
-                    className="flex-1"
+                    className="flex-1 text-xs md:text-sm h-9 md:h-10"
                   >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
                     disabled={updateMutation.isPending}
-                    className="flex-1 bg-indigo-600 hover:bg-indigo-700"
+                    className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-xs md:text-sm h-9 md:h-10"
                   >
                     {updateMutation.isPending ? (
                       <>Updating...</>
@@ -397,10 +406,10 @@ export default function EditTenantPage() {
 
           {/* Payment Tracker Section */}
           {tenantData && formData.property_id && (
-            <Card className="mt-6">
+            <Card className="mt-4 md:mt-6">
               <CardHeader>
-                <CardTitle>Payment Tracking</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-base md:text-lg">Payment Tracking</CardTitle>
+                <CardDescription className="text-xs md:text-sm">
                   Track monthly payments for this tenant. Payment records are automatically
                   generated from the property creation date to the current month.
                 </CardDescription>

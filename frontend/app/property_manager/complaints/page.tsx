@@ -195,15 +195,15 @@ export default function PropertyManagerComplaintsPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
-        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800"><Clock className="mr-1 h-3 w-3" />Pending</Badge>;
+        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 text-xs"><Clock className="mr-1 h-3 w-3" />Pending</Badge>;
       case 'in_progress':
-        return <Badge variant="secondary" className="bg-blue-100 text-blue-800"><AlertCircle className="mr-1 h-3 w-3" />In Progress</Badge>;
+        return <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs"><AlertCircle className="mr-1 h-3 w-3" />In Progress</Badge>;
       case 'resolved':
-        return <Badge variant="secondary" className="bg-green-100 text-green-800"><CheckCircle2 className="mr-1 h-3 w-3" />Resolved</Badge>;
+        return <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs"><CheckCircle2 className="mr-1 h-3 w-3" />Resolved</Badge>;
       case 'rejected':
-        return <Badge variant="secondary" className="bg-red-100 text-red-800"><XCircle className="mr-1 h-3 w-3" />Rejected</Badge>;
+        return <Badge variant="secondary" className="bg-red-100 text-red-800 text-xs"><XCircle className="mr-1 h-3 w-3" />Rejected</Badge>;
       default:
-        return <Badge variant="secondary">{status}</Badge>;
+        return <Badge variant="secondary" className="text-xs">{status}</Badge>;
     }
   };
 
@@ -219,52 +219,52 @@ export default function PropertyManagerComplaintsPage() {
   return (
     <ProtectedRoute allowedRoles={["property_manager"]}>
       <PropertyManagerLayout title="Complaints">
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6">
           {/* Stats Cards */}
-          <div className="grid gap-4 md:grid-cols-5">
+          <div className="grid gap-3 md:gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Complaints</CardTitle>
-                <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className="text-xs md:text-sm font-medium">Total Complaints</CardTitle>
+                <MessageSquare className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.total}</div>
+                <div className="text-xl md:text-2xl font-bold">{stats.total}</div>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Pending</CardTitle>
-                <Clock className="h-4 w-4 text-yellow-600" />
+                <CardTitle className="text-xs md:text-sm font-medium">Pending</CardTitle>
+                <Clock className="h-3 w-3 md:h-4 md:w-4 text-yellow-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.pending}</div>
+                <div className="text-xl md:text-2xl font-bold">{stats.pending}</div>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">In Progress</CardTitle>
-                <AlertCircle className="h-4 w-4 text-blue-600" />
+                <CardTitle className="text-xs md:text-sm font-medium">In Progress</CardTitle>
+                <AlertCircle className="h-3 w-3 md:h-4 md:w-4 text-blue-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.in_progress}</div>
+                <div className="text-xl md:text-2xl font-bold">{stats.in_progress}</div>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Resolved</CardTitle>
-                <CheckCircle2 className="h-4 w-4 text-green-600" />
+                <CardTitle className="text-xs md:text-sm font-medium">Resolved</CardTitle>
+                <CheckCircle2 className="h-3 w-3 md:h-4 md:w-4 text-green-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.resolved}</div>
+                <div className="text-xl md:text-2xl font-bold">{stats.resolved}</div>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Rejected</CardTitle>
-                <XCircle className="h-4 w-4 text-red-600" />
+                <CardTitle className="text-xs md:text-sm font-medium">Rejected</CardTitle>
+                <XCircle className="h-3 w-3 md:h-4 md:w-4 text-red-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.rejected}</div>
+                <div className="text-xl md:text-2xl font-bold">{stats.rejected}</div>
               </CardContent>
             </Card>
           </div>
@@ -272,37 +272,37 @@ export default function PropertyManagerComplaintsPage() {
           {/* Filters and Table */}
           <Card>
             <CardHeader>
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div className="flex flex-col gap-3 md:gap-4">
                 <div>
-                  <CardTitle>Complaints Overview</CardTitle>
-                  <CardDescription>
+                  <CardTitle className="text-base md:text-lg">Complaints Overview</CardTitle>
+                  <CardDescription className="text-xs md:text-sm">
                     Manage complaints from your properties
                   </CardDescription>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2">
                   <Select value={selectedProperty} onValueChange={setSelectedProperty}>
-                    <SelectTrigger className="w-full sm:w-[200px]">
+                    <SelectTrigger className="w-full sm:w-[200px] h-9 md:h-10 text-xs md:text-sm">
                       <SelectValue placeholder="All Properties" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Properties</SelectItem>
+                      <SelectItem value="all" className="text-xs md:text-sm">All Properties</SelectItem>
                       {properties?.map((property) => (
-                        <SelectItem key={property.id} value={property.id.toString()}>
+                        <SelectItem key={property.id} value={property.id.toString()} className="text-xs md:text-sm">
                           {property.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                   <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-                    <SelectTrigger className="w-full sm:w-[180px]">
+                    <SelectTrigger className="w-full sm:w-[180px] h-9 md:h-10 text-xs md:text-sm">
                       <SelectValue placeholder="All Statuses" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Statuses</SelectItem>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="in_progress">In Progress</SelectItem>
-                      <SelectItem value="resolved">Resolved</SelectItem>
-                      <SelectItem value="rejected">Rejected</SelectItem>
+                      <SelectItem value="all" className="text-xs md:text-sm">All Statuses</SelectItem>
+                      <SelectItem value="pending" className="text-xs md:text-sm">Pending</SelectItem>
+                      <SelectItem value="in_progress" className="text-xs md:text-sm">In Progress</SelectItem>
+                      <SelectItem value="resolved" className="text-xs md:text-sm">Resolved</SelectItem>
+                      <SelectItem value="rejected" className="text-xs md:text-sm">Rejected</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -311,94 +311,164 @@ export default function PropertyManagerComplaintsPage() {
             <CardContent>
               {isLoading ? (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+                  <Loader2 className="h-6 w-6 md:h-8 md:w-8 animate-spin text-emerald-600" />
                 </div>
               ) : complaints.length === 0 ? (
                 <Alert>
                   <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>
+                  <AlertDescription className="text-xs md:text-sm">
                     No complaints found matching the selected filters.
                   </AlertDescription>
                 </Alert>
               ) : (
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Title</TableHead>
-                        <TableHead>Property</TableHead>
-                        <TableHead>Tenant</TableHead>
-                        <TableHead>Floor</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {complaints.map((complaint) => (
-                        <TableRow key={complaint.id}>
-                          <TableCell className="font-medium">
-                            <div className="max-w-[200px]">
-                              <div className="font-medium truncate">{complaint.title}</div>
-                              {complaint.description && (
-                                <div className="text-xs text-muted-foreground truncate mt-1">
-                                  {complaint.description}
+                <>
+                  {/* Desktop Table */}
+                  <div className="hidden md:block overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Title</TableHead>
+                          <TableHead>Property</TableHead>
+                          <TableHead>Tenant</TableHead>
+                          <TableHead>Floor</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Date</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {complaints.map((complaint) => (
+                          <TableRow key={complaint.id}>
+                            <TableCell className="font-medium">
+                              <div className="max-w-[200px]">
+                                <div className="font-medium truncate">{complaint.title}</div>
+                                {complaint.description && (
+                                  <div className="text-xs text-muted-foreground truncate mt-1">
+                                    {complaint.description}
+                                  </div>
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Building2 className="h-4 w-4 text-muted-foreground" />
+                                <div className="max-w-[150px] truncate">
+                                  {complaint.property.name}
                                 </div>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <User className="h-4 w-4 text-muted-foreground" />
+                                <div>
+                                  <div className="font-medium">
+                                    {complaint.tenant.name} {complaint.tenant.surname}
+                                  </div>
+                                  <div className="text-xs text-muted-foreground">
+                                    {complaint.tenant.email}
+                                  </div>
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              {complaint.tenant.floor_assigned !== null
+                                ? complaint.tenant.floor_assigned
+                                : "N/A"}
+                            </TableCell>
+                            <TableCell>{getStatusBadge(complaint.status)}</TableCell>
+                            <TableCell>
+                              <div className="text-sm">
+                                {format(new Date(complaint.created_at), "PP")}
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                {format(new Date(complaint.created_at), "p")}
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedComplaint(complaint);
+                                  setNewStatus(complaint.status);
+                                }}
+                              >
+                                Update Status
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+
+                  {/* Mobile Cards */}
+                  <div className="md:hidden space-y-3">
+                    {complaints.map((complaint) => (
+                      <Card key={complaint.id} className="border-l-4 border-l-emerald-500">
+                        <CardContent className="p-4 space-y-3">
+                          <div className="flex justify-between items-start gap-2">
+                            <div className="flex-1">
+                              <h3 className="font-medium text-sm mb-1">{complaint.title}</h3>
+                              {complaint.description && (
+                                <p className="text-xs text-muted-foreground line-clamp-2">
+                                  {complaint.description}
+                                </p>
                               )}
                             </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Building2 className="h-4 w-4 text-muted-foreground" />
-                              <div className="max-w-[150px] truncate">
-                                {complaint.property.name}
+                            {getStatusBadge(complaint.status)}
+                          </div>
+
+                          <div className="space-y-2 pt-2 border-t">
+                            <div className="flex items-start gap-2">
+                              <Building2 className="h-3 w-3 text-muted-foreground mt-0.5 flex-shrink-0" />
+                              <div className="flex-1 min-w-0">
+                                <div className="text-sm font-medium">{complaint.property.name}</div>
+                                <div className="text-xs text-muted-foreground truncate">{complaint.property.address}</div>
                               </div>
                             </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <User className="h-4 w-4 text-muted-foreground" />
-                              <div>
-                                <div className="font-medium">
+
+                            <div className="flex items-start gap-2">
+                              <User className="h-3 w-3 text-muted-foreground mt-0.5 flex-shrink-0" />
+                              <div className="flex-1 min-w-0">
+                                <div className="text-sm font-medium">
                                   {complaint.tenant.name} {complaint.tenant.surname}
                                 </div>
-                                <div className="text-xs text-muted-foreground">
-                                  {complaint.tenant.email}
-                                </div>
+                                <div className="text-xs text-muted-foreground truncate">{complaint.tenant.email}</div>
                               </div>
                             </div>
-                          </TableCell>
-                          <TableCell>
-                            {complaint.tenant.floor_assigned !== null
-                              ? complaint.tenant.floor_assigned
-                              : "N/A"}
-                          </TableCell>
-                          <TableCell>{getStatusBadge(complaint.status)}</TableCell>
-                          <TableCell>
-                            <div className="text-sm">
+                          </div>
+
+                          <div className="flex justify-between items-center text-xs pt-2 border-t">
+                            <div>
+                              <span className="text-muted-foreground">Floor: </span>
+                              <span className="font-medium">
+                                {complaint.tenant.floor_assigned !== null
+                                  ? complaint.tenant.floor_assigned
+                                  : "N/A"}
+                              </span>
+                            </div>
+                            <div className="text-muted-foreground">
                               {format(new Date(complaint.created_at), "PP")}
                             </div>
-                            <div className="text-xs text-muted-foreground">
-                              {format(new Date(complaint.created_at), "p")}
-                            </div>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => {
-                                setSelectedComplaint(complaint);
-                                setNewStatus(complaint.status);
-                              }}
-                            >
-                              Update Status
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
+                          </div>
+
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full h-8 text-xs"
+                            onClick={() => {
+                              setSelectedComplaint(complaint);
+                              setNewStatus(complaint.status);
+                            }}
+                          >
+                            Update Status
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </>
               )}
             </CardContent>
           </Card>
@@ -406,10 +476,10 @@ export default function PropertyManagerComplaintsPage() {
 
         {/* Status Update Dialog */}
         <Dialog open={!!selectedComplaint} onOpenChange={(open) => !open && setSelectedComplaint(null)}>
-          <DialogContent>
+          <DialogContent className="w-[95vw] max-w-[500px]">
             <DialogHeader>
-              <DialogTitle>Update Complaint Status</DialogTitle>
-              <DialogDescription>
+              <DialogTitle className="text-base md:text-lg">Update Complaint Status</DialogTitle>
+              <DialogDescription className="text-xs md:text-sm">
                 Change the status of this complaint
               </DialogDescription>
             </DialogHeader>
@@ -417,54 +487,64 @@ export default function PropertyManagerComplaintsPage() {
             {selectedComplaint && (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <div className="text-sm font-medium">Complaint Details</div>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-xs md:text-sm font-medium">Complaint Details</div>
+                  <div className="text-xs md:text-sm text-muted-foreground space-y-1">
                     <div><strong>Title:</strong> {selectedComplaint.title}</div>
                     {selectedComplaint.description && (
-                      <div className="mt-1"><strong>Description:</strong> {selectedComplaint.description}</div>
+                      <div><strong>Description:</strong> {selectedComplaint.description}</div>
                     )}
-                    <div className="mt-1"><strong>Property:</strong> {selectedComplaint.property.name}</div>
-                    <div className="mt-1">
+                    <div><strong>Property:</strong> {selectedComplaint.property.name}</div>
+                    <div>
                       <strong>Tenant:</strong> {selectedComplaint.tenant.name} {selectedComplaint.tenant.surname}
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">New Status</label>
+                  <label className="text-xs md:text-sm font-medium">New Status</label>
                   <Select value={newStatus} onValueChange={setNewStatus}>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-9 md:h-10 text-xs md:text-sm">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="in_progress">In Progress</SelectItem>
-                      <SelectItem value="resolved">Resolved</SelectItem>
-                      <SelectItem value="rejected">Rejected</SelectItem>
+                      <SelectItem value="pending" className="text-xs md:text-sm">Pending</SelectItem>
+                      <SelectItem value="in_progress" className="text-xs md:text-sm">In Progress</SelectItem>
+                      <SelectItem value="resolved" className="text-xs md:text-sm">Resolved</SelectItem>
+                      <SelectItem value="rejected" className="text-xs md:text-sm">Rejected</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium">Response (Optional)</Label>
+                  <Label className="text-xs md:text-sm font-medium">Response (Optional)</Label>
                   <Textarea
                     value={response}
                     onChange={(e) => setResponse(e.target.value)}
                     placeholder="Enter your response here"
                     rows={3}
+                    className="text-xs md:text-sm"
                   />
                 </div>
               </div>
             )}
 
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setSelectedComplaint(null)} disabled={isUpdating}>
+            <DialogFooter className="flex-col sm:flex-row gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setSelectedComplaint(null)}
+                disabled={isUpdating}
+                className="h-9 text-xs md:text-sm"
+              >
                 Cancel
               </Button>
-              <Button onClick={handleStatusUpdate} disabled={isUpdating || !newStatus}>
+              <Button
+                onClick={handleStatusUpdate}
+                disabled={isUpdating || !newStatus}
+                className="h-9 text-xs md:text-sm"
+              >
                 {isUpdating ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="mr-2 h-3 w-3 md:h-4 md:w-4 animate-spin" />
                     Updating...
                   </>
                 ) : (

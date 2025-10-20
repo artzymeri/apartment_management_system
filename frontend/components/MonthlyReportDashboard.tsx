@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useMonthlyReportPreview, useGenerateMonthlyReport, usePropertyReports } from "@/hooks/useMonthlyReports";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -276,16 +276,16 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
     : 0;
 
   return (
-    <div className="space-y-6 w-full">
+    <div className="space-y-4 md:space-y-6 w-full">
       {/* Overview Stats */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Budget</CardTitle>
-            <Euro className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-xs md:text-sm font-medium">Total Budget</CardTitle>
+            <Euro className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">€{parseFloat(preview.total_budget).toFixed(2)}</div>
+            <div className="text-xl md:text-2xl font-bold">€{parseFloat(preview.total_budget).toFixed(2)}</div>
             <p className="text-xs text-muted-foreground">
               From {preview.paid_tenants} paid tenants
             </p>
@@ -294,11 +294,11 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Collection Rate</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-xs md:text-sm font-medium">Collection Rate</CardTitle>
+            <TrendingUp className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{collectionRate.toFixed(1)}%</div>
+            <div className="text-xl md:text-2xl font-bold">{collectionRate.toFixed(1)}%</div>
             <p className="text-xs text-muted-foreground">
               {preview.paid_tenants} of {preview.total_tenants} tenants
             </p>
@@ -307,11 +307,11 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Amount</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-xs md:text-sm font-medium">Pending Amount</CardTitle>
+            <Clock className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">€{parseFloat(preview.pending_amount).toFixed(2)}</div>
+            <div className="text-xl md:text-2xl font-bold text-orange-600">€{parseFloat(preview.pending_amount).toFixed(2)}</div>
             <p className="text-xs text-muted-foreground">
               {preview.total_tenants - preview.paid_tenants} unpaid tenants
             </p>
@@ -320,11 +320,11 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Spending Categories</CardTitle>
-            <PieChart className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-xs md:text-sm font-medium">Spending Categories</CardTitle>
+            <PieChart className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{preview.spending_configs?.length || 0}</div>
+            <div className="text-xl md:text-2xl font-bold">{preview.spending_configs?.length || 0}</div>
             <p className="text-xs text-muted-foreground">
               Budget allocation categories
             </p>
@@ -336,10 +336,10 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
       {preview.spending_configs && preview.spending_configs.length > 0 && (
         <Card className="w-full">
           <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
-                <CardTitle>Budget Allocation</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-base md:text-lg">Budget Allocation</CardTitle>
+                <CardDescription className="text-xs md:text-sm">
                   Distribute the collected budget across spending categories
                 </CardDescription>
               </div>
@@ -347,42 +347,43 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
                 variant={isEditMode ? "secondary" : "default"}
                 onClick={() => setIsEditMode(!isEditMode)}
                 size="sm"
+                className="h-8 md:h-9 text-xs md:text-sm w-full sm:w-auto"
               >
-                <Calculator className="mr-2 h-4 w-4" />
+                <Calculator className="mr-2 h-3 w-3 md:h-4 md:w-4" />
                 {isEditMode ? "Cancel Edit" : "Edit Allocations"}
               </Button>
             </div>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-4 md:space-y-6">
             {/* Allocation Summary */}
-            <div className="grid grid-cols-3 gap-4 p-4 bg-muted rounded-lg">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 p-3 md:p-4 bg-muted rounded-lg">
               <div>
-                <p className="text-sm text-muted-foreground">Total Allocated</p>
-                <p className="text-lg font-bold">€{totalAllocated.toFixed(2)}</p>
+                <p className="text-xs md:text-sm text-muted-foreground">Total Allocated</p>
+                <p className="text-base md:text-lg font-bold">€{totalAllocated.toFixed(2)}</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Remaining</p>
-                <p className={`text-lg font-bold ${remainingBudget < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                <p className="text-xs md:text-sm text-muted-foreground">Remaining</p>
+                <p className={`text-base md:text-lg font-bold ${remainingBudget < 0 ? 'text-red-600' : 'text-green-600'}`}>
                   €{Math.abs(remainingBudget).toFixed(2)}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Allocation %</p>
-                <p className="text-lg font-bold">{allocationPercentage.toFixed(1)}%</p>
+                <p className="text-xs md:text-sm text-muted-foreground">Allocation %</p>
+                <p className="text-base md:text-lg font-bold">{allocationPercentage.toFixed(1)}%</p>
               </div>
             </div>
 
             {remainingBudget < -0.01 && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
+                <AlertDescription className="text-xs md:text-sm">
                   Total allocation exceeds available budget by €{Math.abs(remainingBudget).toFixed(2)}
                 </AlertDescription>
               </Alert>
             )}
 
-            {/* Allocation Table */}
-            <div className="w-full">
+            {/* Allocation Table - Desktop */}
+            <div className="hidden lg:block w-full overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -459,10 +460,83 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
               </Table>
             </div>
 
+            {/* Allocation Cards - Mobile/Tablet */}
+            <div className="lg:hidden space-y-3">
+              {spendingAllocations.map((allocation, index) => {
+                const colors = [
+                  'bg-blue-500',
+                  'bg-green-500',
+                  'bg-yellow-500',
+                  'bg-purple-500',
+                  'bg-pink-500',
+                  'bg-indigo-500',
+                  'bg-red-500',
+                  'bg-teal-500',
+                ];
+                const colorClass = colors[index % colors.length];
+
+                return (
+                  <Card key={allocation.config_id} className={`border-l-4 ${colorClass.replace('bg-', 'border-l-')}`}>
+                    <CardContent className="p-4 space-y-3">
+                      <div>
+                        <h4 className="font-medium text-sm md:text-base">{allocation.config_title}</h4>
+                        {allocation.description && (
+                          <p className="text-xs text-muted-foreground mt-1">{allocation.description}</p>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="text-xs text-muted-foreground">Amount (€)</label>
+                          {isEditMode ? (
+                            <Input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              value={editingAmounts[allocation.config_id] || allocation.allocated_amount.toFixed(2)}
+                              onChange={(e) => handleAmountInputChange(allocation.config_id, e.target.value)}
+                              onBlur={() => handleAmountBlur(allocation.config_id)}
+                              className="w-full text-right h-8 text-xs md:text-sm mt-1"
+                            />
+                          ) : (
+                            <p className="font-mono text-sm md:text-base font-bold mt-1">€{allocation.allocated_amount.toFixed(2)}</p>
+                          )}
+                        </div>
+                        <div>
+                          <label className="text-xs text-muted-foreground">Percentage (%)</label>
+                          {isEditMode ? (
+                            <Input
+                              type="number"
+                              step="0.1"
+                              min="0"
+                              max="100"
+                              value={editingPercentages[allocation.config_id] || allocation.percentage.toFixed(1)}
+                              onChange={(e) => handlePercentageInputChange(allocation.config_id, e.target.value)}
+                              onBlur={() => handlePercentageBlur(allocation.config_id)}
+                              className="w-full text-right h-8 text-xs md:text-sm mt-1"
+                            />
+                          ) : (
+                            <p className="font-mono text-sm md:text-base font-bold mt-1">{allocation.percentage.toFixed(1)}%</p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className={`${colorClass} h-2 rounded-full transition-all`}
+                          style={{ width: `${Math.min(allocation.percentage, 100)}%` }}
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+
             {/* Visual Budget Breakdown */}
             <div className="space-y-2">
-              <h4 className="font-medium">Budget Distribution</h4>
-              <div className="flex w-full h-12 rounded-lg overflow-hidden border">
+              <h4 className="font-medium text-sm md:text-base">Budget Distribution</h4>
+              <div className="flex w-full h-10 md:h-12 rounded-lg overflow-hidden border">
                 {spendingAllocations.map((allocation, index) => {
                   const colors = [
                     'bg-blue-500',
@@ -486,7 +560,7 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
                   );
                 })}
               </div>
-              <div className="flex flex-wrap gap-3 mt-2">
+              <div className="flex flex-wrap gap-2 md:gap-3 mt-2">
                 {spendingAllocations.map((allocation, index) => {
                   const colors = [
                     'bg-blue-500',
@@ -499,8 +573,8 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
                     'bg-teal-500',
                   ];
                   return (
-                    <div key={allocation.config_id} className="flex items-center gap-2 text-sm">
-                      <div className={`w-4 h-4 rounded ${colors[index % colors.length]}`} />
+                    <div key={allocation.config_id} className="flex items-center gap-2 text-xs md:text-sm">
+                      <div className={`w-3 h-3 md:w-4 md:h-4 rounded ${colors[index % colors.length]}`} />
                       <span>{allocation.config_title}</span>
                     </div>
                   );
@@ -514,11 +588,12 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
       {/* Payment Details */}
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>Payment Details</CardTitle>
-          <CardDescription>Breakdown of tenant payments for this period</CardDescription>
+          <CardTitle className="text-base md:text-lg">Payment Details</CardTitle>
+          <CardDescription className="text-xs md:text-sm">Breakdown of tenant payments for this period</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="w-full">
+          {/* Desktop Table */}
+          <div className="hidden md:block w-full overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -577,14 +652,65 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
               </TableBody>
             </Table>
           </div>
+
+          {/* Mobile Cards */}
+          <div className="md:hidden space-y-3">
+            {preview.payments && preview.payments.length > 0 ? (
+              preview.payments.map((payment: any) => (
+                <Card key={payment.id} className="border-l-4 border-l-indigo-500">
+                  <CardContent className="p-4 space-y-2">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="font-medium text-sm">
+                          {payment.tenant.name} {payment.tenant.surname}
+                        </p>
+                        <p className="text-xs text-muted-foreground">{payment.tenant.email}</p>
+                      </div>
+                      <div>
+                        {payment.status === 'paid' && (
+                          <Badge className="bg-green-100 text-green-800 text-xs">
+                            <CheckCircle2 className="mr-1 h-3 w-3" />
+                            Paid
+                          </Badge>
+                        )}
+                        {payment.status === 'pending' && (
+                          <Badge className="bg-yellow-100 text-yellow-800 text-xs">
+                            <Clock className="mr-1 h-3 w-3" />
+                            Pending
+                          </Badge>
+                        )}
+                        {payment.status === 'overdue' && (
+                          <Badge className="bg-red-100 text-red-800 text-xs">
+                            <AlertCircle className="mr-1 h-3 w-3" />
+                            Overdue
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center pt-2 border-t">
+                      <div className="flex gap-3 text-xs">
+                        <span className="text-muted-foreground">Floor: {payment.tenant.floor_assigned || "—"}</span>
+                        <span className="text-muted-foreground">Date: {payment.payment_date || "—"}</span>
+                      </div>
+                      <p className="font-mono text-base font-bold text-indigo-600">€{parseFloat(payment.amount).toFixed(2)}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <p className="text-center text-muted-foreground text-sm py-8">
+                No payment records found for this period
+              </p>
+            )}
+          </div>
         </CardContent>
       </Card>
 
       {/* Notes Section */}
       <Card>
         <CardHeader>
-          <CardTitle>Report Notes</CardTitle>
-          <CardDescription>Add any additional notes or comments for this report</CardDescription>
+          <CardTitle className="text-base md:text-lg">Report Notes</CardTitle>
+          <CardDescription className="text-xs md:text-sm">Add any additional notes or comments for this report</CardDescription>
         </CardHeader>
         <CardContent>
           <Textarea
@@ -592,6 +718,7 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={4}
+            className="text-xs md:text-sm"
           />
         </CardContent>
       </Card>
@@ -602,8 +729,9 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
           size="lg"
           onClick={handleGenerateReport}
           disabled={generateMutation.isPending || remainingBudget < -0.01}
+          className="w-full sm:w-auto h-10 md:h-11 text-xs md:text-base"
         >
-          <Save className="mr-2 h-5 w-5" />
+          <Save className="mr-2 h-4 w-4 md:h-5 md:w-5" />
           {generateMutation.isPending ? "Generating..." : "Generate & Save Report"}
         </Button>
       </div>

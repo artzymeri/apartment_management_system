@@ -80,31 +80,27 @@ export default function CreatePropertyPage() {
 
   return (
     <ProtectedRoute allowedRoles={["property_manager"]}>
-      <PropertyManagerLayout>
-        <div className="max-w-4xl space-y-6">
-          {/* Header */}
-          <div className="flex items-center gap-4">
+      <PropertyManagerLayout title="Create Property">
+        <div className="max-w-4xl mx-auto space-y-4 md:space-y-6">
+          {/* Back Button */}
+          <div className="flex items-center gap-3">
             <Button
               variant="outline"
               size="icon"
               onClick={() => router.push("/property_manager/properties")}
+              className="h-9 w-9 md:h-10 md:w-10"
             >
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <div>
-              <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-                Create Property
-              </h2>
-              <p className="text-slate-600 mt-2">
-                Add a new property to the system
-              </p>
-            </div>
+            <p className="text-xs md:text-sm text-slate-600">
+              Add a new property to the system
+            </p>
           </div>
 
           {/* Success Alert */}
           {success && (
             <Alert className="border-green-200 bg-green-50">
-              <AlertDescription className="text-green-800">
+              <AlertDescription className="text-green-800 text-xs md:text-sm">
                 Property created successfully! Redirecting...
               </AlertDescription>
             </Alert>
@@ -113,22 +109,22 @@ export default function CreatePropertyPage() {
           {/* Error Alert */}
           {error && (
             <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
+              <AlertDescription className="text-xs md:text-sm">{error}</AlertDescription>
             </Alert>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
             {/* Property Details Form */}
             <Card className="border-indigo-200">
               <CardHeader>
-                <CardTitle>Property Details</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-base md:text-lg">Property Details</CardTitle>
+                <CardDescription className="text-xs md:text-sm">
                   Enter the property information below
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-4 md:space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Property Name *</Label>
+                  <Label htmlFor="name" className="text-xs md:text-sm">Property Name *</Label>
                   <Input
                     id="name"
                     placeholder="e.g., Greenwood Apartments"
@@ -138,11 +134,12 @@ export default function CreatePropertyPage() {
                     }
                     required
                     disabled={createMutation.isPending}
+                    className="text-sm md:text-base h-9 md:h-10"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="address">Address *</Label>
+                  <Label htmlFor="address" className="text-xs md:text-sm">Address *</Label>
                   <Input
                     id="address"
                     placeholder="e.g., 123 Main Street"
@@ -152,11 +149,12 @@ export default function CreatePropertyPage() {
                     }
                     required
                     disabled={createMutation.isPending}
+                    className="text-sm md:text-base h-9 md:h-10"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="city">City *</Label>
+                  <Label htmlFor="city" className="text-xs md:text-sm">City *</Label>
                   <Select
                     value={formData.city_id ? formData.city_id.toString() : ""}
                     onValueChange={(value) =>
@@ -164,12 +162,12 @@ export default function CreatePropertyPage() {
                     }
                     disabled={createMutation.isPending}
                   >
-                    <SelectTrigger id="city">
+                    <SelectTrigger id="city" className="text-sm md:text-base h-9 md:h-10">
                       <SelectValue placeholder="Select a city" />
                     </SelectTrigger>
                     <SelectContent>
                       {cities.map((city) => (
-                        <SelectItem key={city.id} value={city.id.toString()}>
+                        <SelectItem key={city.id} value={city.id.toString()} className="text-sm md:text-base">
                           {city.name}
                         </SelectItem>
                       ))}
@@ -178,10 +176,10 @@ export default function CreatePropertyPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Floor Range (Optional)</Label>
-                  <div className="grid grid-cols-2 gap-4">
+                  <Label className="text-xs md:text-sm">Floor Range (Optional)</Label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="floors_from" className="text-sm text-slate-600">From</Label>
+                      <Label htmlFor="floors_from" className="text-xs text-slate-600">From</Label>
                       <Select
                         value={formData.floors_from !== null ? formData.floors_from.toString() : "none"}
                         onValueChange={(value) =>
@@ -189,13 +187,13 @@ export default function CreatePropertyPage() {
                         }
                         disabled={createMutation.isPending}
                       >
-                        <SelectTrigger id="floors_from">
+                        <SelectTrigger id="floors_from" className="text-sm md:text-base h-9 md:h-10">
                           <SelectValue placeholder="Starting floor" />
                         </SelectTrigger>
                         <SelectContent className="max-h-[300px]">
-                          <SelectItem value="none">Not specified</SelectItem>
+                          <SelectItem value="none" className="text-sm">Not specified</SelectItem>
                           {Array.from({ length: 221 }, (_, i) => i - 20).map((floor) => (
-                            <SelectItem key={floor} value={floor.toString()}>
+                            <SelectItem key={floor} value={floor.toString()} className="text-sm">
                               {floor === 0 ? "Ground Level" : floor < 0 ? `B${Math.abs(floor)}` : `Floor ${floor}`}
                             </SelectItem>
                           ))}
@@ -203,7 +201,7 @@ export default function CreatePropertyPage() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="floors_to" className="text-sm text-slate-600">To</Label>
+                      <Label htmlFor="floors_to" className="text-xs text-slate-600">To</Label>
                       <Select
                         value={formData.floors_to !== null ? formData.floors_to.toString() : "none"}
                         onValueChange={(value) =>
@@ -211,13 +209,13 @@ export default function CreatePropertyPage() {
                         }
                         disabled={createMutation.isPending}
                       >
-                        <SelectTrigger id="floors_to">
+                        <SelectTrigger id="floors_to" className="text-sm md:text-base h-9 md:h-10">
                           <SelectValue placeholder="Ending floor" />
                         </SelectTrigger>
                         <SelectContent className="max-h-[300px]">
-                          <SelectItem value="none">Not specified</SelectItem>
+                          <SelectItem value="none" className="text-sm">Not specified</SelectItem>
                           {Array.from({ length: 221 }, (_, i) => i - 20).map((floor) => (
-                            <SelectItem key={floor} value={floor.toString()}>
+                            <SelectItem key={floor} value={floor.toString()} className="text-sm">
                               {floor === 0 ? "Ground Level" : floor < 0 ? `B${Math.abs(floor)}` : `Floor ${floor}`}
                             </SelectItem>
                           ))}
@@ -241,10 +239,10 @@ export default function CreatePropertyPage() {
             />
 
             {/* Action Buttons */}
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
               <Button
                 type="submit"
-                className="bg-indigo-600 hover:bg-indigo-700 gap-2"
+                className="bg-indigo-600 hover:bg-indigo-700 gap-2 text-xs md:text-sm h-9 md:h-10"
                 isLoading={createMutation.isPending}
               >
                 <Save className="h-4 w-4" />
@@ -255,6 +253,7 @@ export default function CreatePropertyPage() {
                 variant="outline"
                 onClick={() => router.push("/property_manager/properties")}
                 disabled={createMutation.isPending}
+                className="text-xs md:text-sm h-9 md:h-10"
               >
                 Cancel
               </Button>
@@ -265,4 +264,3 @@ export default function CreatePropertyPage() {
     </ProtectedRoute>
   );
 }
-
