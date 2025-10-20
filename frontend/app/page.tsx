@@ -81,7 +81,7 @@ export default function Home() {
               <Link href="/login">
                 <Button
                   variant="ghost"
-                  className="text-white hover:bg-white/10 text-sm sm:text-base px-3 sm:px-4"
+                  className="text-white hover:text-white hover:bg-white/10 text-sm sm:text-base px-3 sm:px-4"
                 >
                   Sign In
                 </Button>
