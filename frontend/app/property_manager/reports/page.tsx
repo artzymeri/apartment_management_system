@@ -84,13 +84,13 @@ export default function PropertyManagerReportsPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
-        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 text-xs"><Clock className="mr-1 h-3 w-3" />Pending</Badge>;
+        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 text-xs"><Clock className="mr-1 h-3 w-3" />Në pritje</Badge>;
       case 'in_progress':
-        return <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs"><AlertCircle className="mr-1 h-3 w-3" />In Progress</Badge>;
+        return <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs"><AlertCircle className="mr-1 h-3 w-3" />Në progres</Badge>;
       case 'resolved':
-        return <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs"><CheckCircle2 className="mr-1 h-3 w-3" />Resolved</Badge>;
+        return <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs"><CheckCircle2 className="mr-1 h-3 w-3" />Zgjidhur</Badge>;
       case 'rejected':
-        return <Badge variant="secondary" className="bg-red-100 text-red-800 text-xs"><XCircle className="mr-1 h-3 w-3" />Rejected</Badge>;
+        return <Badge variant="secondary" className="bg-red-100 text-red-800 text-xs"><XCircle className="mr-1 h-3 w-3" />Refuzuar</Badge>;
       default:
         return <Badge variant="secondary" className="text-xs">{status}</Badge>;
     }
@@ -106,13 +106,13 @@ export default function PropertyManagerReportsPage() {
 
   return (
     <ProtectedRoute allowedRoles={['property_manager']}>
-      <PropertyManagerLayout title="Reports">
+      <PropertyManagerLayout title="Raportet">
         <div className="space-y-4 md:space-y-6">
           {/* Stats Grid */}
           <div className="grid gap-3 md:gap-4 grid-cols-2 md:grid-cols-4">
             <Card className="border-slate-200">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-xs md:text-sm font-medium">Total Reports</CardTitle>
+                <CardTitle className="text-xs md:text-sm font-medium">Raportet Totale</CardTitle>
                 <FileText className="h-3 w-3 md:h-4 md:w-4 text-slate-600" />
               </CardHeader>
               <CardContent>
@@ -122,7 +122,7 @@ export default function PropertyManagerReportsPage() {
 
             <Card className="border-yellow-200 bg-yellow-50/50">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-xs md:text-sm font-medium">Pending</CardTitle>
+                <CardTitle className="text-xs md:text-sm font-medium">Në pritje</CardTitle>
                 <Clock className="h-3 w-3 md:h-4 md:w-4 text-yellow-600" />
               </CardHeader>
               <CardContent>
@@ -132,7 +132,7 @@ export default function PropertyManagerReportsPage() {
 
             <Card className="border-blue-200 bg-blue-50/50">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-xs md:text-sm font-medium">In Progress</CardTitle>
+                <CardTitle className="text-xs md:text-sm font-medium">Në progres</CardTitle>
                 <AlertCircle className="h-3 w-3 md:h-4 md:w-4 text-blue-600" />
               </CardHeader>
               <CardContent>
@@ -142,7 +142,7 @@ export default function PropertyManagerReportsPage() {
 
             <Card className="border-green-200 bg-green-50/50">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-xs md:text-sm font-medium">Resolved</CardTitle>
+                <CardTitle className="text-xs md:text-sm font-medium">Zgjidhur</CardTitle>
                 <CheckCircle2 className="h-3 w-3 md:h-4 md:w-4 text-green-600" />
               </CardHeader>
               <CardContent>
@@ -156,18 +156,18 @@ export default function PropertyManagerReportsPage() {
             <CardHeader>
               <div className="flex flex-col gap-3 md:gap-4">
                 <div>
-                  <CardTitle className="text-base md:text-lg">Reports Overview</CardTitle>
+                  <CardTitle className="text-base md:text-lg">Pamja e Raporteve</CardTitle>
                   <CardDescription className="text-xs md:text-sm">
-                    Manage and respond to tenant problem reports
+                    Menaxhoni dhe përgjigjuni raporteve të problemeve të qiramarrësve
                   </CardDescription>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2">
                   <Select value={selectedProperty} onValueChange={setSelectedProperty}>
                     <SelectTrigger className="w-full sm:w-[200px] h-9 md:h-10 text-xs md:text-sm">
-                      <SelectValue placeholder="All Properties" />
+                      <SelectValue placeholder="Të Gjitha Pronat" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all" className="text-xs md:text-sm">All Properties</SelectItem>
+                      <SelectItem value="all" className="text-xs md:text-sm">Të Gjitha Pronat</SelectItem>
                       {properties?.map((property: Property) => (
                         <SelectItem key={property.id} value={property.id.toString()} className="text-xs md:text-sm">
                           {property.name}
@@ -177,14 +177,14 @@ export default function PropertyManagerReportsPage() {
                   </Select>
                   <Select value={selectedStatus} onValueChange={setSelectedStatus}>
                     <SelectTrigger className="w-full sm:w-[180px] h-9 md:h-10 text-xs md:text-sm">
-                      <SelectValue placeholder="All Statuses" />
+                      <SelectValue placeholder="Të Gjitha Statuset" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all" className="text-xs md:text-sm">All Statuses</SelectItem>
-                      <SelectItem value="pending" className="text-xs md:text-sm">Pending</SelectItem>
-                      <SelectItem value="in_progress" className="text-xs md:text-sm">In Progress</SelectItem>
-                      <SelectItem value="resolved" className="text-xs md:text-sm">Resolved</SelectItem>
-                      <SelectItem value="rejected" className="text-xs md:text-sm">Rejected</SelectItem>
+                      <SelectItem value="all" className="text-xs md:text-sm">Të Gjitha Statuset</SelectItem>
+                      <SelectItem value="pending" className="text-xs md:text-sm">Në pritje</SelectItem>
+                      <SelectItem value="in_progress" className="text-xs md:text-sm">Në progres</SelectItem>
+                      <SelectItem value="resolved" className="text-xs md:text-sm">Zgjidhur</SelectItem>
+                      <SelectItem value="rejected" className="text-xs md:text-sm">Refuzuar</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -195,20 +195,20 @@ export default function PropertyManagerReportsPage() {
                 <Alert variant="destructive" className="mb-4">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription className="text-xs md:text-sm">
-                    {(error as any)?.response?.data?.message || 'Failed to load reports'}
+                    {(error as any)?.response?.data?.message || 'Dështoi ngarkimi i raporteve'}
                   </AlertDescription>
                 </Alert>
               )}
 
               {isLoading ? (
                 <div className="flex items-center justify-center py-8">
-                  <div className="text-slate-600 text-xs md:text-sm">Loading reports...</div>
+                  <div className="text-slate-600 text-xs md:text-sm">Duke ngarkuar raportet...</div>
                 </div>
               ) : reports.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-8 md:py-12 text-slate-500">
                   <FileText className="mb-3 md:mb-4 h-10 w-10 md:h-12 md:w-12 text-slate-300" />
-                  <p className="text-base md:text-lg font-medium">No reports found</p>
-                  <p className="text-xs md:text-sm">Try adjusting your filters</p>
+                  <p className="text-base md:text-lg font-medium">Nuk u gjetën raporte</p>
+                  <p className="text-xs md:text-sm">Provoni të rregulloni filtrat tuaj</p>
                 </div>
               ) : (
                 <>
@@ -218,13 +218,13 @@ export default function PropertyManagerReportsPage() {
                       <TableHeader>
                         <TableRow>
                           <TableHead>ID</TableHead>
-                          <TableHead>Property</TableHead>
-                          <TableHead>Tenant</TableHead>
-                          <TableHead>Problem</TableHead>
-                          <TableHead>Floor</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead>Date</TableHead>
-                          <TableHead>Actions</TableHead>
+                          <TableHead>Prona</TableHead>
+                          <TableHead>Qiramarrësi</TableHead>
+                          <TableHead>Problemi</TableHead>
+                          <TableHead>Kati</TableHead>
+                          <TableHead>Statusi</TableHead>
+                          <TableHead>Data</TableHead>
+                          <TableHead>Veprimet</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -258,7 +258,7 @@ export default function PropertyManagerReportsPage() {
                               )}
                             </TableCell>
                             <TableCell>
-                              {report.floor !== null ? `Floor ${report.floor}` : '-'}
+                              {report.floor !== null ? `Kati ${report.floor}` : '-'}
                             </TableCell>
                             <TableCell>{getStatusBadge(report.status)}</TableCell>
                             <TableCell className="text-sm text-slate-600">
@@ -276,7 +276,7 @@ export default function PropertyManagerReportsPage() {
                                   setNewStatus(report.status);
                                 }}
                               >
-                                Update Status
+                                Përditëso Statusin
                               </Button>
                             </TableCell>
                           </TableRow>
@@ -322,7 +322,7 @@ export default function PropertyManagerReportsPage() {
 
                           <div className="pt-2 border-t space-y-2">
                             <div>
-                              <div className="text-xs text-slate-500 uppercase mb-1">Problem</div>
+                              <div className="text-xs text-slate-500 uppercase mb-1">Problemi</div>
                               <div className="font-medium text-sm">{report.problemOption?.title}</div>
                               {report.description && (
                                 <div className="text-xs text-slate-600 mt-1 line-clamp-2">
@@ -333,8 +333,8 @@ export default function PropertyManagerReportsPage() {
 
                             <div className="flex justify-between items-center text-xs">
                               <div>
-                                <span className="text-slate-500">Floor: </span>
-                                <span className="font-medium">{report.floor !== null ? `Floor ${report.floor}` : '-'}</span>
+                                <span className="text-slate-500">Kati: </span>
+                                <span className="font-medium">{report.floor !== null ? `Kati ${report.floor}` : '-'}</span>
                               </div>
                               <div className="text-slate-500">
                                 {format(new Date(report.created_at), 'MMM d, yyyy')}
@@ -351,7 +351,7 @@ export default function PropertyManagerReportsPage() {
                               setNewStatus(report.status);
                             }}
                           >
-                            Update Status
+                            Përditëso Statusin
                           </Button>
                         </CardContent>
                       </Card>
@@ -372,9 +372,9 @@ export default function PropertyManagerReportsPage() {
         }}>
           <DialogContent className="w-[95vw] max-w-[600px]">
             <DialogHeader>
-              <DialogTitle className="text-base md:text-lg">Update Report Status</DialogTitle>
+              <DialogTitle className="text-base md:text-lg">Përditëso Statusin e Raportit</DialogTitle>
               <DialogDescription className="text-xs md:text-sm">
-                Change the status of report #{selectedReport?.id}
+                Ndryshoni statusin e raportit #{selectedReport?.id}
               </DialogDescription>
             </DialogHeader>
 
@@ -383,13 +383,13 @@ export default function PropertyManagerReportsPage() {
                 {/* Report Details */}
                 <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 md:p-4 space-y-3">
                   <div>
-                    <div className="text-xs text-slate-500 uppercase">Property</div>
+                    <div className="text-xs text-slate-500 uppercase">Prona</div>
                     <div className="font-medium text-sm md:text-base">{selectedReport.property?.name}</div>
                     <div className="text-xs md:text-sm text-slate-600">{selectedReport.property?.address}</div>
                   </div>
 
                   <div>
-                    <div className="text-xs text-slate-500 uppercase">Tenant</div>
+                    <div className="text-xs text-slate-500 uppercase">Qiramarrësi</div>
                     <div className="font-medium text-sm md:text-base">
                       {selectedReport.tenant?.name} {selectedReport.tenant?.surname}
                     </div>
@@ -397,42 +397,42 @@ export default function PropertyManagerReportsPage() {
                   </div>
 
                   <div>
-                    <div className="text-xs text-slate-500 uppercase">Problem</div>
+                    <div className="text-xs text-slate-500 uppercase">Problemi</div>
                     <div className="font-medium text-sm md:text-base">{selectedReport.problemOption?.title}</div>
                   </div>
 
                   {selectedReport.description && (
                     <div>
-                      <div className="text-xs text-slate-500 uppercase">Description</div>
+                      <div className="text-xs text-slate-500 uppercase">Përshkrimi</div>
                       <div className="text-xs md:text-sm text-slate-700">{selectedReport.description}</div>
                     </div>
                   )}
 
                   {selectedReport.floor !== null && (
                     <div>
-                      <div className="text-xs text-slate-500 uppercase">Floor</div>
-                      <div className="text-xs md:text-sm text-slate-700">Floor {selectedReport.floor}</div>
+                      <div className="text-xs text-slate-500 uppercase">Kati</div>
+                      <div className="text-xs md:text-sm text-slate-700">Kati {selectedReport.floor}</div>
                     </div>
                   )}
 
                   <div>
-                    <div className="text-xs text-slate-500 uppercase">Current Status</div>
+                    <div className="text-xs text-slate-500 uppercase">Statusi Aktual</div>
                     <div className="mt-1">{getStatusBadge(selectedReport.status)}</div>
                   </div>
                 </div>
 
                 {/* Status Selector */}
                 <div className="space-y-2">
-                  <label className="text-xs md:text-sm font-medium">New Status</label>
+                  <label className="text-xs md:text-sm font-medium">Statusi i Ri</label>
                   <Select value={newStatus} onValueChange={setNewStatus}>
                     <SelectTrigger className="h-9 md:h-10 text-xs md:text-sm">
-                      <SelectValue placeholder="Select status" />
+                      <SelectValue placeholder="Zgjidhni statusin" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="pending" className="text-xs md:text-sm">Pending</SelectItem>
-                      <SelectItem value="in_progress" className="text-xs md:text-sm">In Progress</SelectItem>
-                      <SelectItem value="resolved" className="text-xs md:text-sm">Resolved</SelectItem>
-                      <SelectItem value="rejected" className="text-xs md:text-sm">Rejected</SelectItem>
+                      <SelectItem value="pending" className="text-xs md:text-sm">Në pritje</SelectItem>
+                      <SelectItem value="in_progress" className="text-xs md:text-sm">Në progres</SelectItem>
+                      <SelectItem value="resolved" className="text-xs md:text-sm">Zgjidhur</SelectItem>
+                      <SelectItem value="rejected" className="text-xs md:text-sm">Refuzuar</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -448,14 +448,14 @@ export default function PropertyManagerReportsPage() {
                 }}
                 className="h-9 text-xs md:text-sm"
               >
-                Cancel
+                Anulo
               </Button>
               <Button
                 onClick={handleStatusUpdate}
                 disabled={!newStatus || newStatus === selectedReport?.status || updateReportMutation.isPending}
                 className="bg-indigo-600 hover:bg-indigo-700 h-9 text-xs md:text-sm"
               >
-                {updateReportMutation.isPending ? 'Updating...' : 'Update Status'}
+                {updateReportMutation.isPending ? 'Duke përditësuar...' : 'Përditëso Statusin'}
               </Button>
             </DialogFooter>
           </DialogContent>

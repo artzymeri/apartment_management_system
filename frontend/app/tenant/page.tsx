@@ -68,7 +68,7 @@ export default function TenantDashboard() {
 
   // Format currency
   const formatCurrency = (amount: string | number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('sq-AL', {
       style: 'currency',
       currency: 'EUR',
     }).format(typeof amount === 'string' ? parseFloat(amount) : amount);
@@ -76,7 +76,7 @@ export default function TenantDashboard() {
 
   // Format date
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString('sq-AL', {
       month: 'short',
       day: 'numeric',
       year: 'numeric'
@@ -84,7 +84,7 @@ export default function TenantDashboard() {
   };
 
   // Get current month name
-  const currentMonthName = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const currentMonthName = new Date().toLocaleDateString('sq-AL', { month: 'long', year: 'numeric' });
 
   // Check if rent is due soon (within 7 days)
   const isRentDueSoon = useMemo(() => {
@@ -99,7 +99,7 @@ export default function TenantDashboard() {
   if (isLoading) {
     return (
       <ProtectedRoute allowedRoles={['tenant']}>
-        <TenantLayout title="Dashboard">
+        <TenantLayout title="Paneli">
           <div className="w-full h-full flex items-center justify-center min-h-[200px]">
             <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
           </div>
@@ -110,16 +110,16 @@ export default function TenantDashboard() {
 
   return (
     <ProtectedRoute allowedRoles={['tenant']}>
-      <TenantLayout title="Dashboard">
+      <TenantLayout title="Paneli">
         <div className="space-y-4 sm:space-y-6">
           {/* Welcome Section */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
               <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
-                Welcome back, {user?.name}!
+                Mirë se erdhe, {user?.name}!
               </h2>
               <p className="text-sm sm:text-base text-slate-600 mt-1">
-                Here's an overview of your apartment status
+                Këtu është një përmbledhje e gjendjes së apartamentit tuaj
               </p>
             </div>
             <div className="flex items-center gap-2 text-slate-600">
@@ -152,10 +152,10 @@ export default function TenantDashboard() {
                   : "text-emerald-900"
               }`}>
                 {paymentStats.currentMonthPayment.status === 'overdue'
-                  ? "Monthly Fee Payment Overdue"
+                  ? "Pagesa Mujore e Vonuar"
                   : isRentDueSoon
-                  ? "Monthly Fee Due Soon"
-                  : "Monthly Fee Payment Pending"}
+                  ? "Pagesa Mujore në Afat të Shkurtër"
+                  : "Pagesa Mujore në Pritje"}
               </AlertTitle>
               <AlertDescription className={`text-xs sm:text-sm ${
                 paymentStats.currentMonthPayment.status === 'overdue'
@@ -164,9 +164,9 @@ export default function TenantDashboard() {
                   ? "text-amber-700"
                   : "text-emerald-700"
               }`}>
-                Your monthly fee payment of {formatCurrency(paymentStats.currentMonthPayment.amount)} for {currentMonthName} is {
-                  paymentStats.currentMonthPayment.status === 'overdue' ? 'overdue' : 'pending'
-                }. Please contact your property manager.
+                Pagesa juaj mujore prej {formatCurrency(paymentStats.currentMonthPayment.amount)} për {currentMonthName} është {
+                  paymentStats.currentMonthPayment.status === 'overdue' ? 'e vonuar' : 'në pritje'
+                }. Ju lutem kontaktoni menaxherin e pronës.
               </AlertDescription>
             </Alert>
           )}
@@ -174,11 +174,11 @@ export default function TenantDashboard() {
           {paymentStats?.currentMonthPayment?.status === 'paid' && (
             <Alert className="border-emerald-200 bg-emerald-50">
               <AlertCircle className="h-4 w-4 flex-shrink-0 text-emerald-600" />
-              <AlertTitle className="text-sm sm:text-base text-emerald-900">Monthly Fee Paid</AlertTitle>
+              <AlertTitle className="text-sm sm:text-base text-emerald-900">Pagesa Mujore e Kryer</AlertTitle>
               <AlertDescription className="text-xs sm:text-sm text-emerald-700">
-                Your monthly fee for {currentMonthName} has been paid. Thank you!
+                Pagesa juaj mujore për {currentMonthName} është kryer. Faleminderit!
                 {paymentStats.currentMonthPayment.payment_date &&
-                  ` (Paid on ${formatDate(paymentStats.currentMonthPayment.payment_date)})`
+                  ` (Paguar më ${formatDate(paymentStats.currentMonthPayment.payment_date)})`
                 }
               </AlertDescription>
             </Alert>
@@ -192,7 +192,7 @@ export default function TenantDashboard() {
               onClick={() => router.push('/tenant/report-problem')}
             >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Problem Reports</CardTitle>
+                <CardTitle className="text-sm font-medium">Raportet e Problemeve</CardTitle>
                 <Wrench className="h-4 w-4 text-blue-600 flex-shrink-0" />
               </CardHeader>
               <CardContent>
@@ -200,10 +200,10 @@ export default function TenantDashboard() {
                   {reportStats.pending + reportStats.inProgress}
                 </div>
                 <p className="text-xs text-slate-600">
-                  {reportStats.pending > 0 && `${reportStats.pending} pending`}
+                  {reportStats.pending > 0 && `${reportStats.pending} në pritje`}
                   {reportStats.pending > 0 && reportStats.inProgress > 0 && ', '}
-                  {reportStats.inProgress > 0 && `${reportStats.inProgress} in progress`}
-                  {reportStats.pending === 0 && reportStats.inProgress === 0 && 'No active reports'}
+                  {reportStats.inProgress > 0 && `${reportStats.inProgress} në proces`}
+                  {reportStats.pending === 0 && reportStats.inProgress === 0 && 'Nuk ka raporte aktive'}
                 </p>
               </CardContent>
             </Card>
@@ -214,13 +214,13 @@ export default function TenantDashboard() {
               onClick={() => router.push('/tenant/complaints')}
             >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Complaints</CardTitle>
+                <CardTitle className="text-sm font-medium">Ankesat</CardTitle>
                 <MessageSquare className="h-4 w-4 text-purple-600 flex-shrink-0" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-purple-700">{complaints.length}</div>
                 <p className="text-xs text-slate-600">
-                  {complaints.filter(c => c.status === 'pending').length} pending
+                  {complaints.filter(c => c.status === 'pending').length} në pritje
                 </p>
               </CardContent>
             </Card>
@@ -231,13 +231,13 @@ export default function TenantDashboard() {
               onClick={() => router.push('/tenant/suggestions')}
             >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Suggestions</CardTitle>
+                <CardTitle className="text-sm font-medium">Sugjerimet</CardTitle>
                 <Lightbulb className="h-4 w-4 text-amber-600 flex-shrink-0" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-amber-700">{suggestions.length}</div>
                 <p className="text-xs text-slate-600">
-                  {suggestions.filter(s => s.status === 'approved').length} approved
+                  {suggestions.filter(s => s.status === 'approved').length} të miratuara
                 </p>
               </CardContent>
             </Card>
@@ -250,8 +250,8 @@ export default function TenantDashboard() {
               <CardHeader>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <div>
-                    <CardTitle className="text-base sm:text-lg">Payment History</CardTitle>
-                    <CardDescription className="text-xs sm:text-sm">Your recent monthly fee payments</CardDescription>
+                    <CardTitle className="text-base sm:text-lg">Historiku i Pagesave</CardTitle>
+                    <CardDescription className="text-xs sm:text-sm">Pagesat tuaja të fundit mujore</CardDescription>
                   </div>
                   <Button
                     variant="ghost"
@@ -259,7 +259,7 @@ export default function TenantDashboard() {
                     onClick={() => router.push('/tenant/payments')}
                     className="self-start sm:self-auto text-xs sm:text-sm"
                   >
-                    View All
+                    Shiko Të Gjitha
                   </Button>
                 </div>
               </CardHeader>
@@ -270,14 +270,14 @@ export default function TenantDashboard() {
                       <div key={payment.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-100 pb-3 last:border-0">
                         <div className="flex-1">
                           <p className="font-medium text-slate-900 text-sm sm:text-base">
-                            {new Date(payment.payment_month).toLocaleDateString('en-US', {
+                            {new Date(payment.payment_month).toLocaleDateString('sq-AL', {
                               month: 'long',
                               year: 'numeric'
                             })}
                           </p>
                           <p className="text-xs sm:text-sm text-slate-600">
                             {formatCurrency(payment.amount)}
-                            {payment.payment_date && ` • Paid ${formatDate(payment.payment_date)}`}
+                            {payment.payment_date && ` • Paguar më ${formatDate(payment.payment_date)}`}
                           </p>
                         </div>
                         <Badge
@@ -290,14 +290,17 @@ export default function TenantDashboard() {
                               : "bg-amber-100 text-amber-700"
                           }`}
                         >
-                          {payment.status.charAt(0).toUpperCase() + payment.status.slice(1)}
+                          {payment.status === 'paid' ? 'E Paguar' :
+                           payment.status === 'overdue' ? 'E Vonuar' :
+                           payment.status === 'pending' ? 'Në Pritje' :
+                           payment.status.charAt(0).toUpperCase() + payment.status.slice(1)}
                         </Badge>
                       </div>
                     ))}
                     {paymentStats && (
                       <div className="pt-3 border-t">
                         <div className="flex justify-between text-xs sm:text-sm">
-                          <span className="text-slate-600">Total Paid This Year</span>
+                          <span className="text-slate-600">Totali i Paguar Këtë Vit</span>
                           <span className="font-semibold text-emerald-700">
                             {formatCurrency(paymentStats.totalPaid)}
                           </span>
@@ -306,7 +309,7 @@ export default function TenantDashboard() {
                     )}
                   </div>
                 ) : (
-                  <p className="text-xs sm:text-sm text-slate-500 text-center py-4">No payment records available</p>
+                  <p className="text-xs sm:text-sm text-slate-500 text-center py-4">Nuk ka të dhëna për pagesat</p>
                 )}
               </CardContent>
             </Card>
@@ -316,8 +319,8 @@ export default function TenantDashboard() {
               <CardHeader>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <div>
-                    <CardTitle className="text-base sm:text-lg">Problem Reports</CardTitle>
-                    <CardDescription className="text-xs sm:text-sm">Track your maintenance requests</CardDescription>
+                    <CardTitle className="text-base sm:text-lg">Raportet e Problemeve</CardTitle>
+                    <CardDescription className="text-xs sm:text-sm">Ndiqni kërkesat tuaja për mirëmbajtje</CardDescription>
                   </div>
                   <Button
                     variant="ghost"
@@ -325,7 +328,7 @@ export default function TenantDashboard() {
                     onClick={() => router.push('/tenant/report-problem')}
                     className="self-start sm:self-auto text-xs sm:text-sm"
                   >
-                    View All
+                    Shiko Të Gjitha
                   </Button>
                 </div>
               </CardHeader>
@@ -336,11 +339,11 @@ export default function TenantDashboard() {
                       <div key={report.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-100 pb-3 last:border-0">
                         <div className="flex-1">
                           <p className="font-medium text-slate-900 text-sm sm:text-base">
-                            {report.problemOption?.title || 'Problem Report'}
+                            {report.problemOption?.title || 'Raport Problemi'}
                           </p>
                           <p className="text-xs sm:text-sm text-slate-600">
-                            Submitted {formatDate(report.created_at)}
-                            {report.floor && ` • Floor ${report.floor}`}
+                            Dërguar më {formatDate(report.created_at)}
+                            {report.floor && ` • Kati ${report.floor}`}
                           </p>
                         </div>
                         <Badge
@@ -355,7 +358,10 @@ export default function TenantDashboard() {
                               : "bg-amber-100 text-amber-700"
                           }`}
                         >
-                          {report.status === 'in_progress' ? 'In Progress' :
+                          {report.status === 'in_progress' ? 'Në Proces' :
+                           report.status === 'resolved' ? 'E Zgjidhur' :
+                           report.status === 'rejected' ? 'E Refuzuar' :
+                           report.status === 'pending' ? 'Në Pritje' :
                            report.status.charAt(0).toUpperCase() + report.status.slice(1)}
                         </Badge>
                       </div>
@@ -366,19 +372,19 @@ export default function TenantDashboard() {
                       onClick={() => router.push('/tenant/report-problem')}
                     >
                       <Wrench className="h-4 w-4 mr-2" />
-                      Report New Problem
+                      Raporto Problem të Ri
                     </Button>
                   </div>
                 ) : (
                   <div className="text-center py-4">
-                    <p className="text-xs sm:text-sm text-slate-500 mb-3">No problem reports yet</p>
+                    <p className="text-xs sm:text-sm text-slate-500 mb-3">Nuk ka raporte problemesh ende</p>
                     <Button
                       variant="outline"
                       className="border-emerald-200 text-emerald-700 hover:bg-emerald-50 text-xs sm:text-sm h-9 sm:h-10"
                       onClick={() => router.push('/tenant/report-problem')}
                     >
                       <Wrench className="h-4 w-4 mr-2" />
-                      Report New Problem
+                      Raporto Problem të Ri
                     </Button>
                   </div>
                 )}
@@ -390,8 +396,8 @@ export default function TenantDashboard() {
               <CardHeader>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <div>
-                    <CardTitle className="text-base sm:text-lg">Recent Complaints</CardTitle>
-                    <CardDescription className="text-xs sm:text-sm">Your submitted complaints</CardDescription>
+                    <CardTitle className="text-base sm:text-lg">Ankesat e Fundit</CardTitle>
+                    <CardDescription className="text-xs sm:text-sm">Ankesat tuaja të dërguara</CardDescription>
                   </div>
                   <Button
                     variant="ghost"
@@ -399,7 +405,7 @@ export default function TenantDashboard() {
                     onClick={() => router.push('/tenant/complaints')}
                     className="self-start sm:self-auto text-xs sm:text-sm"
                   >
-                    View All
+                    Shiko Të Gjitha
                   </Button>
                 </div>
               </CardHeader>
@@ -422,7 +428,10 @@ export default function TenantDashboard() {
                                 : "bg-amber-100 text-amber-700"
                             }`}
                           >
-                            {complaint.status === 'in_progress' ? 'In Progress' :
+                            {complaint.status === 'in_progress' ? 'Në Proces' :
+                             complaint.status === 'resolved' ? 'E Zgjidhur' :
+                             complaint.status === 'rejected' ? 'E Refuzuar' :
+                             complaint.status === 'pending' ? 'Në Pritje' :
                              complaint.status.charAt(0).toUpperCase() + complaint.status.slice(1)}
                           </Badge>
                         </div>
@@ -431,7 +440,7 @@ export default function TenantDashboard() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-xs sm:text-sm text-slate-500 text-center py-4">No complaints submitted</p>
+                  <p className="text-xs sm:text-sm text-slate-500 text-center py-4">Nuk ka ankesa të dërguara</p>
                 )}
               </CardContent>
             </Card>
@@ -441,8 +450,8 @@ export default function TenantDashboard() {
               <CardHeader>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <div>
-                    <CardTitle className="text-base sm:text-lg">Recent Suggestions</CardTitle>
-                    <CardDescription className="text-xs sm:text-sm">Your improvement ideas</CardDescription>
+                    <CardTitle className="text-base sm:text-lg">Sugjerimet e Fundit</CardTitle>
+                    <CardDescription className="text-xs sm:text-sm">Idetë tuaja për përmirësim</CardDescription>
                   </div>
                   <Button
                     variant="ghost"
@@ -450,7 +459,7 @@ export default function TenantDashboard() {
                     onClick={() => router.push('/tenant/suggestions')}
                     className="self-start sm:self-auto text-xs sm:text-sm"
                   >
-                    View All
+                    Shiko Të Gjitha
                   </Button>
                 </div>
               </CardHeader>
@@ -473,7 +482,10 @@ export default function TenantDashboard() {
                                 : "bg-amber-100 text-amber-700"
                             }`}
                           >
-                            {suggestion.status === 'under_review' ? 'Under Review' :
+                            {suggestion.status === 'under_review' ? 'Në Shqyrtim' :
+                             suggestion.status === 'approved' ? 'E Miratuar' :
+                             suggestion.status === 'rejected' ? 'E Refuzuar' :
+                             suggestion.status === 'pending' ? 'Në Pritje' :
                              suggestion.status.charAt(0).toUpperCase() + suggestion.status.slice(1)}
                           </Badge>
                         </div>
@@ -482,7 +494,7 @@ export default function TenantDashboard() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-xs sm:text-sm text-slate-500 text-center py-4">No suggestions submitted</p>
+                  <p className="text-xs sm:text-sm text-slate-500 text-center py-4">Nuk ka sugjerime të dërguara</p>
                 )}
               </CardContent>
             </Card>
@@ -498,9 +510,9 @@ export default function TenantDashboard() {
                       <FileText className="h-5 w-5 text-emerald-600" />
                     </div>
                     <div>
-                      <CardTitle className="text-base sm:text-lg">Property Financial Reports</CardTitle>
+                      <CardTitle className="text-base sm:text-lg">Raportet Financiare të Pronës</CardTitle>
                       <CardDescription className="text-xs sm:text-sm">
-                        View how your rent is allocated • {monthlyReports.length} report{monthlyReports.length !== 1 ? 's' : ''} available
+                        Shikoni si shpërndahet qiraja juaj • {monthlyReports.length} raport{monthlyReports.length !== 1 ? 'e' : ''} në dispozicion
                       </CardDescription>
                     </div>
                   </div>
@@ -510,14 +522,14 @@ export default function TenantDashboard() {
                     onClick={() => router.push('/tenant/monthly-reports')}
                   >
                     <TrendingUp className="h-4 w-4 mr-2" />
-                    View Reports
+                    Shiko Raportet
                   </Button>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600">
                   <Clock className="h-4 w-4 flex-shrink-0" />
-                  <span>Latest report: {formatDate(monthlyReports[0].created_at)}</span>
+                  <span>Raporti i fundit: {formatDate(monthlyReports[0].created_at)}</span>
                 </div>
               </CardContent>
             </Card>

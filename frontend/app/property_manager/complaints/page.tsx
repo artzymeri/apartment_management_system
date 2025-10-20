@@ -107,11 +107,11 @@ export default function PropertyManagerComplaintsPage() {
           const data = await response.json();
           setComplaints(data.complaints);
         } else {
-          toast.error("Failed to load complaints");
+          toast.error("Dështoi ngarkimi i ankesave");
         }
       } catch (error) {
         console.error("Error fetching complaints:", error);
-        toast.error("Failed to load complaints");
+        toast.error("Dështoi ngarkimi i ankesave");
       } finally {
         setIsLoading(false);
       }
@@ -155,7 +155,7 @@ export default function PropertyManagerComplaintsPage() {
       });
 
       if (response_text.ok) {
-        toast.success("Complaint status updated successfully");
+        toast.success("Statusi i ankesës u përditësua me sukses");
         setSelectedComplaint(null);
         setNewStatus("");
         setResponse("");
@@ -182,11 +182,11 @@ export default function PropertyManagerComplaintsPage() {
         }
       } else {
         const data = await response_text.json();
-        toast.error(data.message || "Failed to update complaint status");
+        toast.error(data.message || "Dështoi përditësimi i statusit të ankesës");
       }
     } catch (error) {
       console.error("Error updating complaint status:", error);
-      toast.error("Failed to update complaint status");
+      toast.error("Dështoi përditësimi i statusit të ankesës");
     } finally {
       setIsUpdating(false);
     }
@@ -195,13 +195,13 @@ export default function PropertyManagerComplaintsPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
-        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 text-xs"><Clock className="mr-1 h-3 w-3" />Pending</Badge>;
+        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 text-xs"><Clock className="mr-1 h-3 w-3" />Në pritje</Badge>;
       case 'in_progress':
-        return <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs"><AlertCircle className="mr-1 h-3 w-3" />In Progress</Badge>;
+        return <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs"><AlertCircle className="mr-1 h-3 w-3" />Në progres</Badge>;
       case 'resolved':
-        return <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs"><CheckCircle2 className="mr-1 h-3 w-3" />Resolved</Badge>;
+        return <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs"><CheckCircle2 className="mr-1 h-3 w-3" />Zgjidhur</Badge>;
       case 'rejected':
-        return <Badge variant="secondary" className="bg-red-100 text-red-800 text-xs"><XCircle className="mr-1 h-3 w-3" />Rejected</Badge>;
+        return <Badge variant="secondary" className="bg-red-100 text-red-800 text-xs"><XCircle className="mr-1 h-3 w-3" />Refuzuar</Badge>;
       default:
         return <Badge variant="secondary" className="text-xs">{status}</Badge>;
     }
@@ -218,13 +218,13 @@ export default function PropertyManagerComplaintsPage() {
 
   return (
     <ProtectedRoute allowedRoles={["property_manager"]}>
-      <PropertyManagerLayout title="Complaints">
+      <PropertyManagerLayout title="Ankesat">
         <div className="space-y-4 md:space-y-6">
           {/* Stats Cards */}
           <div className="grid gap-3 md:gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-xs md:text-sm font-medium">Total Complaints</CardTitle>
+                <CardTitle className="text-xs md:text-sm font-medium">Ankesat Totale</CardTitle>
                 <MessageSquare className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -233,7 +233,7 @@ export default function PropertyManagerComplaintsPage() {
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-xs md:text-sm font-medium">Pending</CardTitle>
+                <CardTitle className="text-xs md:text-sm font-medium">Në pritje</CardTitle>
                 <Clock className="h-3 w-3 md:h-4 md:w-4 text-yellow-600" />
               </CardHeader>
               <CardContent>
@@ -242,7 +242,7 @@ export default function PropertyManagerComplaintsPage() {
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-xs md:text-sm font-medium">In Progress</CardTitle>
+                <CardTitle className="text-xs md:text-sm font-medium">Në progres</CardTitle>
                 <AlertCircle className="h-3 w-3 md:h-4 md:w-4 text-blue-600" />
               </CardHeader>
               <CardContent>
@@ -251,7 +251,7 @@ export default function PropertyManagerComplaintsPage() {
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-xs md:text-sm font-medium">Resolved</CardTitle>
+                <CardTitle className="text-xs md:text-sm font-medium">Zgjidhur</CardTitle>
                 <CheckCircle2 className="h-3 w-3 md:h-4 md:w-4 text-green-600" />
               </CardHeader>
               <CardContent>
@@ -260,7 +260,7 @@ export default function PropertyManagerComplaintsPage() {
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-xs md:text-sm font-medium">Rejected</CardTitle>
+                <CardTitle className="text-xs md:text-sm font-medium">Refuzuar</CardTitle>
                 <XCircle className="h-3 w-3 md:h-4 md:w-4 text-red-600" />
               </CardHeader>
               <CardContent>
@@ -274,18 +274,18 @@ export default function PropertyManagerComplaintsPage() {
             <CardHeader>
               <div className="flex flex-col gap-3 md:gap-4">
                 <div>
-                  <CardTitle className="text-base md:text-lg">Complaints Overview</CardTitle>
+                  <CardTitle className="text-base md:text-lg">Pamja e Ankesave</CardTitle>
                   <CardDescription className="text-xs md:text-sm">
-                    Manage complaints from your properties
+                    Menaxhoni ankesat nga pronat tuaja
                   </CardDescription>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2">
                   <Select value={selectedProperty} onValueChange={setSelectedProperty}>
                     <SelectTrigger className="w-full sm:w-[200px] h-9 md:h-10 text-xs md:text-sm">
-                      <SelectValue placeholder="All Properties" />
+                      <SelectValue placeholder="Të Gjitha Pronat" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all" className="text-xs md:text-sm">All Properties</SelectItem>
+                      <SelectItem value="all" className="text-xs md:text-sm">Të Gjitha Pronat</SelectItem>
                       {properties?.map((property) => (
                         <SelectItem key={property.id} value={property.id.toString()} className="text-xs md:text-sm">
                           {property.name}
@@ -295,14 +295,14 @@ export default function PropertyManagerComplaintsPage() {
                   </Select>
                   <Select value={selectedStatus} onValueChange={setSelectedStatus}>
                     <SelectTrigger className="w-full sm:w-[180px] h-9 md:h-10 text-xs md:text-sm">
-                      <SelectValue placeholder="All Statuses" />
+                      <SelectValue placeholder="Të Gjitha Statuset" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all" className="text-xs md:text-sm">All Statuses</SelectItem>
-                      <SelectItem value="pending" className="text-xs md:text-sm">Pending</SelectItem>
-                      <SelectItem value="in_progress" className="text-xs md:text-sm">In Progress</SelectItem>
-                      <SelectItem value="resolved" className="text-xs md:text-sm">Resolved</SelectItem>
-                      <SelectItem value="rejected" className="text-xs md:text-sm">Rejected</SelectItem>
+                      <SelectItem value="all" className="text-xs md:text-sm">Të Gjitha Statuset</SelectItem>
+                      <SelectItem value="pending" className="text-xs md:text-sm">Në pritje</SelectItem>
+                      <SelectItem value="in_progress" className="text-xs md:text-sm">Në progres</SelectItem>
+                      <SelectItem value="resolved" className="text-xs md:text-sm">Zgjidhur</SelectItem>
+                      <SelectItem value="rejected" className="text-xs md:text-sm">Refuzuar</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -317,7 +317,7 @@ export default function PropertyManagerComplaintsPage() {
                 <Alert>
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription className="text-xs md:text-sm">
-                    No complaints found matching the selected filters.
+                    Nuk u gjetën ankesa që përputhen me filtrat e zgjedhur.
                   </AlertDescription>
                 </Alert>
               ) : (
@@ -327,13 +327,13 @@ export default function PropertyManagerComplaintsPage() {
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Title</TableHead>
-                          <TableHead>Property</TableHead>
-                          <TableHead>Tenant</TableHead>
-                          <TableHead>Floor</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead>Date</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
+                          <TableHead>Titulli</TableHead>
+                          <TableHead>Prona</TableHead>
+                          <TableHead>Qiramarrësi</TableHead>
+                          <TableHead>Kati</TableHead>
+                          <TableHead>Statusi</TableHead>
+                          <TableHead>Data</TableHead>
+                          <TableHead className="text-right">Veprimet</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -393,7 +393,7 @@ export default function PropertyManagerComplaintsPage() {
                                   setNewStatus(complaint.status);
                                 }}
                               >
-                                Update Status
+                                Përditëso Statusin
                               </Button>
                             </TableCell>
                           </TableRow>
@@ -441,7 +441,7 @@ export default function PropertyManagerComplaintsPage() {
 
                           <div className="flex justify-between items-center text-xs pt-2 border-t">
                             <div>
-                              <span className="text-muted-foreground">Floor: </span>
+                              <span className="text-muted-foreground">Kati: </span>
                               <span className="font-medium">
                                 {complaint.tenant.floor_assigned !== null
                                   ? complaint.tenant.floor_assigned
@@ -462,7 +462,7 @@ export default function PropertyManagerComplaintsPage() {
                               setNewStatus(complaint.status);
                             }}
                           >
-                            Update Status
+                            Përditëso Statusin
                           </Button>
                         </CardContent>
                       </Card>
@@ -478,49 +478,49 @@ export default function PropertyManagerComplaintsPage() {
         <Dialog open={!!selectedComplaint} onOpenChange={(open) => !open && setSelectedComplaint(null)}>
           <DialogContent className="w-[95vw] max-w-[500px]">
             <DialogHeader>
-              <DialogTitle className="text-base md:text-lg">Update Complaint Status</DialogTitle>
+              <DialogTitle className="text-base md:text-lg">Përditëso Statusin e Ankesës</DialogTitle>
               <DialogDescription className="text-xs md:text-sm">
-                Change the status of this complaint
+                Ndryshoni statusin e kësaj ankese
               </DialogDescription>
             </DialogHeader>
 
             {selectedComplaint && (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <div className="text-xs md:text-sm font-medium">Complaint Details</div>
+                  <div className="text-xs md:text-sm font-medium">Detajet e Ankesës</div>
                   <div className="text-xs md:text-sm text-muted-foreground space-y-1">
-                    <div><strong>Title:</strong> {selectedComplaint.title}</div>
+                    <div><strong>Titulli:</strong> {selectedComplaint.title}</div>
                     {selectedComplaint.description && (
-                      <div><strong>Description:</strong> {selectedComplaint.description}</div>
+                      <div><strong>Përshkrimi:</strong> {selectedComplaint.description}</div>
                     )}
-                    <div><strong>Property:</strong> {selectedComplaint.property.name}</div>
+                    <div><strong>Prona:</strong> {selectedComplaint.property.name}</div>
                     <div>
-                      <strong>Tenant:</strong> {selectedComplaint.tenant.name} {selectedComplaint.tenant.surname}
+                      <strong>Qiramarrësi:</strong> {selectedComplaint.tenant.name} {selectedComplaint.tenant.surname}
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs md:text-sm font-medium">New Status</label>
+                  <label className="text-xs md:text-sm font-medium">Statusi i Ri</label>
                   <Select value={newStatus} onValueChange={setNewStatus}>
                     <SelectTrigger className="h-9 md:h-10 text-xs md:text-sm">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="pending" className="text-xs md:text-sm">Pending</SelectItem>
-                      <SelectItem value="in_progress" className="text-xs md:text-sm">In Progress</SelectItem>
-                      <SelectItem value="resolved" className="text-xs md:text-sm">Resolved</SelectItem>
-                      <SelectItem value="rejected" className="text-xs md:text-sm">Rejected</SelectItem>
+                      <SelectItem value="pending" className="text-xs md:text-sm">Në pritje</SelectItem>
+                      <SelectItem value="in_progress" className="text-xs md:text-sm">Në progres</SelectItem>
+                      <SelectItem value="resolved" className="text-xs md:text-sm">Zgjidhur</SelectItem>
+                      <SelectItem value="rejected" className="text-xs md:text-sm">Refuzuar</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-xs md:text-sm font-medium">Response (Optional)</Label>
+                  <Label className="text-xs md:text-sm font-medium">Përgjigja (Opsionale)</Label>
                   <Textarea
                     value={response}
                     onChange={(e) => setResponse(e.target.value)}
-                    placeholder="Enter your response here"
+                    placeholder="Vendosni përgjigjen tuaj këtu"
                     rows={3}
                     className="text-xs md:text-sm"
                   />
@@ -535,7 +535,7 @@ export default function PropertyManagerComplaintsPage() {
                 disabled={isUpdating}
                 className="h-9 text-xs md:text-sm"
               >
-                Cancel
+                Anulo
               </Button>
               <Button
                 onClick={handleStatusUpdate}
@@ -545,10 +545,10 @@ export default function PropertyManagerComplaintsPage() {
                 {isUpdating ? (
                   <>
                     <Loader2 className="mr-2 h-3 w-3 md:h-4 md:w-4 animate-spin" />
-                    Updating...
+                    Duke përditësuar...
                   </>
                 ) : (
-                  "Update Status"
+                  "Përditëso Statusin"
                 )}
               </Button>
             </DialogFooter>

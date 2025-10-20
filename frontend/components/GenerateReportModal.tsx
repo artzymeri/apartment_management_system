@@ -48,18 +48,18 @@ export function GenerateReportModal({ open, onOpenChange }: GenerateReportModalP
   };
 
   const months = [
-    { value: 1, label: "January" },
-    { value: 2, label: "February" },
-    { value: 3, label: "March" },
-    { value: 4, label: "April" },
-    { value: 5, label: "May" },
-    { value: 6, label: "June" },
-    { value: 7, label: "July" },
-    { value: 8, label: "August" },
-    { value: 9, label: "September" },
-    { value: 10, label: "October" },
-    { value: 11, label: "November" },
-    { value: 12, label: "December" },
+    { value: 1, label: "Janar" },
+    { value: 2, label: "Shkurt" },
+    { value: 3, label: "Mars" },
+    { value: 4, label: "Prill" },
+    { value: 5, label: "Maj" },
+    { value: 6, label: "Qershor" },
+    { value: 7, label: "Korrik" },
+    { value: 8, label: "Gusht" },
+    { value: 9, label: "Shtator" },
+    { value: 10, label: "Tetor" },
+    { value: 11, label: "Nëntor" },
+    { value: 12, label: "Dhjetor" },
   ];
 
   const currentYear = new Date().getFullYear();
@@ -75,9 +75,9 @@ export function GenerateReportModal({ open, onOpenChange }: GenerateReportModalP
           {/* Sticky Header */}
           <div className="flex-shrink-0 border-b px-4 md:px-8 py-3 md:py-4 bg-background">
             <DialogHeader>
-              <DialogTitle className="text-lg md:text-2xl">Generate Monthly Report</DialogTitle>
+              <DialogTitle className="text-lg md:text-2xl">Gjenero Raport Mujor</DialogTitle>
               <DialogDescription className="text-xs md:text-base">
-                Select property and time period to generate a new monthly report
+                Zgjidhni pronën dhe periudhën kohore për të gjeneruar një raport të ri mujor
               </DialogDescription>
             </DialogHeader>
           </div>
@@ -89,16 +89,16 @@ export function GenerateReportModal({ open, onOpenChange }: GenerateReportModalP
                 {/* Filters */}
                 <Card className="w-full">
                   <CardHeader>
-                    <CardTitle className="text-base md:text-lg">Report Filters</CardTitle>
-                    <CardDescription className="text-xs md:text-sm">Select property and time period</CardDescription>
+                    <CardTitle className="text-base md:text-lg">Filtrat e Raportit</CardTitle>
+                    <CardDescription className="text-xs md:text-sm">Zgjidhni pronën dhe periudhën kohore</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                       <div className="space-y-2">
-                        <label className="text-xs md:text-sm font-medium">Property</label>
+                        <label className="text-xs md:text-sm font-medium">Prona</label>
                         <Select value={selectedProperty} onValueChange={setSelectedProperty}>
                           <SelectTrigger className="h-9 md:h-10 text-xs md:text-sm">
-                            <SelectValue placeholder="Select property" />
+                            <SelectValue placeholder="Zgjidhni pronën" />
                           </SelectTrigger>
                           <SelectContent>
                             {properties.map((property) => (
@@ -111,7 +111,7 @@ export function GenerateReportModal({ open, onOpenChange }: GenerateReportModalP
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-xs md:text-sm font-medium">Month</label>
+                        <label className="text-xs md:text-sm font-medium">Muaji</label>
                         <Select value={selectedMonth.toString()} onValueChange={(val) => setSelectedMonth(parseInt(val))}>
                           <SelectTrigger className="h-9 md:h-10 text-xs md:text-sm">
                             <SelectValue />
@@ -127,7 +127,7 @@ export function GenerateReportModal({ open, onOpenChange }: GenerateReportModalP
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-xs md:text-sm font-medium">Year</label>
+                        <label className="text-xs md:text-sm font-medium">Viti</label>
                         <Select value={selectedYear.toString()} onValueChange={(val) => setSelectedYear(parseInt(val))}>
                           <SelectTrigger className="h-9 md:h-10 text-xs md:text-sm">
                             <SelectValue />
@@ -160,8 +160,8 @@ export function GenerateReportModal({ open, onOpenChange }: GenerateReportModalP
                     <Card>
                       <CardContent className="flex flex-col items-center justify-center py-8 md:py-12">
                         <FileText className="h-10 w-10 md:h-12 md:w-12 text-muted-foreground mb-3 md:mb-4" />
-                        <p className="text-base md:text-lg font-medium text-muted-foreground">No properties found</p>
-                        <p className="text-xs md:text-sm text-muted-foreground">Create a property to start generating reports</p>
+                        <p className="text-base md:text-lg font-medium text-muted-foreground">Nuk u gjetën prona</p>
+                        <p className="text-xs md:text-sm text-muted-foreground">Krijoni një pronë për të filluar gjenerimin e raporteve</p>
                       </CardContent>
                     </Card>
                   )

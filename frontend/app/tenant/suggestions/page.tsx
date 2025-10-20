@@ -19,7 +19,6 @@ import {
 import { CheckCircle2, Clock, Loader2, Lightbulb, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
 
 interface Property {
   id: number;
@@ -68,11 +67,11 @@ export default function SuggestionsPage() {
           }
         } else {
           console.error("Failed to fetch properties:", response.status);
-          toast.error("Failed to load properties");
+          toast.error("Gabim në ngarkimin e pronave");
         }
       } catch (error) {
         console.error("Error fetching properties:", error);
-        toast.error("Failed to load properties");
+        toast.error("Gabim në ngarkimin e pronave");
       } finally {
         setFetchingData(false);
       }
@@ -103,7 +102,7 @@ export default function SuggestionsPage() {
     e.preventDefault();
 
     if (!selectedProperty || !title.trim()) {
-      toast.error("Please select a property and enter a title");
+      toast.error("Ju lutem zgjidhni një pronë dhe vendosni titullin");
       return;
     }
 
@@ -126,7 +125,7 @@ export default function SuggestionsPage() {
       const data = await response.json();
 
       if (response.ok) {
-        toast.success("Suggestion submitted successfully!");
+        toast.success("Sugjeri u dërgua me sukses!");
         // Don't reset selectedProperty since it's auto-selected
         setTitle("");
         setDescription("");
@@ -140,11 +139,11 @@ export default function SuggestionsPage() {
           setMySuggestions(suggestionsData.suggestions);
         }
       } else {
-        toast.error(data.message || "Failed to submit suggestion");
+        toast.error(data.message || "Gabim në dërgimin e sugjerimit");
       }
     } catch (error) {
       console.error("Error submitting suggestion:", error);
-      toast.error("Failed to submit suggestion");
+      toast.error("Gabim në dërgimin e sugjerimit");
     } finally {
       setLoading(false);
     }
@@ -156,28 +155,28 @@ export default function SuggestionsPage() {
         return (
           <Badge variant="secondary" className="bg-yellow-100 text-yellow-700">
             <Clock className="mr-1 h-3 w-3" />
-            Pending
+            Në Pritje
           </Badge>
         );
       case "in_progress":
         return (
           <Badge variant="secondary" className="bg-blue-100 text-blue-700">
             <Loader2 className="mr-1 h-3 w-3" />
-            In Progress
+            Në Proces
           </Badge>
         );
       case "resolved":
         return (
           <Badge variant="secondary" className="bg-green-100 text-green-700">
             <CheckCircle2 className="mr-1 h-3 w-3" />
-            Resolved
+            E Zgjidhur
           </Badge>
         );
       case "rejected":
         return (
           <Badge variant="secondary" className="bg-red-100 text-red-700">
             <AlertTriangle className="mr-1 h-3 w-3" />
-            Rejected
+            E Refuzuar
           </Badge>
         );
       default:
@@ -185,10 +184,20 @@ export default function SuggestionsPage() {
     }
   };
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('sq-AL', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   if (fetchingData) {
     return (
       <ProtectedRoute allowedRoles={["tenant"]}>
-        <TenantLayout title="My Suggestions">
+        <TenantLayout title="Sugjerimet e Mia">
           <div className="flex items-center justify-center h-64">
             <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
           </div>
@@ -199,7 +208,7 @@ export default function SuggestionsPage() {
 
   return (
     <ProtectedRoute allowedRoles={["tenant"]}>
-      <TenantLayout title="My Suggestions">
+      <TenantLayout title="Sugjerimet e Mia">
         <div className="space-y-6">
           <div className="grid gap-6 md:grid-cols-2">
             {/* Suggestion Form */}
@@ -207,23 +216,23 @@ export default function SuggestionsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Lightbulb className="h-5 w-5 text-emerald-600" />
-                  Submit a Suggestion
+                  Dërgo Sugjerim
                 </CardTitle>
                 <CardDescription>
-                  Share your ideas to improve your property
+                  Ndani idetë tuaja për të përmirësuar pronën
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="property">Property</Label>
+                    <Label htmlFor="property">Prona</Label>
                     <Select
                       value={selectedProperty}
                       onValueChange={setSelectedProperty}
                       disabled
                     >
                       <SelectTrigger id="property">
-                        <SelectValue placeholder="Select property" />
+                        <SelectValue placeholder="Zgjidhni pronën" />
                       </SelectTrigger>
                       <SelectContent>
                         {properties.map((property) => (
@@ -236,10 +245,10 @@ export default function SuggestionsPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="title">Title</Label>
+                    <Label htmlFor="title">Titulli</Label>
                     <Input
                       id="title"
-                      placeholder="Brief description of your suggestion"
+                      placeholder="Përshkrim i shkurtër i sugjerimit tuaj"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       maxLength={255}
@@ -248,24 +257,24 @@ export default function SuggestionsPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="description">Description (Optional)</Label>
+                    <Label htmlFor="description">Përshkrimi (Opsional)</Label>
                     <Textarea
                       id="description"
-                      placeholder="Provide more details about your suggestion..."
+                      placeholder="Jepni më shumë detaje rreth sugjerimit tuaj..."
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       rows={4}
                     />
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={loading}>
+                  <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700" disabled={loading}>
                     {loading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Submitting...
+                        Duke Dërguar...
                       </>
                     ) : (
-                      "Submit Suggestion"
+                      "Dërgo Sugjerimin"
                     )}
                   </Button>
                 </form>
@@ -275,39 +284,39 @@ export default function SuggestionsPage() {
             {/* Info Card */}
             <Card>
               <CardHeader>
-                <CardTitle>About Suggestions</CardTitle>
-                <CardDescription>How the suggestion process works</CardDescription>
+                <CardTitle>Rreth Sugjerimeve</CardTitle>
+                <CardDescription>Si funksionon procesi i sugjerimeve</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <h4 className="font-medium text-sm">What to suggest:</h4>
+                  <h4 className="font-medium text-sm">Çfarë të sugjeroni:</h4>
                   <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
-                    <li>Property improvements</li>
-                    <li>New amenities or services</li>
-                    <li>Energy-saving initiatives</li>
-                    <li>Community events or programs</li>
-                    <li>Security enhancements</li>
-                    <li>Any other ideas for improvement</li>
+                    <li>Përmirësime të pronës</li>
+                    <li>Shërbime ose pajisje të reja</li>
+                    <li>Iniciativa për kursim energjie</li>
+                    <li>Ngjarje ose programe komunitare</li>
+                    <li>Përmirësime të sigurisë</li>
+                    <li>Çdo ide tjetër për përmirësim</li>
                   </ul>
                 </div>
                 <div className="space-y-2">
-                  <h4 className="font-medium text-sm">Status meanings:</h4>
+                  <h4 className="font-medium text-sm">Kuptimi i gjendjes:</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2">
                       {getStatusBadge("pending")}
-                      <span className="text-muted-foreground">Under review</span>
+                      <span className="text-muted-foreground">Në shqyrtim</span>
                     </div>
                     <div className="flex items-center gap-2">
                       {getStatusBadge("in_progress")}
-                      <span className="text-muted-foreground">Being considered</span>
+                      <span className="text-muted-foreground">Po konsiderohet</span>
                     </div>
                     <div className="flex items-center gap-2">
                       {getStatusBadge("resolved")}
-                      <span className="text-muted-foreground">Implemented</span>
+                      <span className="text-muted-foreground">Është zbatuar</span>
                     </div>
                     <div className="flex items-center gap-2">
                       {getStatusBadge("rejected")}
-                      <span className="text-muted-foreground">Not feasible</span>
+                      <span className="text-muted-foreground">Nuk është i realizueshëm</span>
                     </div>
                   </div>
                 </div>
@@ -318,16 +327,16 @@ export default function SuggestionsPage() {
           {/* My Suggestions */}
           <Card>
             <CardHeader>
-              <CardTitle>My Suggestions</CardTitle>
+              <CardTitle>Sugjerimet e Mia</CardTitle>
               <CardDescription>
-                Track the status of your submitted suggestions
+                Ndiqni gjendjen e sugjerimeve tuaja të dërguara
               </CardDescription>
             </CardHeader>
             <CardContent>
               {mySuggestions.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   <Lightbulb className="mx-auto h-12 w-12 mb-3 opacity-50" />
-                  <p>No suggestions submitted yet</p>
+                  <p>Nuk ka sugjerime të dërguara ende</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -347,7 +356,7 @@ export default function SuggestionsPage() {
                             )}
                             {suggestion.response && (
                               <div className="mt-3 p-3 bg-emerald-50 rounded-md border border-emerald-200">
-                                <p className="text-xs font-semibold text-emerald-900 mb-1">Property Manager Response:</p>
+                                <p className="text-xs font-semibold text-emerald-900 mb-1">Përgjigja e Menaxherit të Pronës:</p>
                                 <p className="text-sm text-emerald-800">
                                   {suggestion.response}
                                 </p>
@@ -359,7 +368,7 @@ export default function SuggestionsPage() {
                           </div>
                         </div>
                         <div className="text-xs text-muted-foreground mt-3">
-                          Submitted on {format(new Date(suggestion.created_at), "PPp")}
+                          Dërguar më {formatDate(suggestion.created_at)}
                         </div>
                       </CardContent>
                     </Card>

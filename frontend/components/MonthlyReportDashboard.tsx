@@ -130,7 +130,7 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
 
     // Check if it would exceed 100%
     if (totalPercentage > 100) {
-      toast.error(`Cannot allocate €${numAmount.toFixed(2)}. Total allocation would be ${totalPercentage.toFixed(1)}%, which exceeds 100%.`);
+      toast.error(`Nuk mund të alokoni €${numAmount.toFixed(2)}. Alokimi total do të jetë ${totalPercentage.toFixed(1)}%, i cili tejkalon 100%.`);
 
       // Revert to previous value
       const currentAllocation = spendingAllocations.find(a => a.config_id === configId);
@@ -181,7 +181,7 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
 
     // Check if it would exceed 100%
     if (totalPercentage > 100) {
-      toast.error(`Cannot allocate ${numPercentage.toFixed(1)}%. Total allocation would be ${totalPercentage.toFixed(1)}%, which exceeds 100%.`);
+      toast.error(`Nuk mund të alokoni ${numPercentage.toFixed(1)}%. Alokimi total do të jetë ${totalPercentage.toFixed(1)}%, i cili tejkalon 100%.`);
 
       // Revert to previous value
       const currentAllocation = spendingAllocations.find(a => a.config_id === configId);
@@ -220,7 +220,7 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
 
     // Prevent duplicate report generation
     if (existingReport) {
-      toast.error(`A report already exists for this period. Please delete the existing report first or view it in the reports list.`);
+      toast.error(`Një raport tashmë ekziston për këtë periudhë. Ju lutem fshini raportin ekzistues fillimisht ose shiheni në listën e raporteve.`);
       return;
     }
 
@@ -233,7 +233,7 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
         spendingAllocations,
       });
 
-      toast.success("Monthly report generated successfully!");
+      toast.success("Raporti mujor u gjenerua me sukses!");
       setIsEditMode(false);
 
       // Call the onSuccess callback to close the modal
@@ -241,7 +241,7 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
         onSuccess();
       }
     } catch (error: any) {
-      toast.error(error.message || "Failed to generate report");
+      toast.error(error.message || "Dështoi gjenerimi i raportit");
     }
   };
 
@@ -265,7 +265,7 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
       <Alert>
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
-          No data available for the selected period. Please ensure tenants have payment records for this month.
+          Nuk ka të dhëna të disponueshme për periudhën e zgjedhur. Ju lutem sigurohuni që qiramarrësit kanë regjistrime pagese për këtë muaj.
         </AlertDescription>
       </Alert>
     );
@@ -281,52 +281,52 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs md:text-sm font-medium">Total Budget</CardTitle>
+            <CardTitle className="text-xs md:text-sm font-medium">Buxheti Total</CardTitle>
             <Euro className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-xl md:text-2xl font-bold">€{parseFloat(preview.total_budget).toFixed(2)}</div>
             <p className="text-xs text-muted-foreground">
-              From {preview.paid_tenants} paid tenants
+              Nga {preview.paid_tenants} qiramarrës të paguar
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs md:text-sm font-medium">Collection Rate</CardTitle>
+            <CardTitle className="text-xs md:text-sm font-medium">Norma e Mbledhjes</CardTitle>
             <TrendingUp className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-xl md:text-2xl font-bold">{collectionRate.toFixed(1)}%</div>
             <p className="text-xs text-muted-foreground">
-              {preview.paid_tenants} of {preview.total_tenants} tenants
+              {preview.paid_tenants} nga {preview.total_tenants} qiramarrës
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs md:text-sm font-medium">Pending Amount</CardTitle>
+            <CardTitle className="text-xs md:text-sm font-medium">Shuma Në pritje</CardTitle>
             <Clock className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-xl md:text-2xl font-bold text-orange-600">€{parseFloat(preview.pending_amount).toFixed(2)}</div>
             <p className="text-xs text-muted-foreground">
-              {preview.total_tenants - preview.paid_tenants} unpaid tenants
+              {preview.total_tenants - preview.paid_tenants} qiramarrës të papaguar
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs md:text-sm font-medium">Spending Categories</CardTitle>
+            <CardTitle className="text-xs md:text-sm font-medium">Kategoritë e Shpenzimeve</CardTitle>
             <PieChart className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-xl md:text-2xl font-bold">{preview.spending_configs?.length || 0}</div>
             <p className="text-xs text-muted-foreground">
-              Budget allocation categories
+              Kategori të alokimit të buxhetit
             </p>
           </CardContent>
         </Card>
@@ -338,19 +338,19 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
           <CardHeader>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
-                <CardTitle className="text-base md:text-lg">Budget Allocation</CardTitle>
+                <CardTitle className="text-base md:text-lg">Alokimi i Buxhetit</CardTitle>
                 <CardDescription className="text-xs md:text-sm">
-                  Distribute the collected budget across spending categories
+                  Shpërndani buxhetin e mbledhur nëpër kategoritë e shpenzimeve
                 </CardDescription>
               </div>
               <Button
                 variant={isEditMode ? "secondary" : "default"}
                 onClick={() => setIsEditMode(!isEditMode)}
                 size="sm"
-                className="h-8 md:h-9 text-xs md:text-sm w-full sm:w-auto"
+                className="h-8 md:h-9 text-xs md:text-sm w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700"
               >
                 <Calculator className="mr-2 h-3 w-3 md:h-4 md:w-4" />
-                {isEditMode ? "Cancel Edit" : "Edit Allocations"}
+                {isEditMode ? "Anulo Ndryshimin" : "Ndrysho Alokimet"}
               </Button>
             </div>
           </CardHeader>
@@ -358,17 +358,17 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
             {/* Allocation Summary */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 p-3 md:p-4 bg-muted rounded-lg">
               <div>
-                <p className="text-xs md:text-sm text-muted-foreground">Total Allocated</p>
+                <p className="text-xs md:text-sm text-muted-foreground">Totali i Alokuar</p>
                 <p className="text-base md:text-lg font-bold">€{totalAllocated.toFixed(2)}</p>
               </div>
               <div>
-                <p className="text-xs md:text-sm text-muted-foreground">Remaining</p>
+                <p className="text-xs md:text-sm text-muted-foreground">Mbetur</p>
                 <p className={`text-base md:text-lg font-bold ${remainingBudget < 0 ? 'text-red-600' : 'text-green-600'}`}>
                   €{Math.abs(remainingBudget).toFixed(2)}
                 </p>
               </div>
               <div>
-                <p className="text-xs md:text-sm text-muted-foreground">Allocation %</p>
+                <p className="text-xs md:text-sm text-muted-foreground">Alokimi %</p>
                 <p className="text-base md:text-lg font-bold">{allocationPercentage.toFixed(1)}%</p>
               </div>
             </div>
@@ -377,7 +377,7 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription className="text-xs md:text-sm">
-                  Total allocation exceeds available budget by €{Math.abs(remainingBudget).toFixed(2)}
+                  Alokimi total tejkalon buxhetin e disponueshëm me €{Math.abs(remainingBudget).toFixed(2)}
                 </AlertDescription>
               </Alert>
             )}
@@ -387,11 +387,11 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead style={{ width: '22%' }}>Category</TableHead>
-                    <TableHead style={{ width: '28%' }}>Description</TableHead>
-                    <TableHead className="text-right" style={{ width: '18%' }}>Amount (€)</TableHead>
-                    <TableHead className="text-right" style={{ width: '14%' }}>Percentage (%)</TableHead>
-                    <TableHead className="text-right" style={{ width: '18%' }}>Visual</TableHead>
+                    <TableHead style={{ width: '22%' }}>Kategoria</TableHead>
+                    <TableHead style={{ width: '28%' }}>Përshkrimi</TableHead>
+                    <TableHead className="text-right" style={{ width: '18%' }}>Shuma (€)</TableHead>
+                    <TableHead className="text-right" style={{ width: '14%' }}>Përqindja (%)</TableHead>
+                    <TableHead className="text-right" style={{ width: '18%' }}>Vizuale</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -487,7 +487,7 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
 
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <label className="text-xs text-muted-foreground">Amount (€)</label>
+                          <label className="text-xs text-muted-foreground">Shuma (€)</label>
                           {isEditMode ? (
                             <Input
                               type="number"
@@ -503,7 +503,7 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
                           )}
                         </div>
                         <div>
-                          <label className="text-xs text-muted-foreground">Percentage (%)</label>
+                          <label className="text-xs text-muted-foreground">Përqindja (%)</label>
                           {isEditMode ? (
                             <Input
                               type="number"
@@ -535,7 +535,7 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
 
             {/* Visual Budget Breakdown */}
             <div className="space-y-2">
-              <h4 className="font-medium text-sm md:text-base">Budget Distribution</h4>
+              <h4 className="font-medium text-sm md:text-base">Shpërndarja e Buxhetit</h4>
               <div className="flex w-full h-10 md:h-12 rounded-lg overflow-hidden border">
                 {spendingAllocations.map((allocation, index) => {
                   const colors = [
@@ -588,8 +588,8 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
       {/* Payment Details */}
       <Card className="w-full">
         <CardHeader>
-          <CardTitle className="text-base md:text-lg">Payment Details</CardTitle>
-          <CardDescription className="text-xs md:text-sm">Breakdown of tenant payments for this period</CardDescription>
+          <CardTitle className="text-base md:text-lg">Detajet e Pagesës</CardTitle>
+          <CardDescription className="text-xs md:text-sm">Ndarja e pagesave të qiramarrësve për këtë periudhë</CardDescription>
         </CardHeader>
         <CardContent>
           {/* Desktop Table */}
@@ -597,12 +597,12 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead style={{ width: '18%' }}>Tenant</TableHead>
+                  <TableHead style={{ width: '18%' }}>Qiramarrësi</TableHead>
                   <TableHead style={{ width: '24%' }}>Email</TableHead>
-                  <TableHead style={{ width: '10%' }}>Floor</TableHead>
-                  <TableHead style={{ width: '14%' }}>Amount</TableHead>
-                  <TableHead style={{ width: '18%' }}>Status</TableHead>
-                  <TableHead style={{ width: '16%' }}>Payment Date</TableHead>
+                  <TableHead style={{ width: '10%' }}>Kati</TableHead>
+                  <TableHead style={{ width: '14%' }}>Shuma</TableHead>
+                  <TableHead style={{ width: '18%' }}>Statusi</TableHead>
+                  <TableHead style={{ width: '16%' }}>Data e Pagesës</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -621,19 +621,19 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
                         {payment.status === 'paid' && (
                           <Badge className="bg-green-100 text-green-800 text-xs">
                             <CheckCircle2 className="mr-1 h-3 w-3" />
-                            Paid
+                            Paguar
                           </Badge>
                         )}
                         {payment.status === 'pending' && (
                           <Badge className="bg-yellow-100 text-yellow-800 text-xs">
                             <Clock className="mr-1 h-3 w-3" />
-                            Pending
+                            Në pritje
                           </Badge>
                         )}
                         {payment.status === 'overdue' && (
                           <Badge className="bg-red-100 text-red-800 text-xs">
                             <AlertCircle className="mr-1 h-3 w-3" />
-                            Overdue
+                            Vonuar
                           </Badge>
                         )}
                       </TableCell>
@@ -645,7 +645,7 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
                 ) : (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center text-muted-foreground">
-                      No payment records found for this period
+                      Nuk u gjetën regjistrime pagese për këtë periudhë
                     </TableCell>
                   </TableRow>
                 )}
@@ -670,27 +670,27 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
                         {payment.status === 'paid' && (
                           <Badge className="bg-green-100 text-green-800 text-xs">
                             <CheckCircle2 className="mr-1 h-3 w-3" />
-                            Paid
+                            Paguar
                           </Badge>
                         )}
                         {payment.status === 'pending' && (
                           <Badge className="bg-yellow-100 text-yellow-800 text-xs">
                             <Clock className="mr-1 h-3 w-3" />
-                            Pending
+                            Në pritje
                           </Badge>
                         )}
                         {payment.status === 'overdue' && (
                           <Badge className="bg-red-100 text-red-800 text-xs">
                             <AlertCircle className="mr-1 h-3 w-3" />
-                            Overdue
+                            Vonuar
                           </Badge>
                         )}
                       </div>
                     </div>
                     <div className="flex justify-between items-center pt-2 border-t">
                       <div className="flex gap-3 text-xs">
-                        <span className="text-muted-foreground">Floor: {payment.tenant.floor_assigned || "—"}</span>
-                        <span className="text-muted-foreground">Date: {payment.payment_date || "—"}</span>
+                        <span className="text-muted-foreground">Kati: {payment.tenant.floor_assigned || "—"}</span>
+                        <span className="text-muted-foreground">Data: {payment.payment_date || "—"}</span>
                       </div>
                       <p className="font-mono text-base font-bold text-indigo-600">€{parseFloat(payment.amount).toFixed(2)}</p>
                     </div>
@@ -699,7 +699,7 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
               ))
             ) : (
               <p className="text-center text-muted-foreground text-sm py-8">
-                No payment records found for this period
+                Nuk u gjetën regjistrime pagese për këtë periudhë
               </p>
             )}
           </div>
@@ -709,12 +709,12 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
       {/* Notes Section */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base md:text-lg">Report Notes</CardTitle>
-          <CardDescription className="text-xs md:text-sm">Add any additional notes or comments for this report</CardDescription>
+          <CardTitle className="text-base md:text-lg">Shënimet e Raportit</CardTitle>
+          <CardDescription className="text-xs md:text-sm">Shtoni çdo shënim ose koment shtesë për këtë raport</CardDescription>
         </CardHeader>
         <CardContent>
           <Textarea
-            placeholder="Enter notes about this month's report, special circumstances, maintenance items, etc."
+            placeholder="Vendosni shënime rreth raportit të këtij muaji, rrethana të veçanta, artikuj mirëmbajtjeje, etj."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={4}
@@ -729,10 +729,10 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
           size="lg"
           onClick={handleGenerateReport}
           disabled={generateMutation.isPending || remainingBudget < -0.01}
-          className="w-full sm:w-auto h-10 md:h-11 text-xs md:text-base"
+          className="w-full sm:w-auto h-10 md:h-11 text-xs md:text-base bg-indigo-600 hover:bg-indigo-700"
         >
           <Save className="mr-2 h-4 w-4 md:h-5 md:w-5" />
-          {generateMutation.isPending ? "Generating..." : "Generate & Save Report"}
+          {generateMutation.isPending ? "Duke gjeneruar..." : "Gjenero & Ruaj Raportin"}
         </Button>
       </div>
     </div>

@@ -49,7 +49,7 @@ export default function TenantPaymentsPage() {
       setPayments(data);
     } catch (error: any) {
       console.error("Error fetching payments:", error);
-      toast.error(error.message || "Failed to load payment history");
+      toast.error(error.message || "Gabim në ngarkimin e historikut të pagesave");
     } finally {
       setLoading(false);
     }
@@ -81,15 +81,28 @@ export default function TenantPaymentsPage() {
     }
   };
 
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case "paid":
+        return "E Paguar";
+      case "pending":
+        return "Në Pritje";
+      case "overdue":
+        return "E Vonuar";
+      default:
+        return status.charAt(0).toUpperCase() + status.slice(1);
+    }
+  };
+
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
+    return new Date(dateString).toLocaleDateString("sq-AL", {
       year: "numeric",
       month: "long",
     });
   };
 
   const formatCurrency = (amount: string) => {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("sq-AL", {
       style: "currency",
       currency: "EUR",
     }).format(parseFloat(amount));
@@ -112,26 +125,26 @@ export default function TenantPaymentsPage() {
 
   return (
     <ProtectedRoute allowedRoles={["tenant"]}>
-      <TenantLayout title="My Payments">
+      <TenantLayout title="Pagesat e Mia">
         <div className="space-y-4 sm:space-y-6">
           {/* Header Stats */}
           <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-xs sm:text-sm font-medium">Total Payments</CardTitle>
+                <CardTitle className="text-xs sm:text-sm font-medium">Pagesa Totale</CardTitle>
                 <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
               </CardHeader>
               <CardContent>
                 <div className="text-xl sm:text-2xl font-bold">{stats.total}</div>
                 <p className="text-xs text-muted-foreground">
-                  For year {selectedYear}
+                  Për vitin {selectedYear}
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-xs sm:text-sm font-medium">Paid</CardTitle>
+                <CardTitle className="text-xs sm:text-sm font-medium">Të Paguara</CardTitle>
                 <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
               </CardHeader>
               <CardContent>
@@ -144,26 +157,26 @@ export default function TenantPaymentsPage() {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-xs sm:text-sm font-medium">Pending</CardTitle>
+                <CardTitle className="text-xs sm:text-sm font-medium">Në Pritje</CardTitle>
                 <Clock className="h-4 w-4 text-yellow-600 flex-shrink-0" />
               </CardHeader>
               <CardContent>
                 <div className="text-xl sm:text-2xl font-bold text-yellow-600">{stats.pending}</div>
                 <p className="text-xs text-muted-foreground">
-                  Awaiting confirmation
+                  Në pritje të konfirmimit
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-xs sm:text-sm font-medium">Overdue</CardTitle>
+                <CardTitle className="text-xs sm:text-sm font-medium">Të Vonuara</CardTitle>
                 <AlertCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
               </CardHeader>
               <CardContent>
                 <div className="text-xl sm:text-2xl font-bold text-red-600">{stats.overdue}</div>
                 <p className="text-xs text-muted-foreground">
-                  Requires attention
+                  Kërkon vëmendje
                 </p>
               </CardContent>
             </Card>
@@ -174,9 +187,9 @@ export default function TenantPaymentsPage() {
             <CardHeader>
               <div className="flex flex-col gap-3 sm:gap-4">
                 <div>
-                  <CardTitle className="text-base sm:text-lg">Payment History</CardTitle>
+                  <CardTitle className="text-base sm:text-lg">Historiku i Pagesave</CardTitle>
                   <CardDescription className="text-xs sm:text-sm">
-                    View your monthly fee payment history and status
+                    Shikoni historikun dhe gjendjen e pagesave tuaja mujore
                   </CardDescription>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2">
@@ -202,13 +215,13 @@ export default function TenantPaymentsPage() {
                       onValueChange={setSelectedProperty}
                     >
                       <SelectTrigger className="w-full sm:w-[180px] h-9 text-sm">
-                        <SelectValue placeholder="All Properties" />
+                        <SelectValue placeholder="Të Gjitha Pronat" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">All Properties</SelectItem>
+                        <SelectItem value="all">Të Gjitha Pronat</SelectItem>
                         {userProperties.map((propId) => (
                           <SelectItem key={propId} value={propId.toString()}>
-                            Property {propId}
+                            Prona {propId}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -227,9 +240,9 @@ export default function TenantPaymentsPage() {
               ) : payments.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-8 sm:py-12 text-center">
                   <Euro className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mb-3 sm:mb-4" />
-                  <h3 className="text-base sm:text-lg font-semibold">No payments found</h3>
+                  <h3 className="text-base sm:text-lg font-semibold">Nuk u gjetën pagesa</h3>
                   <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                    No payment records for the selected filters
+                    Nuk ka të dhëna për pagesat me filtrat e zgjedhura
                   </p>
                 </div>
               ) : (
@@ -248,7 +261,7 @@ export default function TenantPaymentsPage() {
                                 <Building2 className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0" />
                                 <div className="min-w-0">
                                   <div className="text-xs sm:text-sm text-slate-700 truncate">
-                                    {payment.property?.name || `Property ${payment.property_id}`}
+                                    {payment.property?.name || `Prona ${payment.property_id}`}
                                   </div>
                                   {payment.property?.address && (
                                     <div className="text-xs text-muted-foreground truncate">
@@ -265,24 +278,23 @@ export default function TenantPaymentsPage() {
                               )} border-none text-white flex-shrink-0 text-xs`}
                             >
                               <span className="mr-1">{getStatusIcon(payment.status)}</span>
-                              {payment.status.charAt(0).toUpperCase() +
-                                payment.status.slice(1)}
+                              {getStatusText(payment.status)}
                             </Badge>
                           </div>
 
                           {/* Amount and Date Row */}
                           <div className="flex items-center justify-between pt-2 border-t border-slate-100">
                             <div>
-                              <div className="text-xs text-muted-foreground">Amount</div>
+                              <div className="text-xs text-muted-foreground">Shuma</div>
                               <div className="text-base sm:text-lg font-bold text-emerald-700">
                                 {formatCurrency(payment.amount)}
                               </div>
                             </div>
                             <div className="text-right">
-                              <div className="text-xs text-muted-foreground">Payment Date</div>
+                              <div className="text-xs text-muted-foreground">Data e Pagesës</div>
                               <div className="text-xs sm:text-sm font-medium text-slate-700">
                                 {payment.payment_date
-                                  ? new Date(payment.payment_date).toLocaleDateString()
+                                  ? new Date(payment.payment_date).toLocaleDateString('sq-AL')
                                   : "-"}
                               </div>
                             </div>

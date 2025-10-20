@@ -19,7 +19,6 @@ import {
 import { AlertTriangle, CheckCircle2, Clock, Loader2, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
 
 interface Property {
   id: number;
@@ -68,11 +67,11 @@ export default function ComplaintsPage() {
           }
         } else {
           console.error("Failed to fetch properties:", response.status);
-          toast.error("Failed to load properties");
+          toast.error("Gabim në ngarkimin e pronave");
         }
       } catch (error) {
         console.error("Error fetching properties:", error);
-        toast.error("Failed to load properties");
+        toast.error("Gabim në ngarkimin e pronave");
       } finally {
         setFetchingData(false);
       }
@@ -103,7 +102,7 @@ export default function ComplaintsPage() {
     e.preventDefault();
 
     if (!selectedProperty || !title.trim()) {
-      toast.error("Please select a property and enter a title");
+      toast.error("Ju lutem zgjidhni një pronë dhe vendosni titullin");
       return;
     }
 
@@ -126,7 +125,7 @@ export default function ComplaintsPage() {
       const data = await response.json();
 
       if (response.ok) {
-        toast.success("Complaint submitted successfully!");
+        toast.success("Ankesa u dërgua me sukses!");
         // Don't reset selectedProperty since it's auto-selected
         setTitle("");
         setDescription("");
@@ -140,11 +139,11 @@ export default function ComplaintsPage() {
           setMyComplaints(complaintsData.complaints);
         }
       } else {
-        toast.error(data.message || "Failed to submit complaint");
+        toast.error(data.message || "Gabim në dërgimin e ankesës");
       }
     } catch (error) {
       console.error("Error submitting complaint:", error);
-      toast.error("Failed to submit complaint");
+      toast.error("Gabim në dërgimin e ankesës");
     } finally {
       setLoading(false);
     }
@@ -156,28 +155,28 @@ export default function ComplaintsPage() {
         return (
           <Badge variant="secondary" className="bg-yellow-100 text-yellow-700">
             <Clock className="mr-1 h-3 w-3" />
-            Pending
+            Në Pritje
           </Badge>
         );
       case "in_progress":
         return (
           <Badge variant="secondary" className="bg-blue-100 text-blue-700">
             <Loader2 className="mr-1 h-3 w-3" />
-            In Progress
+            Në Proces
           </Badge>
         );
       case "resolved":
         return (
           <Badge variant="secondary" className="bg-green-100 text-green-700">
             <CheckCircle2 className="mr-1 h-3 w-3" />
-            Resolved
+            E Zgjidhur
           </Badge>
         );
       case "rejected":
         return (
           <Badge variant="secondary" className="bg-red-100 text-red-700">
             <AlertTriangle className="mr-1 h-3 w-3" />
-            Rejected
+            E Refuzuar
           </Badge>
         );
       default:
@@ -185,10 +184,20 @@ export default function ComplaintsPage() {
     }
   };
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('sq-AL', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   if (fetchingData) {
     return (
       <ProtectedRoute allowedRoles={["tenant"]}>
-        <TenantLayout title="My Complaints">
+        <TenantLayout title="Ankesat e Mia">
           <div className="flex items-center justify-center h-64">
             <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
           </div>
@@ -199,7 +208,7 @@ export default function ComplaintsPage() {
 
   return (
     <ProtectedRoute allowedRoles={["tenant"]}>
-      <TenantLayout title="My Complaints">
+      <TenantLayout title="Ankesat e Mia">
         <div className="space-y-6">
           <div className="grid gap-6 md:grid-cols-2">
             {/* Complaint Form */}
@@ -207,23 +216,23 @@ export default function ComplaintsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MessageSquare className="h-5 w-5 text-emerald-600" />
-                  File a Complaint
+                  Dërgo Ankesë
                 </CardTitle>
                 <CardDescription>
-                  Submit a complaint about your property
+                  Paraqisni një ankesë për pronën tuaj
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="property">Property</Label>
+                    <Label htmlFor="property">Prona</Label>
                     <Select
                       value={selectedProperty}
                       onValueChange={setSelectedProperty}
                       disabled
                     >
                       <SelectTrigger id="property">
-                        <SelectValue placeholder="Select property" />
+                        <SelectValue placeholder="Zgjidhni pronën" />
                       </SelectTrigger>
                       <SelectContent>
                         {properties.map((property) => (
@@ -236,10 +245,10 @@ export default function ComplaintsPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="title">Title</Label>
+                    <Label htmlFor="title">Titulli</Label>
                     <Input
                       id="title"
-                      placeholder="Brief description of your complaint"
+                      placeholder="Përshkrim i shkurtër i ankesës suaj"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       maxLength={255}
@@ -248,24 +257,24 @@ export default function ComplaintsPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="description">Description (Optional)</Label>
+                    <Label htmlFor="description">Përshkrimi (Opsional)</Label>
                     <Textarea
                       id="description"
-                      placeholder="Provide more details about your complaint..."
+                      placeholder="Jepni më shumë detaje rreth ankesës suaj..."
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       rows={4}
                     />
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={loading}>
+                  <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700" disabled={loading}>
                     {loading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Submitting...
+                        Duke Dërguar...
                       </>
                     ) : (
-                      "Submit Complaint"
+                      "Dërgo Ankesën"
                     )}
                   </Button>
                 </form>
@@ -275,38 +284,38 @@ export default function ComplaintsPage() {
             {/* Info Card */}
             <Card>
               <CardHeader>
-                <CardTitle>About Complaints</CardTitle>
-                <CardDescription>How the complaint process works</CardDescription>
+                <CardTitle>Rreth Ankesave</CardTitle>
+                <CardDescription>Si funksionon procesi i ankesave</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <h4 className="font-medium text-sm">When to file a complaint:</h4>
+                  <h4 className="font-medium text-sm">Kur të dërgoni një ankesë:</h4>
                   <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
-                    <li>Issues with property management</li>
-                    <li>Maintenance concerns</li>
-                    <li>Noise or disturbances</li>
-                    <li>Facility problems</li>
-                    <li>Any other concerns</li>
+                    <li>Probleme me menaxhimin e pronës</li>
+                    <li>Shqetësime për mirëmbajtjen</li>
+                    <li>Zhurmë ose shqetësime</li>
+                    <li>Probleme me objektet</li>
+                    <li>Çdo shqetësim tjetër</li>
                   </ul>
                 </div>
                 <div className="space-y-2">
-                  <h4 className="font-medium text-sm">Status meanings:</h4>
+                  <h4 className="font-medium text-sm">Kuptimi i gjendjes:</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2">
                       {getStatusBadge("pending")}
-                      <span className="text-muted-foreground">Awaiting review</span>
+                      <span className="text-muted-foreground">Në pritje të shqyrtimit</span>
                     </div>
                     <div className="flex items-center gap-2">
                       {getStatusBadge("in_progress")}
-                      <span className="text-muted-foreground">Being addressed</span>
+                      <span className="text-muted-foreground">Po trajtohet</span>
                     </div>
                     <div className="flex items-center gap-2">
                       {getStatusBadge("resolved")}
-                      <span className="text-muted-foreground">Issue resolved</span>
+                      <span className="text-muted-foreground">Çështja u zgjidh</span>
                     </div>
                     <div className="flex items-center gap-2">
                       {getStatusBadge("rejected")}
-                      <span className="text-muted-foreground">Unable to process</span>
+                      <span className="text-muted-foreground">Nuk mund të përpunohet</span>
                     </div>
                   </div>
                 </div>
@@ -317,16 +326,16 @@ export default function ComplaintsPage() {
           {/* My Complaints */}
           <Card>
             <CardHeader>
-              <CardTitle>My Complaints</CardTitle>
+              <CardTitle>Ankesat e Mia</CardTitle>
               <CardDescription>
-                Track the status of your submitted complaints
+                Ndiqni gjendjen e ankesave tuaja të dërguara
               </CardDescription>
             </CardHeader>
             <CardContent>
               {myComplaints.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   <MessageSquare className="mx-auto h-12 w-12 mb-3 opacity-50" />
-                  <p>No complaints submitted yet</p>
+                  <p>Nuk ka ankesa të dërguara ende</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -346,7 +355,7 @@ export default function ComplaintsPage() {
                             )}
                             {complaint.response && (
                               <div className="mt-3 p-3 bg-blue-50 rounded-md border border-blue-200">
-                                <p className="text-xs font-semibold text-blue-900 mb-1">Property Manager Response:</p>
+                                <p className="text-xs font-semibold text-blue-900 mb-1">Përgjigja e Menaxherit të Pronës:</p>
                                 <p className="text-sm text-blue-800">
                                   {complaint.response}
                                 </p>
@@ -358,7 +367,7 @@ export default function ComplaintsPage() {
                           </div>
                         </div>
                         <div className="text-xs text-muted-foreground mt-3">
-                          Submitted on {format(new Date(complaint.created_at), "PPp")}
+                          Dërguar më {formatDate(complaint.created_at)}
                         </div>
                       </CardContent>
                     </Card>

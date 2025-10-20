@@ -122,7 +122,7 @@ export default function PaymentsPage() {
       setStatistics(statsData);
     } catch (error) {
       console.error("Error fetching payment data:", error);
-      toast.error("Failed to load payment data");
+      toast.error("Dështoi ngarkimi i të dhënave të pagesave");
     } finally {
       setLoading(false);
     }
@@ -149,7 +149,7 @@ export default function PaymentsPage() {
       setTenants(data.data || []);
     } catch (error) {
       console.error("Error fetching tenants:", error);
-      toast.error("Failed to load tenants");
+      toast.error("Dështoi ngarkimi i qiramarrësve");
     } finally {
       setTenantsLoading(false);
     }
@@ -178,7 +178,7 @@ export default function PaymentsPage() {
       );
     } catch (error) {
       console.error("Error fetching existing payments:", error);
-      toast.error("Failed to load existing payments");
+      toast.error("Dështoi ngarkimi i pagesave ekzistuese");
     } finally {
       setDialogLoading(false);
     }
@@ -213,7 +213,7 @@ export default function PaymentsPage() {
       setExistingPayments(paymentsData);
     } catch (error) {
       console.error("Error fetching property payments:", error);
-      toast.error("Failed to load property payments");
+      toast.error("Dështoi ngarkimi i pagesave të pronës");
     } finally {
       setDialogLoading(false);
     }
@@ -237,7 +237,7 @@ export default function PaymentsPage() {
 
   const handleBulkMarkAsPaid = async () => {
     if (selectedMonths.length === 0 || !selectedDialogProperty || selectedTenantIds.length === 0) {
-      toast.error("Please select month, property, and at least one tenant");
+      toast.error("Ju lutem zgjidhni muajin, pronën dhe të paktën një qiramarrës");
       return;
     }
 
@@ -259,26 +259,26 @@ export default function PaymentsPage() {
 
         // Show specific errors
         ensureResult.errors.forEach((err: any) => {
-          toast.error(`Tenant ${err.tenant_id}: ${err.error}`);
+          toast.error(`Qiramarrësi ${err.tenant_id}: ${err.error}`);
         });
       }
 
       if (ensureResult.new_records > 0) {
-        toast.success(`Created ${ensureResult.new_records} new payment record(s)`);
+        toast.success(`U krijuan ${ensureResult.new_records} regjistrim(e) të ri(a) pagese`);
       }
 
       // Step 2: Get the payment IDs that were created/found
       const paymentIds = ensureResult.payments.map(p => p.id);
 
       if (paymentIds.length === 0) {
-        toast.error(`Could not create payment records. Check console for details.`);
+        toast.error(`Nuk mund të krijohen regjistrime pagese. Kontrolloni konsolën për detaje.`);
         return;
       }
 
       // Step 3: Mark all payments as paid
       await bulkUpdatePayments(paymentIds, "paid");
 
-      toast.success(`Successfully marked ${paymentIds.length} payment(s) as paid!`);
+      toast.success(`U shënuan me sukses ${paymentIds.length} pagesë(a) si të paguar!`);
 
       // Reset dialog state
       setIsDialogOpen(false);
@@ -291,7 +291,7 @@ export default function PaymentsPage() {
       fetchData();
     } catch (error: any) {
       console.error("Error marking payments:", error);
-      toast.error(error.message || "Failed to mark payments as paid");
+      toast.error(error.message || "Dështoi shënimi i pagesave si të paguara");
     } finally {
       setDialogLoading(false);
     }
@@ -300,11 +300,11 @@ export default function PaymentsPage() {
   const handleQuickStatusUpdate = async (paymentId: number, newStatus: "pending" | "paid" | "overdue") => {
     try {
       await updatePaymentStatus(paymentId, newStatus);
-      toast.success("Payment status updated");
+      toast.success("Statusi i pagesës u përditësua");
       fetchData();
     } catch (error) {
       console.error("Error updating payment:", error);
-      toast.error("Failed to update payment");
+      toast.error("Dështoi përditësimi i pagesës");
     }
   };
 
@@ -317,13 +317,13 @@ export default function PaymentsPage() {
       // Update the payment date
       await updatePaymentDate(selectedPaymentForEdit.id, format(editPaymentDate, 'yyyy-MM-dd'));
 
-      toast.success("Payment date updated");
+      toast.success("Data e pagesës u përditësua");
 
       // Refresh payments data
       fetchData();
     } catch (error) {
       console.error("Error updating payment date:", error);
-      toast.error("Failed to update payment date");
+      toast.error("Dështoi përditësimi i datës së pagesës");
     } finally {
       setEditDateLoading(false);
       setIsEditDateDialogOpen(false);
@@ -338,21 +338,21 @@ export default function PaymentsPage() {
         return (
             <Badge className="bg-green-500 hover:bg-green-600">
               <CheckCircle className="w-3 h-3 mr-1" />
-              Paid
+              Paguar
             </Badge>
         );
       case "pending":
         return (
             <Badge className="bg-yellow-500 hover:bg-yellow-600">
               <Clock className="w-3 h-3 mr-1" />
-              Pending
+              Në pritje
             </Badge>
         );
       case "overdue":
         return (
             <Badge className="bg-red-500 hover:bg-red-600">
               <AlertCircle className="w-3 h-3 mr-1" />
-              Overdue
+              Vonuar
             </Badge>
         );
       default:
@@ -373,8 +373,8 @@ export default function PaymentsPage() {
   };
 
   const getMonthName = (monthIndex: number) => {
-    const months = ["January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"];
+    const months = ["Janar", "Shkurt", "Mars", "Prill", "Maj", "Qershor",
+      "Korrik", "Gusht", "Shtator", "Tetor", "Nëntor", "Dhjetor"];
     return months[monthIndex];
   };
 
@@ -443,7 +443,7 @@ export default function PaymentsPage() {
 
   return (
       <ProtectedRoute allowedRoles={["property_manager"]}>
-        <PropertyManagerLayout title="Payment Management">
+        <PropertyManagerLayout title="Menaxhimi i Pagesave">
           <div className="space-y-4 md:space-y-6">
             {/* Statistics Cards */}
             {statistics && (
@@ -452,8 +452,8 @@ export default function PaymentsPage() {
                     <CardHeader className="pb-2">
                       <CardTitle className="text-xs md:text-sm font-medium flex items-center gap-2">
                         <Euro className="w-3 h-3 md:w-4 md:h-4" />
-                        <span className="hidden sm:inline">Total Payments</span>
-                        <span className="sm:hidden">Total</span>
+                        <span className="hidden sm:inline">Pagesat Totale</span>
+                        <span className="sm:hidden">Totali</span>
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -468,7 +468,7 @@ export default function PaymentsPage() {
                     <CardHeader className="pb-2">
                       <CardTitle className="text-xs md:text-sm font-medium flex items-center gap-2 text-green-600">
                         <CheckCircle className="w-3 h-3 md:w-4 md:h-4" />
-                        Paid
+                        Paguar
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -483,7 +483,7 @@ export default function PaymentsPage() {
                     <CardHeader className="pb-2">
                       <CardTitle className="text-xs md:text-sm font-medium flex items-center gap-2 text-yellow-600">
                         <Clock className="w-3 h-3 md:w-4 md:h-4" />
-                        Pending
+                        Në pritje
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -498,7 +498,7 @@ export default function PaymentsPage() {
                     <CardHeader className="pb-2">
                       <CardTitle className="text-xs md:text-sm font-medium flex items-center gap-2 text-red-600">
                         <AlertCircle className="w-3 h-3 md:w-4 md:h-4" />
-                        Overdue
+                        Vonuar
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -517,37 +517,37 @@ export default function PaymentsPage() {
                 <div className="flex flex-col gap-4">
                   <CardTitle className="flex items-center gap-2 text-base md:text-lg">
                     <CalendarIcon className="w-4 h-4 md:w-5 md:h-5" />
-                    Payment History
+                    Historiku i Pagesave
                   </CardTitle>
                   <div className="flex flex-col sm:flex-row flex-wrap gap-2">
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                       <DialogTrigger asChild>
                         <Button className="bg-indigo-600 hover:bg-indigo-700 h-9 text-xs md:text-sm">
                           <Plus className="w-3 h-3 md:w-4 md:h-4 mr-2" />
-                          Mark Payments
+                          Shëno Pagesat
                         </Button>
                       </DialogTrigger>
                       <DialogContent className="w-[95vw] max-w-2xl max-h-[85vh] overflow-y-auto">
                         <DialogHeader>
                           <DialogTitle className="flex items-center gap-2 text-base md:text-lg">
                             <Users className="w-4 h-4 md:w-5 md:h-5" />
-                            Mark Tenant Payments as Paid
+                            Shëno Pagesat e Qiramarrësve si të Paguara
                           </DialogTitle>
                           <DialogDescription className="text-xs md:text-sm">
-                            Select a month, property, and tenants who have completed their payment
+                            Zgjidhni një muaj, pronë dhe qiramarrës që kanë përfunduar pagesën e tyre
                           </DialogDescription>
                         </DialogHeader>
 
                         <div className="space-y-4 py-4">
                           {/* Property Selection - Move this first */}
                           <div className="space-y-2">
-                            <Label className="text-xs md:text-sm">Property</Label>
+                            <Label className="text-xs md:text-sm">Prona</Label>
                             <Select
                                 value={selectedDialogProperty}
                                 onValueChange={handleDialogPropertyChange}
                             >
                               <SelectTrigger className="h-9 md:h-10 text-xs md:text-sm">
-                                <SelectValue placeholder="Select property" />
+                                <SelectValue placeholder="Zgjidhni pronën" />
                               </SelectTrigger>
                               <SelectContent>
                                 {properties.map((property: any) => (
@@ -562,7 +562,7 @@ export default function PaymentsPage() {
                           {/* Month Selection - Show after property selected */}
                           {selectedDialogProperty && tenants.length > 0 && (
                               <div className="space-y-2">
-                                <Label className="text-xs md:text-sm">Payment Months (select multiple)</Label>
+                                <Label className="text-xs md:text-sm">Muajt e Pagesës (zgjidhni të shumtë)</Label>
                                 <div className="border rounded-lg divide-y max-h-64 overflow-y-auto">
                                   {Array.from({ length: 12 }, (_, i) => {
                                     // Calculate how many tenants have paid for this month
@@ -615,15 +615,15 @@ export default function PaymentsPage() {
                                               </div>
                                               {allTenantsPaid ? (
                                                   <div className="text-xs text-green-600 font-medium">
-                                                    ✓ All tenants paid ({tenants.length}/{tenants.length})
+                                                    ✓ Të gjithë qiramarrësit kanë paguar ({tenants.length}/{tenants.length})
                                                   </div>
                                               ) : someTenantsPaid ? (
                                                   <div className="text-xs text-yellow-600">
-                                                    {paidTenantIds.size}/{tenants.length} tenants paid
+                                                    {paidTenantIds.size}/{tenants.length} qiramarrës kanë paguar
                                                   </div>
                                               ) : (
                                                   <div className="text-xs text-muted-foreground">
-                                                    0/{tenants.length} tenants paid
+                                                    0/{tenants.length} qiramarrës kanë paguar
                                                   </div>
                                               )}
                                             </div>
@@ -639,7 +639,7 @@ export default function PaymentsPage() {
                           {selectedDialogProperty && selectedMonths.length > 0 && (
                               <div className="space-y-2">
                                 <div className="flex items-center justify-between">
-                                  <Label className="text-xs md:text-sm">Select Tenants Who Paid</Label>
+                                  <Label className="text-xs md:text-sm">Zgjidhni Qiramarrësit që Paguan</Label>
                                   {tenants.length > 0 && (
                                       <Button
                                           type="button"
@@ -648,18 +648,18 @@ export default function PaymentsPage() {
                                           onClick={handleSelectAllTenants}
                                           className="h-8 text-xs md:text-sm"
                                       >
-                                        {selectedTenantIds.length === tenants.length ? "Deselect All" : "Select All"}
+                                        {selectedTenantIds.length === tenants.length ? "Çzgjidh të Gjithë" : "Zgjidh të Gjithë"}
                                       </Button>
                                   )}
                                 </div>
 
                                 {tenantsLoading ? (
                                     <div className="text-center py-8 text-muted-foreground text-xs md:text-sm">
-                                      Loading tenants...
+                                      Duke ngarkuar qiramarrësit...
                                     </div>
                                 ) : tenants.length === 0 ? (
                                     <div className="text-center py-8 text-muted-foreground text-xs md:text-sm">
-                                      No tenants found for this property
+                                      Nuk u gjetën qiramarrës për këtë pronë
                                     </div>
                                 ) : (
                                     <div className="border rounded-lg divide-y max-h-64 overflow-y-auto">
@@ -703,19 +703,19 @@ export default function PaymentsPage() {
                                                 </div>
                                                 {!hasMonthlyRate ? (
                                                     <div className="text-xs text-red-500 font-medium">
-                                                      ⚠ No monthly rate set
+                                                      ⚠ Nuk ka tarifë mujore të vendosur
                                                     </div>
                                                 ) : alreadyPaidAllMonths ? (
                                                     <div className="text-xs text-green-600 font-medium">
-                                                      ✓ Already paid for all selected months
+                                                      ✓ Tashmë ka paguar për të gjithë muajt e zgjedhur
                                                     </div>
                                                 ) : paidMonths.length > 0 ? (
                                                     <div className="text-xs text-yellow-600">
-                                                      Paid {paidMonths.length}/{selectedMonths.length} selected months
+                                                      Ka paguar {paidMonths.length}/{selectedMonths.length} nga muajt e zgjedhur
                                                     </div>
                                                 ) : (
                                                     <div className="text-xs text-muted-foreground">
-                                                      Monthly Rate: {formatAmount(tenant.monthly_rate)}
+                                                      Tarifa Mujore: {formatAmount(tenant.monthly_rate)}
                                                     </div>
                                                 )}
                                               </div>
@@ -731,13 +731,13 @@ export default function PaymentsPage() {
                           {selectedTenantIds.length > 0 && selectedMonths.length > 0 && (
                               <div className="bg-muted p-3 md:p-4 rounded-lg">
                                 <p className="text-xs md:text-sm font-medium">
-                                  Selected: {selectedTenantIds.length} tenant(s) for {selectedMonths.length} month(s)
+                                  Zgjedhur: {selectedTenantIds.length} qiramarrës për {selectedMonths.length} muaj
                                 </p>
                                 <p className="text-xs text-muted-foreground mt-1">
-                                  Months: {selectedMonths.map(m => getMonthName(m)).join(', ')}
+                                  Muajt: {selectedMonths.map(m => getMonthName(m)).join(', ')}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
-                                  Year: {selectedYear}
+                                  Viti: {selectedYear}
                                 </p>
                               </div>
                           )}
@@ -750,14 +750,14 @@ export default function PaymentsPage() {
                               disabled={dialogLoading}
                               className="h-9 text-xs md:text-sm"
                           >
-                            Cancel
+                            Anulo
                           </Button>
                           <Button
                               onClick={handleBulkMarkAsPaid}
                               disabled={dialogLoading || selectedMonths.length === 0 || !selectedDialogProperty || selectedTenantIds.length === 0}
                               className="bg-green-600 hover:bg-green-700 h-9 text-xs md:text-sm"
                           >
-                            {dialogLoading ? "Processing..." : `Mark ${selectedTenantIds.length} as Paid`}
+                            {dialogLoading ? "Duke përpunuar..." : `Shëno ${selectedTenantIds.length} si të Paguar`}
                           </Button>
                         </DialogFooter>
                       </DialogContent>
@@ -778,10 +778,10 @@ export default function PaymentsPage() {
 
                     <Select value={selectedProperty} onValueChange={setSelectedProperty}>
                       <SelectTrigger className="w-full sm:w-48 h-9 text-xs md:text-sm">
-                        <SelectValue placeholder="All Properties" />
+                        <SelectValue placeholder="Të Gjitha Pronat" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all" className="text-xs md:text-sm">All Properties</SelectItem>
+                        <SelectItem value="all" className="text-xs md:text-sm">Të Gjitha Pronat</SelectItem>
                         {properties.map((property: any) => (
                             <SelectItem key={property.id} value={property.id.toString()} className="text-xs md:text-sm">
                               {property.name}
@@ -792,13 +792,13 @@ export default function PaymentsPage() {
 
                     <Select value={selectedStatus} onValueChange={setSelectedStatus}>
                       <SelectTrigger className="w-full sm:w-40 h-9 text-xs md:text-sm">
-                        <SelectValue placeholder="All Statuses" />
+                        <SelectValue placeholder="Të Gjitha Statuset" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all" className="text-xs md:text-sm">All Statuses</SelectItem>
-                        <SelectItem value="paid" className="text-xs md:text-sm">Paid</SelectItem>
-                        <SelectItem value="pending" className="text-xs md:text-sm">Pending</SelectItem>
-                        <SelectItem value="overdue" className="text-xs md:text-sm">Overdue</SelectItem>
+                        <SelectItem value="all" className="text-xs md:text-sm">Të Gjitha Statuset</SelectItem>
+                        <SelectItem value="paid" className="text-xs md:text-sm">Paguar</SelectItem>
+                        <SelectItem value="pending" className="text-xs md:text-sm">Në pritje</SelectItem>
+                        <SelectItem value="overdue" className="text-xs md:text-sm">Vonuar</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -807,7 +807,7 @@ export default function PaymentsPage() {
               <CardContent>
                 {loading ? (
                     <div className="text-center py-8 text-muted-foreground text-xs md:text-sm">
-                      Loading payments...
+                      Duke ngarkuar pagesat...
                     </div>
                 ) : (
                     <div className="space-y-2">
@@ -831,33 +831,33 @@ export default function PaymentsPage() {
                                               <div className="flex flex-wrap gap-1 md:gap-2 text-xs">
                                                 <Badge variant="outline" className="bg-green-50">
                                                   <CheckCircle className="w-3 h-3 mr-1 text-green-600" />
-                                                  {monthStats.paid} Paid
+                                                  {monthStats.paid} Paguar
                                                 </Badge>
                                                 <Badge variant="outline" className="bg-yellow-50">
                                                   <Clock className="w-3 h-3 mr-1 text-yellow-600" />
-                                                  {monthStats.pending} Pending
+                                                  {monthStats.pending} Në pritje
                                                 </Badge>
                                                 {monthStats.overdue > 0 && (
                                                     <Badge variant="outline" className="bg-red-50">
                                                       <AlertCircle className="w-3 h-3 mr-1 text-red-600" />
-                                                      {monthStats.overdue} Overdue
+                                                      {monthStats.overdue} Vonuar
                                                     </Badge>
                                                 )}
                                               </div>
                                           ) : (
                                               <div className="text-xs md:text-sm text-muted-foreground">
-                                                No payments recorded
+                                                Nuk ka pagesa të regjistruara
                                               </div>
                                           )}
                                         </div>
                                         {hasPayments && (
                                             <div className="flex flex-col items-start md:items-end">
                                               <div className="font-semibold text-xs md:text-sm text-green-600">
-                                                Paid: {formatAmount(monthStats.paidAmount)}
+                                                Paguar: {formatAmount(monthStats.paidAmount)}
                                               </div>
                                               {(monthStats.pendingAmount > 0 || monthStats.overdueAmount > 0) && (
                                                   <div className="text-xs text-muted-foreground">
-                                                    Outstanding: {formatAmount(monthStats.pendingAmount + monthStats.overdueAmount)}
+                                                    Të papaguara: {formatAmount(monthStats.pendingAmount + monthStats.overdueAmount)}
                                                   </div>
                                               )}
                                             </div>
@@ -908,7 +908,7 @@ export default function PaymentsPage() {
                                                               {payment.status === "paid" && <CheckCircle className="w-3 h-3 mr-1" />}
                                                               {payment.status === "pending" && <Clock className="w-3 h-3 mr-1" />}
                                                               {payment.status === "overdue" && <AlertCircle className="w-3 h-3 mr-1" />}
-                                                              {payment.status.charAt(0).toUpperCase() + payment.status.slice(1)}
+                                                              {payment.status === "paid" ? "Paguar" : payment.status === "pending" ? "Në pritje" : "Vonuar"}
                                                             </Badge>
                                                           </div>
                                                         </div>
@@ -916,10 +916,10 @@ export default function PaymentsPage() {
 
                                                       <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
                                                         <div>
-                                                          <span className="font-medium">Payment Date:</span>{" "}
+                                                          <span className="font-medium">Data e Pagesës:</span>{" "}
                                                           {payment.payment_date
                                                               ? new Date(payment.payment_date).toLocaleDateString()
-                                                              : "Not paid"}
+                                                              : "Nuk është paguar"}
                                                         </div>
                                                       </div>
 
@@ -931,7 +931,7 @@ export default function PaymentsPage() {
                                                                 className="text-xs h-8 w-full"
                                                                 onClick={() => handleQuickStatusUpdate(payment.id, "paid")}
                                                             >
-                                                              Mark Paid
+                                                              Shëno si të Paguar
                                                             </Button>
                                                         )}
                                                         {payment.status === "paid" && (
@@ -941,7 +941,7 @@ export default function PaymentsPage() {
                                                                 className="text-xs h-8 w-full"
                                                                 onClick={() => handleQuickStatusUpdate(payment.id, "pending")}
                                                             >
-                                                              Mark Pending
+                                                              Shëno si Në pritje
                                                             </Button>
                                                         )}
                                                         <Dialog>
@@ -957,26 +957,26 @@ export default function PaymentsPage() {
                                                                 }}
                                                             >
                                                               <Edit className="w-3 h-3 mr-1" />
-                                                              Edit Payment Date
+                                                              Ndrysho Datën e Pagesës
                                                             </Button>
                                                           </DialogTrigger>
                                                           <DialogContent className="w-[95vw] max-w-md">
                                                             <DialogHeader>
-                                                              <DialogTitle className="text-base md:text-lg">Edit Payment Date</DialogTitle>
+                                                              <DialogTitle className="text-base md:text-lg">Ndrysho Datën e Pagesës</DialogTitle>
                                                               <DialogDescription className="text-xs md:text-sm">
-                                                                Update the payment date for {payment.tenant?.name} {payment.tenant?.surname}
+                                                                Përditëso datën e pagesës për {payment.tenant?.name} {payment.tenant?.surname}
                                                               </DialogDescription>
                                                             </DialogHeader>
                                                             <div className="space-y-4">
                                                               <div>
-                                                                <Label className="text-xs md:text-sm">Payment Date</Label>
+                                                                <Label className="text-xs md:text-sm">Data e Pagesës</Label>
                                                                 <Popover>
                                                                   <PopoverTrigger asChild>
                                                                     <Button
                                                                         variant="outline"
                                                                         className={cn("w-full justify-start text-left h-9 md:h-10 text-xs md:text-sm", !editPaymentDate && "text-muted")}
                                                                     >
-                                                                      {editPaymentDate ? format(editPaymentDate, "PPP") : "Select date"}
+                                                                      {editPaymentDate ? format(editPaymentDate, "PPP") : "Zgjidhni datën"}
                                                                       <CalendarIcon className="w-4 h-4 ml-auto" />
                                                                     </Button>
                                                                   </PopoverTrigger>
@@ -999,14 +999,14 @@ export default function PaymentsPage() {
                                                                   disabled={editDateLoading}
                                                                   className="h-9 text-xs md:text-sm"
                                                               >
-                                                                Cancel
+                                                                Anulo
                                                               </Button>
                                                               <Button
                                                                   onClick={handleEditPaymentDate}
                                                                   disabled={editDateLoading}
                                                                   className="bg-green-600 hover:bg-green-700 h-9 text-xs md:text-sm"
                                                               >
-                                                                {editDateLoading ? "Updating..." : "Update Date"}
+                                                                {editDateLoading ? "Duke përditësuar..." : "Përditëso Datën"}
                                                               </Button>
                                                             </DialogFooter>
                                                           </DialogContent>
@@ -1022,12 +1022,12 @@ export default function PaymentsPage() {
                                               <Table>
                                                 <TableHeader>
                                                   <TableRow>
-                                                    <TableHead>Tenant</TableHead>
-                                                    <TableHead>Property</TableHead>
-                                                    <TableHead>Amount</TableHead>
-                                                    <TableHead>Status</TableHead>
-                                                    <TableHead>Payment Date</TableHead>
-                                                    <TableHead>Actions</TableHead>
+                                                    <TableHead>Qiramarrësi</TableHead>
+                                                    <TableHead>Prona</TableHead>
+                                                    <TableHead>Shuma</TableHead>
+                                                    <TableHead>Statusi</TableHead>
+                                                    <TableHead>Data e Pagesës</TableHead>
+                                                    <TableHead>Veprimet</TableHead>
                                                   </TableRow>
                                                 </TableHeader>
                                                 <TableBody>
@@ -1071,7 +1071,7 @@ export default function PaymentsPage() {
                                                             {payment.status === "paid" && <CheckCircle className="w-3 h-3 mr-1" />}
                                                             {payment.status === "pending" && <Clock className="w-3 h-3 mr-1" />}
                                                             {payment.status === "overdue" && <AlertCircle className="w-3 h-3 mr-1" />}
-                                                            {payment.status.charAt(0).toUpperCase() + payment.status.slice(1)}
+                                                            {payment.status === "paid" ? "Paguar" : payment.status === "pending" ? "Në pritje" : "Vonuar"}
                                                           </Badge>
                                                         </TableCell>
                                                         <TableCell>
@@ -1088,7 +1088,7 @@ export default function PaymentsPage() {
                                                                     className="text-xs"
                                                                     onClick={() => handleQuickStatusUpdate(payment.id, "paid")}
                                                                 >
-                                                                  Mark Paid
+                                                                  Shëno si të Paguar
                                                                 </Button>
                                                             )}
                                                             {payment.status === "paid" && (
@@ -1098,7 +1098,7 @@ export default function PaymentsPage() {
                                                                     className="text-xs"
                                                                     onClick={() => handleQuickStatusUpdate(payment.id, "pending")}
                                                                 >
-                                                                  Mark Pending
+                                                                  Shëno si Në pritje
                                                                 </Button>
                                                             )}
                                                             <Dialog>
@@ -1114,26 +1114,26 @@ export default function PaymentsPage() {
                                                                     }}
                                                                 >
                                                                   <Edit className="w-4 h-4 mr-1" />
-                                                                  Edit Date
+                                                                  Ndrysho Datën
                                                                 </Button>
                                                               </DialogTrigger>
                                                               <DialogContent className="w-[95vw] max-w-md">
                                                                 <DialogHeader>
-                                                                  <DialogTitle className="text-base md:text-lg">Edit Payment Date</DialogTitle>
+                                                                  <DialogTitle className="text-base md:text-lg">Ndrysho Datën e Pagesës</DialogTitle>
                                                                   <DialogDescription className="text-xs md:text-sm">
-                                                                    Update the payment date for {payment.tenant?.name} {payment.tenant?.surname}
+                                                                    Përditëso datën e pagesës për {payment.tenant?.name} {payment.tenant?.surname}
                                                                   </DialogDescription>
                                                                 </DialogHeader>
                                                                 <div className="space-y-4">
                                                                   <div>
-                                                                    <Label className="text-xs md:text-sm">Payment Date</Label>
+                                                                    <Label className="text-xs md:text-sm">Data e Pagesës</Label>
                                                                     <Popover>
                                                                       <PopoverTrigger asChild>
                                                                         <Button
                                                                             variant="outline"
                                                                             className={cn("w-full justify-start text-left h-9 md:h-10 text-xs md:text-sm", !editPaymentDate && "text-muted")}
                                                                         >
-                                                                          {editPaymentDate ? format(editPaymentDate, "PPP") : "Select date"}
+                                                                          {editPaymentDate ? format(editPaymentDate, "PPP") : "Zgjidhni datën"}
                                                                           <CalendarIcon className="w-4 h-4 ml-auto" />
                                                                         </Button>
                                                                       </PopoverTrigger>
@@ -1156,14 +1156,14 @@ export default function PaymentsPage() {
                                                                       disabled={editDateLoading}
                                                                       className="h-9 text-xs md:text-sm"
                                                                   >
-                                                                    Cancel
+                                                                    Anulo
                                                                   </Button>
                                                                   <Button
                                                                       onClick={handleEditPaymentDate}
                                                                       disabled={editDateLoading}
                                                                       className="bg-green-600 hover:bg-green-700 h-9 text-xs md:text-sm"
                                                                   >
-                                                                    {editDateLoading ? "Updating..." : "Update Date"}
+                                                                    {editDateLoading ? "Duke përditësuar..." : "Përditëso Datën"}
                                                                   </Button>
                                                                 </DialogFooter>
                                                               </DialogContent>
@@ -1178,7 +1178,7 @@ export default function PaymentsPage() {
                                           </div>
                                       ) : (
                                           <div className="px-4 pb-4 text-center text-muted-foreground text-xs md:text-sm">
-                                            No payment records for this month
+                                            Nuk ka regjistrime pagese për këtë muaj
                                           </div>
                                       )}
                                     </AccordionContent>
@@ -1195,3 +1195,4 @@ export default function PaymentsPage() {
       </ProtectedRoute>
   );
 }
+

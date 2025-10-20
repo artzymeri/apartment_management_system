@@ -52,8 +52,8 @@ export function MonthlyReportsList({ propertyId, year }: MonthlyReportsListProps
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-8 md:py-12">
           <FileText className="h-10 w-10 md:h-12 md:w-12 text-muted-foreground mb-3 md:mb-4" />
-          <p className="text-base md:text-lg font-medium text-muted-foreground">No reports found</p>
-          <p className="text-xs md:text-sm text-muted-foreground">No reports generated for this property in {year}</p>
+          <p className="text-base md:text-lg font-medium text-muted-foreground">Nuk u gjetën raporte</p>
+          <p className="text-xs md:text-sm text-muted-foreground">Nuk ka raporte të gjeneruara për këtë pronë në {year}</p>
         </CardContent>
       </Card>
     );
@@ -83,15 +83,15 @@ export function MonthlyReportsList({ propertyId, year }: MonthlyReportsListProps
   const handleDownload = async (report: MonthlyReport) => {
     try {
       setDownloadingReportId(report.id);
-      toast.info("Generating PDF...");
+      toast.info("Duke gjeneruar PDF...");
 
       // Generate PDF with just the report data (no tenant payment details)
       await generateMonthlyReportPDF(report);
 
-      toast.success("PDF downloaded successfully!");
+      toast.success("PDF u shkarkua me sukses!");
     } catch (error: any) {
       console.error('PDF generation error:', error);
-      toast.error(error.message || "Failed to generate PDF");
+      toast.error(error.message || "Dështoi gjenerimi i PDF");
     } finally {
       setDownloadingReportId(null);
     }
@@ -120,7 +120,7 @@ export function MonthlyReportsList({ propertyId, year }: MonthlyReportsListProps
                     <CardTitle className="text-base md:text-lg">{getMonthName(report.report_month)}</CardTitle>
                     <CardDescription className="flex items-center gap-2 text-xs text-muted-foreground">
                       <TrendingUp className="h-3 w-3" />
-                      <span>{report.paid_tenants} of {report.total_tenants} tenants paid ({collectionRate(report)}%)</span>
+                      <span>{report.paid_tenants} nga {report.total_tenants} qiramarrës kanë paguar ({collectionRate(report)}%)</span>
                     </CardDescription>
                   </div>
                   {report.property && (
@@ -134,18 +134,18 @@ export function MonthlyReportsList({ propertyId, year }: MonthlyReportsListProps
               <CardContent className="space-y-3">
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
-                    <p className="text-muted-foreground text-xs">Total Budget</p>
+                    <p className="text-muted-foreground text-xs">Buxheti Total</p>
                     <p className="font-semibold text-sm md:text-base">€{parseFloat(report.total_budget).toFixed(2)}</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-xs">Pending</p>
+                    <p className="text-muted-foreground text-xs">Në pritje</p>
                     <p className="font-semibold text-sm md:text-base text-orange-600">€{parseFloat(report.pending_amount).toFixed(2)}</p>
                   </div>
                 </div>
 
                 {report.spending_breakdown && report.spending_breakdown.length > 0 && (
                   <div className="pt-2 border-t">
-                    <p className="text-xs text-muted-foreground mb-2">Budget Allocation</p>
+                    <p className="text-xs text-muted-foreground mb-2">Alokimi i Buxhetit</p>
                     <div className="space-y-1">
                       {report.spending_breakdown.slice(0, 2).map((item: any, idx: number) => (
                         <div key={idx} className="flex justify-between text-xs gap-2">
@@ -155,7 +155,7 @@ export function MonthlyReportsList({ propertyId, year }: MonthlyReportsListProps
                       ))}
                       {report.spending_breakdown.length > 2 && (
                         <p className="text-xs text-muted-foreground italic">
-                          +{report.spending_breakdown.length - 2} more...
+                          +{report.spending_breakdown.length - 2} më shumë...
                         </p>
                       )}
                     </div>
@@ -173,13 +173,13 @@ export function MonthlyReportsList({ propertyId, year }: MonthlyReportsListProps
                     {downloadingReportId === report.id ? (
                       <>
                         <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                        <span className="hidden sm:inline">Generating...</span>
+                        <span className="hidden sm:inline">Duke gjeneruar...</span>
                         <span className="sm:hidden">...</span>
                       </>
                     ) : (
                       <>
                         <Download className="h-3 w-3 mr-1" />
-                        <span className="hidden sm:inline">Download</span>
+                        <span className="hidden sm:inline">Shkarko</span>
                         <span className="sm:hidden">PDF</span>
                       </>
                     )}
@@ -218,15 +218,15 @@ export function MonthlyReportsList({ propertyId, year }: MonthlyReportsListProps
       <AlertDialog open={deleteReportId !== null} onOpenChange={(open) => !open && setDeleteReportId(null)}>
         <AlertDialogContent className="w-[95vw] max-w-md">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-base md:text-lg">Delete Report</AlertDialogTitle>
+            <AlertDialogTitle className="text-base md:text-lg">Fshi Raportin</AlertDialogTitle>
             <AlertDialogDescription className="text-xs md:text-sm">
-              Are you sure you want to delete this monthly report? This action cannot be undone.
+              A jeni të sigurt që dëshironi të fshini këtë raport mujor? Ky veprim nuk mund të zhbëhet.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex-col sm:flex-row gap-2">
-            <AlertDialogCancel className="h-9 text-xs md:text-sm">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="h-9 text-xs md:text-sm">Anulo</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90 h-9 text-xs md:text-sm">
-              Delete
+              Fshi
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

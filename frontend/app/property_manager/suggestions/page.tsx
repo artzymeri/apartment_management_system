@@ -107,11 +107,11 @@ export default function PropertyManagerSuggestionsPage() {
           const data = await response.json();
           setSuggestions(data.suggestions);
         } else {
-          toast.error("Failed to load suggestions");
+          toast.error("Dështoi ngarkimi i sugjerimeve");
         }
       } catch (error) {
         console.error("Error fetching suggestions:", error);
-        toast.error("Failed to load suggestions");
+        toast.error("Dështoi ngarkimi i sugjerimeve");
       } finally {
         setIsLoading(false);
       }
@@ -155,7 +155,7 @@ export default function PropertyManagerSuggestionsPage() {
       });
 
       if (response_text.ok) {
-        toast.success("Suggestion status updated successfully");
+        toast.success("Statusi i sugjerimit u përditësua me sukses");
         setSelectedSuggestion(null);
         setNewStatus("");
         setResponse("");
@@ -182,11 +182,11 @@ export default function PropertyManagerSuggestionsPage() {
         }
       } else {
         const data = await response_text.json();
-        toast.error(data.message || "Failed to update suggestion status");
+        toast.error(data.message || "Dështoi përditësimi i statusit të sugjerimit");
       }
     } catch (error) {
       console.error("Error updating suggestion status:", error);
-      toast.error("Failed to update suggestion status");
+      toast.error("Dështoi përditësimi i statusit të sugjerimit");
     } finally {
       setIsUpdating(false);
     }
@@ -195,13 +195,13 @@ export default function PropertyManagerSuggestionsPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
-        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800"><Clock className="mr-1 h-3 w-3" />Pending</Badge>;
+        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800"><Clock className="mr-1 h-3 w-3" />Në pritje</Badge>;
       case 'in_progress':
-        return <Badge variant="secondary" className="bg-blue-100 text-blue-800"><AlertCircle className="mr-1 h-3 w-3" />In Progress</Badge>;
+        return <Badge variant="secondary" className="bg-blue-100 text-blue-800"><AlertCircle className="mr-1 h-3 w-3" />Në progres</Badge>;
       case 'resolved':
-        return <Badge variant="secondary" className="bg-green-100 text-green-800"><CheckCircle2 className="mr-1 h-3 w-3" />Implemented</Badge>;
+        return <Badge variant="secondary" className="bg-green-100 text-green-800"><CheckCircle2 className="mr-1 h-3 w-3" />Implementuar</Badge>;
       case 'rejected':
-        return <Badge variant="secondary" className="bg-red-100 text-red-800"><XCircle className="mr-1 h-3 w-3" />Rejected</Badge>;
+        return <Badge variant="secondary" className="bg-red-100 text-red-800"><XCircle className="mr-1 h-3 w-3" />Refuzuar</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -218,13 +218,13 @@ export default function PropertyManagerSuggestionsPage() {
 
   return (
     <ProtectedRoute allowedRoles={["property_manager"]}>
-      <PropertyManagerLayout title="Suggestions">
+      <PropertyManagerLayout title="Sugjerimet">
         <div className="space-y-6">
           {/* Stats Cards */}
           <div className="grid gap-4 grid-cols-2 md:grid-cols-5">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total</CardTitle>
+                <CardTitle className="text-sm font-medium">Totali</CardTitle>
                 <Lightbulb className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -233,7 +233,7 @@ export default function PropertyManagerSuggestionsPage() {
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Pending</CardTitle>
+                <CardTitle className="text-sm font-medium">Në pritje</CardTitle>
                 <Clock className="h-4 w-4 text-yellow-600" />
               </CardHeader>
               <CardContent>
@@ -242,7 +242,7 @@ export default function PropertyManagerSuggestionsPage() {
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">In Progress</CardTitle>
+                <CardTitle className="text-sm font-medium">Në progres</CardTitle>
                 <AlertCircle className="h-4 w-4 text-blue-600" />
               </CardHeader>
               <CardContent>
@@ -251,7 +251,7 @@ export default function PropertyManagerSuggestionsPage() {
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Implemented</CardTitle>
+                <CardTitle className="text-sm font-medium">Implementuar</CardTitle>
                 <CheckCircle2 className="h-4 w-4 text-green-600" />
               </CardHeader>
               <CardContent>
@@ -260,7 +260,7 @@ export default function PropertyManagerSuggestionsPage() {
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Rejected</CardTitle>
+                <CardTitle className="text-sm font-medium">Refuzuar</CardTitle>
                 <XCircle className="h-4 w-4 text-red-600" />
               </CardHeader>
               <CardContent>
@@ -274,18 +274,18 @@ export default function PropertyManagerSuggestionsPage() {
             <CardHeader>
               <div className="flex flex-col gap-4">
                 <div>
-                  <CardTitle>Suggestions Overview</CardTitle>
+                  <CardTitle>Pamja e Sugjerimeve</CardTitle>
                   <CardDescription>
-                    Review tenant suggestions for your properties
+                    Shqyrtoni sugjerimet e qiramarrësve për pronat tuaja
                   </CardDescription>
                 </div>
                 <div className="flex flex-col gap-2">
                   <Select value={selectedProperty} onValueChange={setSelectedProperty}>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="All Properties" />
+                      <SelectValue placeholder="Të Gjitha Pronat" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Properties</SelectItem>
+                      <SelectItem value="all">Të Gjitha Pronat</SelectItem>
                       {properties?.map((property) => (
                         <SelectItem key={property.id} value={property.id.toString()}>
                           {property.name}
@@ -295,14 +295,14 @@ export default function PropertyManagerSuggestionsPage() {
                   </Select>
                   <Select value={selectedStatus} onValueChange={setSelectedStatus}>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="All Statuses" />
+                      <SelectValue placeholder="Të Gjitha Statuset" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Statuses</SelectItem>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="in_progress">In Progress</SelectItem>
-                      <SelectItem value="resolved">Implemented</SelectItem>
-                      <SelectItem value="rejected">Rejected</SelectItem>
+                      <SelectItem value="all">Të Gjitha Statuset</SelectItem>
+                      <SelectItem value="pending">Në pritje</SelectItem>
+                      <SelectItem value="in_progress">Në progres</SelectItem>
+                      <SelectItem value="resolved">Implementuar</SelectItem>
+                      <SelectItem value="rejected">Refuzuar</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -317,7 +317,7 @@ export default function PropertyManagerSuggestionsPage() {
                 <Alert>
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    No suggestions found matching the selected filters.
+                    Nuk u gjetën sugjerime që përputhen me filtrat e zgjedhur.
                   </AlertDescription>
                 </Alert>
               ) : (
@@ -327,13 +327,13 @@ export default function PropertyManagerSuggestionsPage() {
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Title</TableHead>
-                          <TableHead>Property</TableHead>
-                          <TableHead>Tenant</TableHead>
-                          <TableHead>Floor</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead>Date</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
+                          <TableHead>Titulli</TableHead>
+                          <TableHead>Prona</TableHead>
+                          <TableHead>Qiramarrësi</TableHead>
+                          <TableHead>Kati</TableHead>
+                          <TableHead>Statusi</TableHead>
+                          <TableHead>Data</TableHead>
+                          <TableHead className="text-right">Veprimet</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -393,7 +393,7 @@ export default function PropertyManagerSuggestionsPage() {
                                   setNewStatus(suggestion.status);
                                 }}
                               >
-                                Update Status
+                                Përditëso Statusin
                               </Button>
                             </TableCell>
                           </TableRow>
@@ -438,7 +438,7 @@ export default function PropertyManagerSuggestionsPage() {
                             </div>
                           </div>
                           <div className="flex items-center justify-between text-sm">
-                            <span className="text-muted-foreground">Floor:</span>
+                            <span className="text-muted-foreground">Kati:</span>
                             <span className="font-medium">
                               {suggestion.tenant.floor_assigned !== null
                                 ? suggestion.tenant.floor_assigned
@@ -446,7 +446,7 @@ export default function PropertyManagerSuggestionsPage() {
                             </span>
                           </div>
                           <div className="flex items-center justify-between text-sm">
-                            <span className="text-muted-foreground">Date:</span>
+                            <span className="text-muted-foreground">Data:</span>
                             <div className="text-right">
                               <div>{format(new Date(suggestion.created_at), "PP")}</div>
                               <div className="text-xs text-muted-foreground">
@@ -463,7 +463,7 @@ export default function PropertyManagerSuggestionsPage() {
                               setNewStatus(suggestion.status);
                             }}
                           >
-                            Update Status
+                            Përditëso Statusin
                           </Button>
                         </CardContent>
                       </Card>
@@ -479,49 +479,49 @@ export default function PropertyManagerSuggestionsPage() {
         <Dialog open={!!selectedSuggestion} onOpenChange={(open) => !open && setSelectedSuggestion(null)}>
           <DialogContent className="max-w-[95vw] md:max-w-[500px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Update Suggestion Status</DialogTitle>
+              <DialogTitle>Përditëso Statusin e Sugjerimit</DialogTitle>
               <DialogDescription>
-                Change the status of this suggestion
+                Ndryshoni statusin e këtij sugjerimi
               </DialogDescription>
             </DialogHeader>
 
             {selectedSuggestion && (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <div className="text-sm font-medium">Suggestion Details</div>
+                  <div className="text-sm font-medium">Detajet e Sugjerimit</div>
                   <div className="text-sm text-muted-foreground space-y-1">
-                    <div><strong>Title:</strong> {selectedSuggestion.title}</div>
+                    <div><strong>Titulli:</strong> {selectedSuggestion.title}</div>
                     {selectedSuggestion.description && (
-                      <div><strong>Description:</strong> {selectedSuggestion.description}</div>
+                      <div><strong>Përshkrimi:</strong> {selectedSuggestion.description}</div>
                     )}
-                    <div><strong>Property:</strong> {selectedSuggestion.property.name}</div>
+                    <div><strong>Prona:</strong> {selectedSuggestion.property.name}</div>
                     <div>
-                      <strong>Tenant:</strong> {selectedSuggestion.tenant.name} {selectedSuggestion.tenant.surname}
+                      <strong>Qiramarrësi:</strong> {selectedSuggestion.tenant.name} {selectedSuggestion.tenant.surname}
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">New Status</label>
+                  <label className="text-sm font-medium">Statusi i Ri</label>
                   <Select value={newStatus} onValueChange={setNewStatus}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="in_progress">In Progress</SelectItem>
-                      <SelectItem value="resolved">Implemented</SelectItem>
-                      <SelectItem value="rejected">Rejected</SelectItem>
+                      <SelectItem value="pending">Në pritje</SelectItem>
+                      <SelectItem value="in_progress">Në progres</SelectItem>
+                      <SelectItem value="resolved">Implementuar</SelectItem>
+                      <SelectItem value="rejected">Refuzuar</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium">Response (Optional)</Label>
+                  <Label className="text-sm font-medium">Përgjigja (Opsionale)</Label>
                   <Textarea
                     value={response}
                     onChange={(e) => setResponse(e.target.value)}
-                    placeholder="Enter your response here"
+                    placeholder="Vendosni përgjigjen tuaj këtu"
                     rows={3}
                   />
                 </div>
@@ -530,16 +530,16 @@ export default function PropertyManagerSuggestionsPage() {
 
             <DialogFooter className="flex-col sm:flex-row gap-2">
               <Button variant="outline" onClick={() => setSelectedSuggestion(null)} disabled={isUpdating} className="w-full sm:w-auto">
-                Cancel
+                Anulo
               </Button>
               <Button onClick={handleStatusUpdate} disabled={isUpdating || !newStatus} className="w-full sm:w-auto">
                 {isUpdating ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Updating...
+                    Duke përditësuar...
                   </>
                 ) : (
-                  "Update Status"
+                  "Përditëso Statusin"
                 )}
               </Button>
             </DialogFooter>

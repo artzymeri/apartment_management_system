@@ -76,11 +76,11 @@ export default function ReportProblemPage() {
           }
         } else {
           console.error("Failed to fetch problem options:", response.status);
-          toast.error("Failed to load problem options");
+          toast.error("Gabim në ngarkimin e opsioneve të problemeve");
         }
       } catch (error) {
         console.error("Error fetching problem options:", error);
-        toast.error("Failed to load problem options");
+        toast.error("Gabim në ngarkimin e opsioneve të problemeve");
       } finally {
         setFetchingData(false);
       }
@@ -130,7 +130,7 @@ export default function ReportProblemPage() {
     e.preventDefault();
 
     if (!selectedProperty || !selectedProblem) {
-      toast.error("Please select a property and problem type");
+      toast.error("Ju lutem zgjidhni një pronë dhe llojin e problemit");
       return;
     }
 
@@ -154,7 +154,7 @@ export default function ReportProblemPage() {
       const data = await response.json();
 
       if (response.ok) {
-        toast.success("Problem reported successfully!");
+        toast.success("Problemi u raportua me sukses!");
         setSelectedProblem("");
         setSelectedFloor("");
 
@@ -167,11 +167,11 @@ export default function ReportProblemPage() {
           setMyReports(reportsData.reports);
         }
       } else {
-        toast.error(data.message || "Failed to submit report");
+        toast.error(data.message || "Gabim në dërgimin e raportit");
       }
     } catch (error) {
       console.error("Error submitting report:", error);
-      toast.error("Failed to submit report");
+      toast.error("Gabim në dërgimin e raportit");
     } finally {
       setLoading(false);
     }
@@ -183,27 +183,27 @@ export default function ReportProblemPage() {
         return (
           <Badge variant="secondary" className="bg-yellow-100 text-yellow-700">
             <Clock className="mr-1 h-3 w-3" />
-            Pending
+            Në Pritje
           </Badge>
         );
       case "in_progress":
         return (
           <Badge variant="secondary" className="bg-blue-100 text-blue-700">
             <Loader2 className="mr-1 h-3 w-3" />
-            In Progress
+            Në Proces
           </Badge>
         );
       case "resolved":
         return (
           <Badge variant="secondary" className="bg-green-100 text-green-700">
             <CheckCircle2 className="mr-1 h-3 w-3" />
-            Resolved
+            E Zgjidhur
           </Badge>
         );
       case "rejected":
         return (
           <Badge variant="secondary" className="bg-red-100 text-red-700">
-            Rejected
+            E Refuzuar
           </Badge>
         );
       default:
@@ -214,7 +214,7 @@ export default function ReportProblemPage() {
   if (fetchingData) {
     return (
       <ProtectedRoute allowedRoles={["tenant"]}>
-        <TenantLayout title="Report a Problem">
+        <TenantLayout title="Raporto Problem">
           <div className="flex items-center justify-center h-64">
             <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
           </div>
@@ -225,7 +225,7 @@ export default function ReportProblemPage() {
 
   return (
     <ProtectedRoute allowedRoles={["tenant"]}>
-      <TenantLayout title="Report a Problem">
+      <TenantLayout title="Raporto Problem">
         <div className="space-y-6">
           <div className="grid gap-6 md:grid-cols-2">
             {/* Report Form */}
@@ -233,23 +233,23 @@ export default function ReportProblemPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <AlertTriangle className="h-5 w-5 text-emerald-600" />
-                  New Report
+                  Raport i Ri
                 </CardTitle>
                 <CardDescription>
-                  Fill out the form below to report an issue
+                  Plotësoni formularin më poshtë për të raportuar një problem
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="property">Property</Label>
+                    <Label htmlFor="property">Prona</Label>
                     <Select
                       value={selectedProperty?.id.toString()}
                       onValueChange={handlePropertyChange}
                       disabled
                     >
                       <SelectTrigger id="property">
-                        <SelectValue placeholder="Select property" />
+                        <SelectValue placeholder="Zgjidhni pronën" />
                       </SelectTrigger>
                       <SelectContent>
                         {properties.map((property) => (
@@ -263,10 +263,10 @@ export default function ReportProblemPage() {
 
                   {selectedProperty && selectedProperty.problemOptions.length > 0 && (
                     <div className="space-y-2">
-                      <Label htmlFor="problem">Problem Type *</Label>
+                      <Label htmlFor="problem">Lloji i Problemit *</Label>
                       <Select value={selectedProblem} onValueChange={setSelectedProblem}>
                         <SelectTrigger id="problem">
-                          <SelectValue placeholder="Select problem type" />
+                          <SelectValue placeholder="Zgjidhni llojin e problemit" />
                         </SelectTrigger>
                         <SelectContent>
                           {selectedProperty.problemOptions.map((option) => (
@@ -283,15 +283,15 @@ export default function ReportProblemPage() {
                     selectedProperty.floors_from !== null &&
                     selectedProperty.floors_to !== null && (
                       <div className="space-y-2">
-                        <Label htmlFor="floor">Floor (Optional)</Label>
+                        <Label htmlFor="floor">Kati (Opsionale)</Label>
                         <Select value={selectedFloor} onValueChange={setSelectedFloor}>
                           <SelectTrigger id="floor">
-                            <SelectValue placeholder="Select floor" />
+                            <SelectValue placeholder="Zgjidhni katin" />
                           </SelectTrigger>
                           <SelectContent>
                             {generateFloorOptions().map((floor) => (
                               <SelectItem key={floor} value={floor.toString()}>
-                                Floor {floor}
+                                Kati {floor}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -307,10 +307,10 @@ export default function ReportProblemPage() {
                     {loading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Submitting...
+                        Duke Dërguar...
                       </>
                     ) : (
-                      "Submit Report"
+                      "Dërgo Raportin"
                     )}
                   </Button>
                 </form>
@@ -320,14 +320,14 @@ export default function ReportProblemPage() {
             {/* My Reports */}
             <Card>
               <CardHeader>
-                <CardTitle>My Reports</CardTitle>
-                <CardDescription>Track your submitted reports</CardDescription>
+                <CardTitle>Raportet e Mia</CardTitle>
+                <CardDescription>Ndiqni raportet tuaja të dërguara</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4 max-h-[500px] overflow-y-auto">
                   {myReports.length === 0 ? (
                     <p className="text-sm text-slate-500 text-center py-8">
-                      No reports submitted yet
+                      Nuk ka raporte të dërguara ende
                     </p>
                   ) : (
                     myReports.map((report) => (
@@ -344,7 +344,7 @@ export default function ReportProblemPage() {
                               {report.property.name}
                             </p>
                             {report.floor && (
-                              <p className="text-xs text-slate-500">Floor {report.floor}</p>
+                              <p className="text-xs text-slate-500">Kati {report.floor}</p>
                             )}
                           </div>
                           {getStatusBadge(report.status)}
@@ -353,7 +353,7 @@ export default function ReportProblemPage() {
                           <p className="text-sm text-slate-600">{report.description}</p>
                         )}
                         <p className="text-xs text-slate-400">
-                          {new Date(report.created_at).toLocaleDateString()}
+                          {new Date(report.created_at).toLocaleDateString('sq-AL')}
                         </p>
                       </div>
                     ))

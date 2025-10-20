@@ -35,26 +35,26 @@ export default function MonthlyReportsPage() {
                 <div className="flex items-start gap-2 md:gap-3">
                   <Filter className="h-4 w-4 md:h-5 md:w-5 mt-1" />
                   <div className="flex-1">
-                    <CardTitle className="text-base md:text-lg">Filter Reports</CardTitle>
-                    <CardDescription className="text-xs md:text-sm">Select a property and year to view reports</CardDescription>
+                    <CardTitle className="text-base md:text-lg">Filtro Raportet</CardTitle>
+                    <CardDescription className="text-xs md:text-sm">Zgjidhni një pronë dhe vit për të parë raportet</CardDescription>
                   </div>
                 </div>
                 <Button
                   onClick={() => setIsGenerateModalOpen(true)}
-                  className="w-full sm:w-auto h-9 md:h-10 text-xs md:text-sm"
+                  className="w-full sm:w-auto h-9 md:h-10 text-xs md:text-sm bg-indigo-600 hover:bg-indigo-700"
                 >
                   <Plus className="h-3 w-3 md:h-5 md:w-5 mr-2" />
-                  Generate New Report
+                  Gjenero Raport të Ri
                 </Button>
               </div>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                 <div className="space-y-2">
-                  <label className="text-xs md:text-sm font-medium">Property</label>
+                  <label className="text-xs md:text-sm font-medium">Prona</label>
                   <Select value={selectedProperty} onValueChange={setSelectedProperty}>
                     <SelectTrigger className="h-9 md:h-10 text-xs md:text-sm">
-                      <SelectValue placeholder="Select a property" />
+                      <SelectValue placeholder="Zgjidhni një pronë" />
                     </SelectTrigger>
                     <SelectContent>
                       {properties.map((property: Property) => (
@@ -67,10 +67,10 @@ export default function MonthlyReportsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs md:text-sm font-medium">Year</label>
+                  <label className="text-xs md:text-sm font-medium">Viti</label>
                   <Select value={selectedYear} onValueChange={setSelectedYear}>
                     <SelectTrigger className="h-9 md:h-10 text-xs md:text-sm">
-                      <SelectValue placeholder="Select a year" />
+                      <SelectValue placeholder="Zgjidhni një vit" />
                     </SelectTrigger>
                     <SelectContent>
                       {years.map((year) => (
@@ -95,8 +95,8 @@ export default function MonthlyReportsPage() {
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-8 md:py-12">
                 <FileText className="h-10 w-10 md:h-12 md:w-12 text-muted-foreground mb-3 md:mb-4" />
-                <p className="text-base md:text-lg font-medium text-muted-foreground">Select filters to view reports</p>
-                <p className="text-xs md:text-sm text-muted-foreground">Please select both a property and year above</p>
+                <p className="text-base md:text-lg font-medium text-muted-foreground">Zgjidhni filtrat për të parë raportet</p>
+                <p className="text-xs md:text-sm text-muted-foreground">Ju lutem zgjidhni një pronë dhe vit më sipër</p>
               </CardContent>
             </Card>
           )}
