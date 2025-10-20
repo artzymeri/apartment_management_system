@@ -199,7 +199,7 @@ export function PropertyManagerLayout({ children, title }: { children: React.Rea
                 <Menu className="h-5 w-5 md:h-6 md:w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-64 p-0">
+            <SheetContent side="left" className="w-64 p-0" showCloseButton={false}>
               <Sidebar />
             </SheetContent>
           </Sheet>

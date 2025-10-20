@@ -148,7 +148,7 @@ export function TenantLayout({ children, title = "My Apartment" }: { children: R
                 <Menu className="h-5 w-5 sm:h-6 sm:w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-64 p-0">
+            <SheetContent side="left" className="w-64 p-0" showCloseButton={false}>
               <Sidebar isMobile={true} />
             </SheetContent>
           </Sheet>
