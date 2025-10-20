@@ -11,14 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { getTenantPayments, TenantPayment } from "@/lib/tenant-payment-api";
@@ -121,16 +113,16 @@ export default function TenantPaymentsPage() {
   return (
     <ProtectedRoute allowedRoles={["tenant"]}>
       <TenantLayout title="My Payments">
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Header Stats */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Payments</CardTitle>
-                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className="text-xs sm:text-sm font-medium">Total Payments</CardTitle>
+                <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.total}</div>
+                <div className="text-xl sm:text-2xl font-bold">{stats.total}</div>
                 <p className="text-xs text-muted-foreground">
                   For year {selectedYear}
                 </p>
@@ -139,12 +131,12 @@ export default function TenantPaymentsPage() {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Paid</CardTitle>
-                <CheckCircle className="h-4 w-4 text-green-600" />
+                <CardTitle className="text-xs sm:text-sm font-medium">Paid</CardTitle>
+                <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-green-600">{stats.paid}</div>
-                <p className="text-xs text-muted-foreground">
+                <div className="text-xl sm:text-2xl font-bold text-green-600">{stats.paid}</div>
+                <p className="text-xs text-muted-foreground truncate">
                   {formatCurrency(stats.paidAmount.toString())}
                 </p>
               </CardContent>
@@ -152,11 +144,11 @@ export default function TenantPaymentsPage() {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Pending</CardTitle>
-                <Clock className="h-4 w-4 text-yellow-600" />
+                <CardTitle className="text-xs sm:text-sm font-medium">Pending</CardTitle>
+                <Clock className="h-4 w-4 text-yellow-600 flex-shrink-0" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
+                <div className="text-xl sm:text-2xl font-bold text-yellow-600">{stats.pending}</div>
                 <p className="text-xs text-muted-foreground">
                   Awaiting confirmation
                 </p>
@@ -165,11 +157,11 @@ export default function TenantPaymentsPage() {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Overdue</CardTitle>
-                <AlertCircle className="h-4 w-4 text-red-600" />
+                <CardTitle className="text-xs sm:text-sm font-medium">Overdue</CardTitle>
+                <AlertCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-red-600">{stats.overdue}</div>
+                <div className="text-xl sm:text-2xl font-bold text-red-600">{stats.overdue}</div>
                 <p className="text-xs text-muted-foreground">
                   Requires attention
                 </p>
@@ -180,19 +172,19 @@ export default function TenantPaymentsPage() {
           {/* Filters and Payment List */}
           <Card>
             <CardHeader>
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col gap-3 sm:gap-4">
                 <div>
-                  <CardTitle>Payment History</CardTitle>
-                  <CardDescription>
-                    View your rental payment history and status
+                  <CardTitle className="text-base sm:text-lg">Payment History</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm">
+                    View your monthly fee payment history and status
                   </CardDescription>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <Select
                     value={selectedYear.toString()}
                     onValueChange={(value) => setSelectedYear(parseInt(value))}
                   >
-                    <SelectTrigger className="w-[120px]">
+                    <SelectTrigger className="w-full sm:w-[120px] h-9 text-sm">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -209,7 +201,7 @@ export default function TenantPaymentsPage() {
                       value={selectedProperty}
                       onValueChange={setSelectedProperty}
                     >
-                      <SelectTrigger className="w-[180px]">
+                      <SelectTrigger className="w-full sm:w-[180px] h-9 text-sm">
                         <SelectValue placeholder="All Properties" />
                       </SelectTrigger>
                       <SelectContent>
@@ -227,76 +219,78 @@ export default function TenantPaymentsPage() {
             </CardHeader>
             <CardContent>
               {loading ? (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {[...Array(5)].map((_, i) => (
-                    <Skeleton key={i} className="h-16 w-full" />
+                    <Skeleton key={i} className="h-24 sm:h-16 w-full" />
                   ))}
                 </div>
               ) : payments.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <Euro className="h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold">No payments found</h3>
-                  <p className="text-sm text-muted-foreground">
+                <div className="flex flex-col items-center justify-center py-8 sm:py-12 text-center">
+                  <Euro className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mb-3 sm:mb-4" />
+                  <h3 className="text-base sm:text-lg font-semibold">No payments found</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                     No payment records for the selected filters
                   </p>
                 </div>
               ) : (
-                <div className="rounded-md border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Month</TableHead>
-                        <TableHead>Property</TableHead>
-                        <TableHead>Amount</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Payment Date</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {payments.map((payment) => (
-                        <TableRow key={payment.id}>
-                          <TableCell className="font-medium">
-                            {formatDate(payment.payment_month)}
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Building2 className="h-4 w-4 text-muted-foreground" />
-                              <div>
-                                <div className="font-medium">
-                                  {payment.property?.name || `Property ${payment.property_id}`}
-                                </div>
-                                {payment.property?.address && (
-                                  <div className="text-xs text-muted-foreground">
-                                    {payment.property.address}
+                <div className="space-y-3">
+                  {payments.map((payment) => (
+                    <Card key={payment.id} className="border-slate-200">
+                      <CardContent className="p-4">
+                        <div className="flex flex-col gap-3">
+                          {/* Month and Status Row */}
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1 min-w-0">
+                              <div className="font-semibold text-sm sm:text-base text-slate-900">
+                                {formatDate(payment.payment_month)}
+                              </div>
+                              <div className="flex items-center gap-2 mt-1">
+                                <Building2 className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0" />
+                                <div className="min-w-0">
+                                  <div className="text-xs sm:text-sm text-slate-700 truncate">
+                                    {payment.property?.name || `Property ${payment.property_id}`}
                                   </div>
-                                )}
+                                  {payment.property?.address && (
+                                    <div className="text-xs text-muted-foreground truncate">
+                                      {payment.property.address}
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                             </div>
-                          </TableCell>
-                          <TableCell className="font-semibold">
-                            {formatCurrency(payment.amount)}
-                          </TableCell>
-                          <TableCell>
                             <Badge
                               variant="outline"
                               className={`${getStatusColor(
                                 payment.status
-                              )} border-none text-white`}
+                              )} border-none text-white flex-shrink-0 text-xs`}
                             >
                               <span className="mr-1">{getStatusIcon(payment.status)}</span>
                               {payment.status.charAt(0).toUpperCase() +
                                 payment.status.slice(1)}
                             </Badge>
-                          </TableCell>
-                          <TableCell>
-                            {payment.payment_date
-                              ? new Date(payment.payment_date).toLocaleDateString()
-                              : "-"}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                          </div>
+
+                          {/* Amount and Date Row */}
+                          <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+                            <div>
+                              <div className="text-xs text-muted-foreground">Amount</div>
+                              <div className="text-base sm:text-lg font-bold text-emerald-700">
+                                {formatCurrency(payment.amount)}
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-xs text-muted-foreground">Payment Date</div>
+                              <div className="text-xs sm:text-sm font-medium text-slate-700">
+                                {payment.payment_date
+                                  ? new Date(payment.payment_date).toLocaleDateString()
+                                  : "-"}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
               )}
             </CardContent>
