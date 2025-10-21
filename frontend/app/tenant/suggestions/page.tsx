@@ -19,6 +19,7 @@ import {
 import { CheckCircle2, Clock, Loader2, Lightbulb, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import { apiFetch } from "@/lib/api-client";
 
 interface Property {
   id: number;
@@ -54,9 +55,7 @@ export default function SuggestionsPage() {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/suggestions/properties`, {
-          credentials: 'include',
-        });
+        const response = await apiFetch('/api/suggestions/properties');
 
         if (response.ok) {
           const data = await response.json();
@@ -79,9 +78,7 @@ export default function SuggestionsPage() {
 
     const fetchMySuggestions = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/suggestions/my-suggestions`, {
-          credentials: 'include',
-        });
+        const response = await apiFetch('/api/suggestions/my-suggestions');
 
         if (response.ok) {
           const data = await response.json();
@@ -109,12 +106,8 @@ export default function SuggestionsPage() {
     setLoading(true);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/suggestions`, {
+      const response = await apiFetch('/api/suggestions', {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: 'include',
         body: JSON.stringify({
           property_id: parseInt(selectedProperty),
           title: title.trim(),
@@ -131,9 +124,7 @@ export default function SuggestionsPage() {
         setDescription("");
 
         // Refresh suggestions list
-        const suggestionsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/suggestions/my-suggestions`, {
-          credentials: 'include',
-        });
+        const suggestionsResponse = await apiFetch('/api/suggestions/my-suggestions');
         if (suggestionsResponse.ok) {
           const suggestionsData = await suggestionsResponse.json();
           setMySuggestions(suggestionsData.suggestions);

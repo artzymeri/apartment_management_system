@@ -19,6 +19,7 @@ import {
 import { AlertTriangle, CheckCircle2, Clock, Loader2, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import { apiFetch } from "@/lib/api-client";
 
 interface Property {
   id: number;
@@ -54,9 +55,7 @@ export default function ComplaintsPage() {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/complaints/properties`, {
-          credentials: 'include',
-        });
+        const response = await apiFetch('/api/complaints/properties');
 
         if (response.ok) {
           const data = await response.json();
@@ -79,9 +78,7 @@ export default function ComplaintsPage() {
 
     const fetchMyComplaints = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/complaints/my-complaints`, {
-          credentials: 'include',
-        });
+        const response = await apiFetch('/api/complaints/my-complaints');
 
         if (response.ok) {
           const data = await response.json();
@@ -109,12 +106,8 @@ export default function ComplaintsPage() {
     setLoading(true);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/complaints`, {
+      const response = await apiFetch('/api/complaints', {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: 'include',
         body: JSON.stringify({
           property_id: parseInt(selectedProperty),
           title: title.trim(),
@@ -131,9 +124,7 @@ export default function ComplaintsPage() {
         setDescription("");
 
         // Refresh complaints list
-        const complaintsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/complaints/my-complaints`, {
-          credentials: 'include',
-        });
+        const complaintsResponse = await apiFetch('/api/complaints/my-complaints');
         if (complaintsResponse.ok) {
           const complaintsData = await complaintsResponse.json();
           setMyComplaints(complaintsData.complaints);

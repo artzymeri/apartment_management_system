@@ -17,6 +17,7 @@ import {
 import { AlertTriangle, CheckCircle2, Clock, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import { apiFetch } from "@/lib/api-client";
 
 interface ProblemOption {
   id: number;
@@ -64,9 +65,7 @@ export default function ReportProblemPage() {
   useEffect(() => {
     const fetchProblemOptions = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/reports/problem-options`, {
-          credentials: 'include',
-        });
+        const response = await apiFetch('/api/reports/problem-options');
 
         if (response.ok) {
           const data = await response.json();
@@ -88,9 +87,7 @@ export default function ReportProblemPage() {
 
     const fetchMyReports = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/reports/my-reports`, {
-          credentials: 'include',
-        });
+        const response = await apiFetch('/api/reports/my-reports');
 
         if (response.ok) {
           const data = await response.json();
@@ -137,12 +134,8 @@ export default function ReportProblemPage() {
     setLoading(true);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/reports`, {
+      const response = await apiFetch('/api/reports', {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: 'include',
         body: JSON.stringify({
           property_id: selectedProperty.id,
           problem_option_id: parseInt(selectedProblem),
@@ -159,9 +152,7 @@ export default function ReportProblemPage() {
         setSelectedFloor("");
 
         // Refresh reports list
-        const reportsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/reports/my-reports`, {
-          credentials: 'include',
-        });
+        const reportsResponse = await apiFetch('/api/reports/my-reports');
         if (reportsResponse.ok) {
           const reportsData = await reportsResponse.json();
           setMyReports(reportsData.reports);
