@@ -19,8 +19,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { FileText, Trash2, Building2, Loader2, TrendingUp, Download, Edit } from "lucide-react";
-import { format } from "date-fns";
 import { toast } from "sonner";
+import { formatMonthYear } from "@/lib/utils";
 
 interface MonthlyReportsListProps {
   propertyId: number;
@@ -98,8 +98,7 @@ export function MonthlyReportsList({ propertyId, year }: MonthlyReportsListProps
   };
 
   const getMonthName = (dateString: string) => {
-    const date = new Date(dateString);
-    return format(date, "MMMM yyyy");
+    return formatMonthYear(dateString);
   };
 
   const collectionRate = (report: MonthlyReport) => {

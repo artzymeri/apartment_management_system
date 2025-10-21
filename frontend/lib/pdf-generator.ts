@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { formatMonthYear } from './utils';
 
 interface MonthlyReportData {
   id: number;
@@ -43,16 +44,13 @@ export const generateMonthlyReportPDF = async (
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(24);
   doc.setFont('helvetica', 'bold');
-  doc.text('MONTHLY REPORT', 105, 20, { align: 'center' });
+  doc.text('RAPORTI MUJOR', 105, 20, { align: 'center' });
 
   // Property name and month
   doc.setFontSize(12);
   doc.setFont('helvetica', 'normal');
-  const monthYear = new Date(report.report_month).toLocaleDateString('en-US', {
-    month: 'long',
-    year: 'numeric'
-  });
-  doc.text(`${report.property?.name || 'Property'} - ${monthYear}`, 105, 32, { align: 'center' });
+  const monthYear = formatMonthYear(report.report_month);
+  doc.text(`${report.property?.name || 'Prona'} - ${monthYear}`, 105, 32, { align: 'center' });
 
   yPosition = 50;
 
@@ -62,7 +60,7 @@ export const generateMonthlyReportPDF = async (
   // === SUMMARY SECTION ===
   doc.setFontSize(16);
   doc.setFont('helvetica', 'bold');
-  doc.text('Financial Summary', 14, yPosition);
+  doc.text('Permbledhja Financiare', 14, yPosition);
   yPosition += 10;
 
   // Summary boxes
@@ -72,10 +70,10 @@ export const generateMonthlyReportPDF = async (
   let xPosition = 14;
 
   const summaryData = [
-    { label: 'Total Budget', value: `€${parseFloat(report.total_budget).toFixed(2)}`, color: [79, 70, 229] },
-    { label: 'Collection Rate', value: `${report.total_tenants > 0 ? ((report.paid_tenants / report.total_tenants) * 100).toFixed(1) : 0}%`, color: [16, 185, 129] },
-    { label: 'Pending Amount', value: `€${parseFloat(report.pending_amount).toFixed(2)}`, color: [249, 115, 22] },
-    { label: 'Paid Tenants', value: `${report.paid_tenants} / ${report.total_tenants}`, color: [59, 130, 246] },
+    { label: 'Buxheti Total', value: `€${parseFloat(report.total_budget).toFixed(2)}`, color: [79, 70, 229] },
+    { label: 'Norma e Mbledhjes', value: `${report.total_tenants > 0 ? ((report.paid_tenants / report.total_tenants) * 100).toFixed(1) : 0}%`, color: [16, 185, 129] },
+    { label: 'Shuma ne Pritje', value: `€${parseFloat(report.pending_amount).toFixed(2)}`, color: [249, 115, 22] },
+    { label: 'Banoret e Paguar', value: `${report.paid_tenants} / ${report.total_tenants}`, color: [59, 130, 246] },
   ];
 
   summaryData.forEach((item, index) => {
@@ -103,7 +101,7 @@ export const generateMonthlyReportPDF = async (
   // === BUDGET ALLOCATION SECTION ===
   doc.setFontSize(16);
   doc.setFont('helvetica', 'bold');
-  doc.text('Budget Allocation', 14, yPosition);
+  doc.text('Alokimi i Buxhetit', 14, yPosition);
   yPosition += 8;
 
   if (report.spending_breakdown && report.spending_breakdown.length > 0) {
@@ -116,7 +114,7 @@ export const generateMonthlyReportPDF = async (
 
     autoTable(doc, {
       startY: yPosition,
-      head: [['Category', 'Amount', 'Percentage']],
+      head: [['Kategoria', 'Shuma', 'Perqindja']],
       body: tableData,
       theme: 'striped',
       headStyles: {
@@ -141,7 +139,7 @@ export const generateMonthlyReportPDF = async (
     // Budget allocation chart (simple bars)
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
-    doc.text('Visual Distribution', 14, yPosition);
+    doc.text('Shperndarja Vizuale', 14, yPosition);
     yPosition += 8;
 
     const barColors = [
@@ -195,7 +193,7 @@ export const generateMonthlyReportPDF = async (
 
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
-    doc.text('Notes', 14, yPosition);
+    doc.text('Shenimet', 14, yPosition);
     yPosition += 8;
 
     doc.setFillColor(249, 250, 251);
@@ -223,22 +221,22 @@ export const generateMonthlyReportPDF = async (
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(128, 128, 128);
 
-    const generatedDate = new Date().toLocaleDateString('en-US', {
+    const generatedDate = new Date().toLocaleDateString('sq-AL', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
     });
-    doc.text(`Generated on ${generatedDate}`, 14, 288);
-    doc.text(`Page ${i} of ${pageCount}`, 196, 288, { align: 'right' });
+    doc.text(`Gjeneruar me ${generatedDate}`, 14, 288);
+    doc.text(`Faqja ${i} nga ${pageCount}`, 196, 288, { align: 'right' });
   }
 
-  // Generate filename
-  const propertyName = report.property?.name?.replace(/[^a-zA-Z0-9]/g, '_') || 'Property';
-  const monthYearStr = new Date(report.report_month).toLocaleDateString('en-US', {
+  // Generate filename in Albanian
+  const propertyName = report.property?.name?.replace(/[^a-zA-Z0-9]/g, '_') || 'Prona';
+  const monthYearStr = new Date(report.report_month).toLocaleDateString('sq-AL', {
     year: 'numeric',
     month: '2-digit'
   }).replace('/', '-');
-  const filename = `Monthly_Report_${propertyName}_${monthYearStr}.pdf`;
+  const filename = `Raporti_Mujor_${propertyName}_${monthYearStr}.pdf`;
 
   // Save the PDF
   doc.save(filename);

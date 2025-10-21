@@ -18,6 +18,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Save, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import { formatMonthYear } from "@/lib/utils";
 
 interface EditReportModalProps {
   open: boolean;
@@ -195,8 +196,7 @@ export function EditReportModal({ open, onOpenChange, report }: EditReportModalP
   const remainingBudget = totalBudget - totalAllocated;
 
   const getMonthName = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    return formatMonthYear(dateString);
   };
 
   return (

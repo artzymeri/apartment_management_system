@@ -16,8 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {Eye, Trash2, FileText, Calendar, Loader2} from "lucide-react";
-import { format } from "date-fns";
-import { toast } from "sonner";
+import { formatMonthYear } from "@/lib/utils";
 
 interface SavedReportsListProps {
   propertyId?: number;
@@ -131,7 +130,7 @@ export function SavedReportsList({ propertyId }: SavedReportsListProps) {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4 text-muted-foreground" />
-                          {format(new Date(report.report_month), 'MMMM yyyy')}
+                          {formatMonthYear(new Date(report.report_month))}
                         </div>
                       </TableCell>
                       <TableCell className="font-mono">
@@ -169,7 +168,7 @@ export function SavedReportsList({ propertyId }: SavedReportsListProps) {
                         </div>
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
-                        {format(new Date(report.created_at), 'MMM dd, yyyy')}
+                        {new Date(report.created_at).toLocaleDateString('sq-AL')}
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
@@ -228,7 +227,7 @@ export function SavedReportsList({ propertyId }: SavedReportsListProps) {
           <DialogHeader>
             <DialogTitle>Report Details</DialogTitle>
             <DialogDescription>
-              {selectedReport?.property?.name} - {selectedReport && format(new Date(selectedReport.report_month), 'MMMM yyyy')}
+              {selectedReport?.property?.name} - {selectedReport && formatMonthYear(new Date(selectedReport.report_month))}
             </DialogDescription>
           </DialogHeader>
 

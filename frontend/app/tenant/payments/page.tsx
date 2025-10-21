@@ -17,6 +17,7 @@ import { getTenantPayments, TenantPayment } from "@/lib/tenant-payment-api";
 import { useAuth } from "@/contexts/AuthContext";
 import { Calendar, Euro, CheckCircle, Clock, AlertCircle, Building2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { formatShortDate, formatMonthYear } from "@/lib/utils";
 
 export default function TenantPaymentsPage() {
   const { user } = useAuth();
@@ -92,13 +93,6 @@ export default function TenantPaymentsPage() {
       default:
         return status.charAt(0).toUpperCase() + status.slice(1);
     }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("sq-AL", {
-      year: "numeric",
-      month: "long",
-    });
   };
 
   const formatCurrency = (amount: string) => {
@@ -210,18 +204,15 @@ export default function TenantPaymentsPage() {
                   </Select>
 
                   {userProperties.length > 1 && (
-                    <Select
-                      value={selectedProperty}
-                      onValueChange={setSelectedProperty}
-                    >
-                      <SelectTrigger className="w-full sm:w-[180px] h-9 text-sm">
+                    <Select value={selectedProperty} onValueChange={setSelectedProperty}>
+                      <SelectTrigger className="w-full sm:w-[200px] h-9 text-sm">
                         <SelectValue placeholder="Të Gjitha Pronat" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">Të Gjitha Pronat</SelectItem>
-                        {userProperties.map((propId) => (
-                          <SelectItem key={propId} value={propId.toString()}>
-                            Prona {propId}
+                        {userProperties.map((propertyId) => (
+                          <SelectItem key={propertyId} value={propertyId.toString()}>
+                            Prona {propertyId}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -233,75 +224,63 @@ export default function TenantPaymentsPage() {
             <CardContent>
               {loading ? (
                 <div className="space-y-3">
-                  {[...Array(5)].map((_, i) => (
-                    <Skeleton key={i} className="h-24 sm:h-16 w-full" />
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="space-y-2 flex-1">
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-3 w-24" />
+                      </div>
+                      <Skeleton className="h-6 w-20" />
+                    </div>
                   ))}
                 </div>
               ) : payments.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-8 sm:py-12 text-center">
-                  <Euro className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mb-3 sm:mb-4" />
-                  <h3 className="text-base sm:text-lg font-semibold">Nuk u gjetën pagesa</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                    Nuk ka të dhëna për pagesat me filtrat e zgjedhura
-                  </p>
+                <div className="text-center py-8 text-slate-500">
+                  <Calendar className="h-12 w-12 mx-auto mb-3 text-slate-300" />
+                  <p className="text-sm">Nuk ka pagesa për këtë periudhë</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {payments.map((payment) => (
-                    <Card key={payment.id} className="border-slate-200">
-                      <CardContent className="p-4">
-                        <div className="flex flex-col gap-3">
-                          {/* Month and Status Row */}
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="flex-1 min-w-0">
-                              <div className="font-semibold text-sm sm:text-base text-slate-900">
-                                {formatDate(payment.payment_month)}
-                              </div>
-                              <div className="flex items-center gap-2 mt-1">
-                                <Building2 className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0" />
-                                <div className="min-w-0">
-                                  <div className="text-xs sm:text-sm text-slate-700 truncate">
-                                    {payment.property?.name || `Prona ${payment.property_id}`}
-                                  </div>
-                                  {payment.property?.address && (
-                                    <div className="text-xs text-muted-foreground truncate">
-                                      {payment.property.address}
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                            <Badge
-                              variant="outline"
-                              className={`${getStatusColor(
-                                payment.status
-                              )} border-none text-white flex-shrink-0 text-xs`}
-                            >
-                              <span className="mr-1">{getStatusIcon(payment.status)}</span>
-                              {getStatusText(payment.status)}
-                            </Badge>
-                          </div>
-
-                          {/* Amount and Date Row */}
-                          <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-                            <div>
-                              <div className="text-xs text-muted-foreground">Shuma</div>
-                              <div className="text-base sm:text-lg font-bold text-emerald-700">
-                                {formatCurrency(payment.amount)}
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="text-xs text-muted-foreground">Data e Pagesës</div>
-                              <div className="text-xs sm:text-sm font-medium text-slate-700">
-                                {payment.payment_date
-                                  ? new Date(payment.payment_date).toLocaleDateString('sq-AL')
-                                  : "-"}
-                              </div>
-                            </div>
-                          </div>
+                    <div
+                      key={payment.id}
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 border rounded-lg hover:bg-slate-50 transition-colors"
+                    >
+                      <div className="flex-1 space-y-1">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-slate-400 flex-shrink-0" />
+                          <span className="font-medium text-slate-900">
+                            {formatMonthYear(payment.payment_month)}
+                          </span>
                         </div>
-                      </CardContent>
-                    </Card>
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm text-slate-600">
+                          <div className="flex items-center gap-2">
+                            <Euro className="h-3 w-3 flex-shrink-0" />
+                            <span>{formatCurrency(payment.amount)}</span>
+                          </div>
+                          {payment.payment_date && (
+                            <div className="flex items-center gap-2">
+                              <span className="hidden sm:inline text-slate-400">•</span>
+                              <span>Paguar më {formatShortDate(payment.payment_date)}</span>
+                            </div>
+                          )}
+                        </div>
+                        {payment.property && (
+                          <div className="flex items-center gap-2 text-xs text-slate-500">
+                            <Building2 className="h-3 w-3 flex-shrink-0" />
+                            <span>{payment.property.name}</span>
+                          </div>
+                        )}
+                      </div>
+                      <Badge
+                        className={`${getStatusColor(
+                          payment.status
+                        )} text-white flex items-center gap-1 self-start sm:self-auto`}
+                      >
+                        {getStatusIcon(payment.status)}
+                        <span>{getStatusText(payment.status)}</span>
+                      </Badge>
+                    </div>
                   ))}
                 </div>
               )}

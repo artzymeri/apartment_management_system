@@ -25,7 +25,7 @@ import axios from "axios";
 import { useAuth } from "@/contexts/AuthContext";
 import { authAPI } from "@/lib/auth-api";
 import Link from "next/link";
-import { format } from "date-fns";
+import { formatMonthYear, formatShortDate } from "@/lib/utils";
 import * as React from "react";
 
 interface DashboardData {
@@ -330,7 +330,7 @@ export default function PropertyManagerDashboard() {
                               </Badge>
                             </div>
                             <p className="text-xs md:text-sm text-slate-600">{payment.property?.name} - {payment.property?.address}</p>
-                            <p className="text-xs text-slate-500 mt-1">Afati: {format(new Date(payment.paymentMonth), 'MMMM yyyy')}</p>
+                            <p className="text-xs text-slate-500 mt-1">Afati: {formatMonthYear(payment.paymentMonth)}</p>
                           </div>
                           <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2">
                             <p className="text-lg md:text-xl font-bold text-red-600">€{payment.amount.toLocaleString()}</p>
@@ -375,7 +375,7 @@ export default function PropertyManagerDashboard() {
                             <div className="flex flex-wrap items-center gap-2 md:gap-4 text-xs text-slate-500">
                               <span>📍 {report.property?.name}</span>
                               <span>👤 {report.tenant?.name}</span>
-                              <span>📅 {format(new Date(report.createdAt), 'MMM dd, yyyy')}</span>
+                              <span>📅 {formatShortDate(report.createdAt)}</span>
                             </div>
                           </div>
                           <Link href={`/property_manager/reports`}>
@@ -484,7 +484,7 @@ export default function PropertyManagerDashboard() {
               <Card>
                 <CardHeader>
                   <CardTitle className="text-base md:text-lg">Përmbledhja e Muajit Aktual</CardTitle>
-                  <CardDescription className="text-xs md:text-sm">{format(new Date(), 'MMMM yyyy')}</CardDescription>
+                  <CardDescription className="text-xs md:text-sm">{formatMonthYear(new Date())}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">

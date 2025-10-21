@@ -41,7 +41,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle, Building2, CheckCircle2, Clock, FileText, User, XCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { format } from "date-fns";
+import { formatShortDate, formatDateTime } from "@/lib/utils";
 
 export default function PropertyManagerReportsPage() {
   const [selectedProperty, setSelectedProperty] = useState<string>("all");
@@ -262,9 +262,9 @@ export default function PropertyManagerReportsPage() {
                             </TableCell>
                             <TableCell>{getStatusBadge(report.status)}</TableCell>
                             <TableCell className="text-sm text-slate-600">
-                              {format(new Date(report.created_at), 'MMM d, yyyy')}
+                              {formatShortDate(report.created_at)}
                               <div className="text-xs text-slate-400">
-                                {format(new Date(report.created_at), 'h:mm a')}
+                                {new Date(report.created_at).toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit' })}
                               </div>
                             </TableCell>
                             <TableCell>
@@ -337,7 +337,7 @@ export default function PropertyManagerReportsPage() {
                                 <span className="font-medium">{report.floor !== null ? `Kati ${report.floor}` : '-'}</span>
                               </div>
                               <div className="text-slate-500">
-                                {format(new Date(report.created_at), 'MMM d, yyyy')}
+                                {formatShortDate(report.created_at)}
                               </div>
                             </div>
                           </div>
@@ -399,63 +399,52 @@ export default function PropertyManagerReportsPage() {
                   <div>
                     <div className="text-xs text-slate-500 uppercase">Problemi</div>
                     <div className="font-medium text-sm md:text-base">{selectedReport.problemOption?.title}</div>
+                    {selectedReport.description && (
+                      <div className="text-xs md:text-sm text-slate-600 mt-1">{selectedReport.description}</div>
+                    )}
                   </div>
 
-                  {selectedReport.description && (
-                    <div>
-                      <div className="text-xs text-slate-500 uppercase">Përshkrimi</div>
-                      <div className="text-xs md:text-sm text-slate-700">{selectedReport.description}</div>
-                    </div>
-                  )}
-
-                  {selectedReport.floor !== null && (
-                    <div>
-                      <div className="text-xs text-slate-500 uppercase">Kati</div>
-                      <div className="text-xs md:text-sm text-slate-700">Kati {selectedReport.floor}</div>
-                    </div>
-                  )}
-
                   <div>
-                    <div className="text-xs text-slate-500 uppercase">Statusi Aktual</div>
-                    <div className="mt-1">{getStatusBadge(selectedReport.status)}</div>
+                    <div className="text-xs text-slate-500 uppercase">Data e Raportimit</div>
+                    <div className="text-sm md:text-base">{formatShortDate(selectedReport.created_at)}</div>
                   </div>
                 </div>
 
-                {/* Status Selector */}
-                <div className="space-y-2">
-                  <label className="text-xs md:text-sm font-medium">Statusi i Ri</label>
+                {/* Status Selection */}
+                <div>
+                  <label className="text-sm font-medium text-slate-700 mb-2 block">
+                    Statusi i Ri
+                  </label>
                   <Select value={newStatus} onValueChange={setNewStatus}>
-                    <SelectTrigger className="h-9 md:h-10 text-xs md:text-sm">
+                    <SelectTrigger className="w-full">
                       <SelectValue placeholder="Zgjidhni statusin" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="pending" className="text-xs md:text-sm">Në pritje</SelectItem>
-                      <SelectItem value="in_progress" className="text-xs md:text-sm">Në progres</SelectItem>
-                      <SelectItem value="resolved" className="text-xs md:text-sm">Zgjidhur</SelectItem>
-                      <SelectItem value="rejected" className="text-xs md:text-sm">Refuzuar</SelectItem>
+                      <SelectItem value="pending">Në pritje</SelectItem>
+                      <SelectItem value="in_progress">Në progres</SelectItem>
+                      <SelectItem value="resolved">Zgjidhur</SelectItem>
+                      <SelectItem value="rejected">Refuzuar</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
             )}
 
-            <DialogFooter className="flex-col sm:flex-row gap-2">
+            <DialogFooter>
               <Button
                 variant="outline"
                 onClick={() => {
                   setSelectedReport(null);
                   setNewStatus("");
                 }}
-                className="h-9 text-xs md:text-sm"
               >
                 Anulo
               </Button>
               <Button
                 onClick={handleStatusUpdate}
-                disabled={!newStatus || newStatus === selectedReport?.status || updateReportMutation.isPending}
-                className="bg-indigo-600 hover:bg-indigo-700 h-9 text-xs md:text-sm"
+                disabled={updateReportMutation.isPending || !newStatus}
               >
-                {updateReportMutation.isPending ? 'Duke përditësuar...' : 'Përditëso Statusin'}
+                {updateReportMutation.isPending ? "Duke ruajtur..." : "Ruaj Ndryshimet"}
               </Button>
             </DialogFooter>
           </DialogContent>

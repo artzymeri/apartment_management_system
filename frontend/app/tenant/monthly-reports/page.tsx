@@ -14,6 +14,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { formatMonthYear } from "@/lib/utils";
 
 export default function TenantMonthlyReportsPage() {
   const currentYear = new Date().getFullYear();
@@ -44,11 +45,6 @@ export default function TenantMonthlyReportsPage() {
     } finally {
       setDownloadingReportId(null);
     }
-  };
-
-  const formatMonth = (reportMonth: string) => {
-    const date = new Date(reportMonth);
-    return date.toLocaleDateString('sq-AL', { month: 'long', year: 'numeric' });
   };
 
   const formatCurrency = (amount: string) => {
@@ -147,7 +143,7 @@ export default function TenantMonthlyReportsPage() {
                     <div className="flex items-start justify-between">
                       <div>
                         <CardTitle className="text-xl text-emerald-700">
-                          {formatMonth(report.report_month)}
+                          {formatMonthYear(report.report_month)}
                         </CardTitle>
                         <CardDescription className="mt-1">
                           {report.property?.name || 'Raport Prone'}

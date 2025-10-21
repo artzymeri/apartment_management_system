@@ -21,6 +21,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useTenantDashboard } from "@/hooks/useTenant";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
+import { formatShortDate, formatMonthYear } from "@/lib/utils";
 
 export default function TenantDashboard() {
   const { user } = useAuth();
@@ -74,17 +75,8 @@ export default function TenantDashboard() {
     }).format(typeof amount === 'string' ? parseFloat(amount) : amount);
   };
 
-  // Format date
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('sq-AL', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
-  };
-
   // Get current month name
-  const currentMonthName = new Date().toLocaleDateString('sq-AL', { month: 'long', year: 'numeric' });
+  const currentMonthName = formatMonthYear(new Date());
 
   // Check if rent is due soon (within 7 days)
   const isRentDueSoon = useMemo(() => {
@@ -178,7 +170,7 @@ export default function TenantDashboard() {
               <AlertDescription className="text-xs sm:text-sm text-emerald-700">
                 Pagesa juaj mujore për {currentMonthName} është kryer. Faleminderit!
                 {paymentStats.currentMonthPayment.payment_date &&
-                  ` (Paguar më ${formatDate(paymentStats.currentMonthPayment.payment_date)})`
+                  ` (Paguar më ${formatShortDate(paymentStats.currentMonthPayment.payment_date)})`
                 }
               </AlertDescription>
             </Alert>
@@ -277,7 +269,7 @@ export default function TenantDashboard() {
                           </p>
                           <p className="text-xs sm:text-sm text-slate-600">
                             {formatCurrency(payment.amount)}
-                            {payment.payment_date && ` • Paguar më ${formatDate(payment.payment_date)}`}
+                            {payment.payment_date && ` • Paguar më ${formatShortDate(payment.payment_date)}`}
                           </p>
                         </div>
                         <Badge
@@ -342,7 +334,7 @@ export default function TenantDashboard() {
                             {report.problemOption?.title || 'Raport Problemi'}
                           </p>
                           <p className="text-xs sm:text-sm text-slate-600">
-                            Dërguar më {formatDate(report.created_at)}
+                            Dërguar më {formatShortDate(report.created_at)}
                             {report.floor && ` • Kati ${report.floor}`}
                           </p>
                         </div>
@@ -434,7 +426,7 @@ export default function TenantDashboard() {
                              'Në Pritje'}
                           </Badge>
                         </div>
-                        <p className="text-xs sm:text-sm text-slate-600">{formatDate(complaint.created_at)}</p>
+                        <p className="text-xs sm:text-sm text-slate-600">{formatShortDate(complaint.created_at)}</p>
                       </div>
                     ))}
                   </div>
@@ -487,7 +479,7 @@ export default function TenantDashboard() {
                              'Në Pritje'}
                           </Badge>
                         </div>
-                        <p className="text-xs sm:text-sm text-slate-600">{formatDate(suggestion.created_at)}</p>
+                        <p className="text-xs sm:text-sm text-slate-600">{formatShortDate(suggestion.created_at)}</p>
                       </div>
                     ))}
                   </div>
@@ -527,7 +519,7 @@ export default function TenantDashboard() {
               <CardContent>
                 <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600">
                   <Clock className="h-4 w-4 flex-shrink-0" />
-                  <span>Raporti i fundit: {formatDate(monthlyReports[0].created_at)}</span>
+                  <span>Raporti i fundit: {formatShortDate(monthlyReports[0].created_at)}</span>
                 </div>
               </CardContent>
             </Card>
