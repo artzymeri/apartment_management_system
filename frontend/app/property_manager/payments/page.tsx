@@ -149,7 +149,7 @@ export default function PaymentsPage() {
       setTenants(data.data || []);
     } catch (error) {
       console.error("Error fetching tenants:", error);
-      toast.error("Dështoi ngarkimi i qiramarrësve");
+      toast.error("Dështoi ngarkimi i banorëve");
     } finally {
       setTenantsLoading(false);
     }
@@ -237,7 +237,7 @@ export default function PaymentsPage() {
 
   const handleBulkMarkAsPaid = async () => {
     if (selectedMonths.length === 0 || !selectedDialogProperty || selectedTenantIds.length === 0) {
-      toast.error("Ju lutem zgjidhni muajin, pronën dhe të paktën një qiramarrës");
+      toast.error("Ju lutem zgjidhni muajin, pronën dhe të paktën një banorë");
       return;
     }
 
@@ -259,7 +259,7 @@ export default function PaymentsPage() {
 
         // Show specific errors
         ensureResult.errors.forEach((err: any) => {
-          toast.error(`Qiramarrësi ${err.tenant_id}: ${err.error}`);
+          toast.error(`Banori ${err.tenant_id}: ${err.error}`);
         });
       }
 
@@ -531,10 +531,10 @@ export default function PaymentsPage() {
                         <DialogHeader>
                           <DialogTitle className="flex items-center gap-2 text-base md:text-lg">
                             <Users className="w-4 h-4 md:w-5 md:h-5" />
-                            Shëno Pagesat e Qiramarrësve si të Paguara
+                            Shëno Pagesat e Banorëve si të Paguara
                           </DialogTitle>
                           <DialogDescription className="text-xs md:text-sm">
-                            Zgjidhni një muaj, pronë dhe qiramarrës që kanë përfunduar pagesën e tyre
+                            Zgjidhni një muaj, pronë dhe banorë që kanë përfunduar pagesën e tyre
                           </DialogDescription>
                         </DialogHeader>
 
@@ -615,15 +615,15 @@ export default function PaymentsPage() {
                                               </div>
                                               {allTenantsPaid ? (
                                                   <div className="text-xs text-green-600 font-medium">
-                                                    ✓ Të gjithë qiramarrësit kanë paguar ({tenants.length}/{tenants.length})
+                                                    ✓ Të gjithë banorët kanë paguar ({tenants.length}/{tenants.length})
                                                   </div>
                                               ) : someTenantsPaid ? (
                                                   <div className="text-xs text-yellow-600">
-                                                    {paidTenantIds.size}/{tenants.length} qiramarrës kanë paguar
+                                                    {paidTenantIds.size}/{tenants.length} banorë kanë paguar
                                                   </div>
                                               ) : (
                                                   <div className="text-xs text-muted-foreground">
-                                                    0/{tenants.length} qiramarrës kanë paguar
+                                                    0/{tenants.length} banorë kanë paguar
                                                   </div>
                                               )}
                                             </div>
@@ -639,7 +639,7 @@ export default function PaymentsPage() {
                           {selectedDialogProperty && selectedMonths.length > 0 && (
                               <div className="space-y-2">
                                 <div className="flex items-center justify-between">
-                                  <Label className="text-xs md:text-sm">Zgjidhni Qiramarrësit që Paguan</Label>
+                                  <Label className="text-xs md:text-sm">Zgjidhni Banorët që Paguan</Label>
                                   {tenants.length > 0 && (
                                       <Button
                                           type="button"
@@ -655,11 +655,11 @@ export default function PaymentsPage() {
 
                                 {tenantsLoading ? (
                                     <div className="text-center py-8 text-muted-foreground text-xs md:text-sm">
-                                      Duke ngarkuar qiramarrësit...
+                                      Duke ngarkuar banorët...
                                     </div>
                                 ) : tenants.length === 0 ? (
                                     <div className="text-center py-8 text-muted-foreground text-xs md:text-sm">
-                                      Nuk u gjetën qiramarrës për këtë pronë
+                                      Nuk u gjetën banorë për këtë pronë
                                     </div>
                                 ) : (
                                     <div className="border rounded-lg divide-y max-h-64 overflow-y-auto">
@@ -731,7 +731,7 @@ export default function PaymentsPage() {
                           {selectedTenantIds.length > 0 && selectedMonths.length > 0 && (
                               <div className="bg-muted p-3 md:p-4 rounded-lg">
                                 <p className="text-xs md:text-sm font-medium">
-                                  Zgjedhur: {selectedTenantIds.length} qiramarrës për {selectedMonths.length} muaj
+                                  Zgjedhur: {selectedTenantIds.length} banorë për {selectedMonths.length} muaj
                                 </p>
                                 <p className="text-xs text-muted-foreground mt-1">
                                   Muajt: {selectedMonths.map(m => getMonthName(m)).join(', ')}
@@ -1022,7 +1022,7 @@ export default function PaymentsPage() {
                                               <Table>
                                                 <TableHeader>
                                                   <TableRow>
-                                                    <TableHead>Qiramarrësi</TableHead>
+                                                    <TableHead>Banori</TableHead>
                                                     <TableHead>Prona</TableHead>
                                                     <TableHead>Shuma</TableHead>
                                                     <TableHead>Statusi</TableHead>

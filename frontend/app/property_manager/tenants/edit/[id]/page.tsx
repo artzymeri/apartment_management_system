@@ -112,8 +112,8 @@ export default function EditTenantPage() {
 
     // Validate property selection
     if (!formData.property_id) {
-      setError("Ju lutemi zgjidhni një pronë për këtë qiramarrës");
-      toast.error("Ju lutemi zgjidhni një pronë për këtë qiramarrës");
+      setError("Ju lutemi zgjidhni një pronë për këtë banorë");
+      toast.error("Ju lutemi zgjidhni një pronë për këtë banorë");
       return;
     }
 
@@ -138,12 +138,12 @@ export default function EditTenantPage() {
         data: updateData,
       });
 
-      toast.success("Qiramarrësi u përditësua me sukses! Duke ridrejtuar...");
+      toast.success("Banori u përditësua me sukses! Duke ridrejtuar...");
       setTimeout(() => {
         router.push("/property_manager/tenants");
       }, 1500);
     } catch (err: any) {
-      const errorMessage = err?.message || "Dështoi përditësimi i qiramarrësit";
+      const errorMessage = err?.message || "Dështoi përditësimi i banorit";
       setError(errorMessage);
       toast.error(errorMessage);
       console.error("Update tenant error:", err);
@@ -153,7 +153,7 @@ export default function EditTenantPage() {
   if (isLoading || propertiesLoading || isRefetching) {
     return (
       <ProtectedRoute allowedRoles={["property_manager"]}>
-        <PropertyManagerLayout title="Ndrysho Qiramarrësin">
+        <PropertyManagerLayout title="Ndrysho Banorin">
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
           </div>
@@ -165,10 +165,10 @@ export default function EditTenantPage() {
   if (!tenantData?.data || tenantData.data.role !== "tenant") {
     return (
       <ProtectedRoute allowedRoles={["property_manager"]}>
-        <PropertyManagerLayout title="Ndrysho Qiramarrësin">
+        <PropertyManagerLayout title="Ndrysho Banorin">
           <Alert variant="destructive">
             <AlertDescription className="text-xs md:text-sm">
-              Qiramarrësi nuk u gjet ose ID e pavlefshme.
+              Banori nuk u gjet ose ID e pavlefshme.
             </AlertDescription>
           </Alert>
         </PropertyManagerLayout>
@@ -178,7 +178,7 @@ export default function EditTenantPage() {
 
   return (
     <ProtectedRoute allowedRoles={["property_manager"]}>
-      <PropertyManagerLayout title="Ndrysho Qiramarrësin">
+      <PropertyManagerLayout title="Ndrysho Banorin">
         <div className="max-w-2xl mx-auto space-y-4 md:space-y-6">
           {/* Back button */}
           <div className="flex items-center gap-3">
@@ -191,7 +191,7 @@ export default function EditTenantPage() {
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <p className="text-xs md:text-sm text-slate-600">
-              Përditëso detajet për këtë qiramarrës
+              Përditëso detajet për këtë banorë
             </p>
           </div>
 
@@ -199,9 +199,9 @@ export default function EditTenantPage() {
           <form onSubmit={handleSubmit}>
             <Card>
               <CardHeader>
-                <CardTitle className="text-base md:text-lg">Informacioni i Qiramarrësit</CardTitle>
+                <CardTitle className="text-base md:text-lg">Informacioni i Banorit</CardTitle>
                 <CardDescription className="text-xs md:text-sm">
-                  Përditëso detajet për këtë qiramarrës
+                  Përditëso detajet për këtë banorë
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 md:space-y-6">
@@ -315,7 +315,7 @@ export default function EditTenantPage() {
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-slate-500">
-                    Caktoni qiramarrësin në një pronë
+                    Caktoni banorin në një pronë
                   </p>
                 </div>
 
@@ -348,7 +348,7 @@ export default function EditTenantPage() {
                     ))}
                   </select>
                   <p className="text-xs text-slate-500">
-                    Caktoni qiramarrësin në një kat specifik (opsionale)
+                    Caktoni banorin në një kat specifik (opsionale)
                   </p>
                 </div>
 
@@ -372,7 +372,7 @@ export default function EditTenantPage() {
                     </span>
                   </div>
                   <p className="text-xs text-slate-500">
-                    Vendosni qiranë mujore për qiramarrësin
+                    Vendosni qiranë mujore për banorin
                   </p>
                 </div>
 
@@ -395,7 +395,7 @@ export default function EditTenantPage() {
                     ) : (
                       <>
                         <Save className="mr-2 h-4 w-4" />
-                        Përditëso Qiramarrësin
+                        Përditëso Banorin
                       </>
                     )}
                   </Button>
@@ -410,7 +410,7 @@ export default function EditTenantPage() {
               <CardHeader>
                 <CardTitle className="text-base md:text-lg">Ndjekja e Pagesave</CardTitle>
                 <CardDescription className="text-xs md:text-sm">
-                  Ndiqni pagesat mujore për këtë qiramarrës. Regjistrat e pagesave gjenerohen automatikisht
+                  Ndiqni pagesat mujore për këtë banorë. Regjistrat e pagesave gjenerohen automatikisht
                   nga data e krijimit të pronës deri në muajin aktual.
                 </CardDescription>
               </CardHeader>

@@ -131,7 +131,7 @@ export default function Home() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="text-base sm:text-xl md:text-2xl text-gray-400 mb-8 sm:mb-12 max-w-3xl mx-auto leading-relaxed px-4"
             >
-              Thjeshtoni operacionet e pronës dhe përmirësoni përvojën e qiramarrësve me automatizim
+              Thjeshtoni operacionet e pronës dhe përmirësoni përvojën e banorëve me automatizim
               inteligjent, komunikim të pandërprerë dhe mjete gjithëpërfshirëse menaxhimi. Nga
               ndjekja e mirëmbajtjes deri te menaxhimi i pagesave, gjithçka që ju nevojitet në një
               platformë elegante.
@@ -197,7 +197,7 @@ export default function Home() {
                     </h3>
                     <p className="text-sm sm:text-base text-gray-400 mb-4 sm:mb-6 leading-relaxed">
                       Thjeshtoni operacionet me mjete inteligjente për menaxhimin e
-                      pronave dhe qiramarrësve.
+                      pronave dhe banorëve.
                     </p>
 
                     <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6">
@@ -211,7 +211,7 @@ export default function Home() {
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-1 h-1 rounded-full bg-blue-400" />
-                        <span>Komunikim me qiramarrësit</span>
+                        <span>Komunikim me banorët</span>
                       </div>
                     </div>
                   </div>
@@ -238,7 +238,7 @@ export default function Home() {
                     </div>
 
                     <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">
-                      Portal për Qiramarrës
+                      Portal për Banorë
                     </h3>
                     <p className="text-sm sm:text-base text-gray-400 mb-4 sm:mb-6 leading-relaxed">
                       Hapësira juaj e personalizuar për jetesë të pandërprerë dhe

@@ -311,7 +311,7 @@ export default function ConfigurationsPage() {
                   <div>
                     <CardTitle>Opsionet e Problemeve</CardTitle>
                     <CardDescription>
-                      Krijoni dhe menaxhoni llojet e problemeve që qiramarrësit mund të raportojnë
+                      Krijoni dhe menaxhoni llojet e problemeve që banorët mund të raportojnë
                     </CardDescription>
                   </div>
                   <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
@@ -325,7 +325,7 @@ export default function ConfigurationsPage() {
                       <DialogHeader>
                         <DialogTitle>Krijo Opsion Problemi</DialogTitle>
                         <DialogDescription>
-                          Shtoni një lloj të ri problemi që qiramarrësit mund të zgjedhin kur raportojnë çështje
+                          Shtoni një lloj të ri problemi që banorët mund të zgjedhin kur raportojnë çështje
                         </DialogDescription>
                       </DialogHeader>
                       <div className="space-y-4">

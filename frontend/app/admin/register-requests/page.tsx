@@ -461,7 +461,7 @@ export default function RegisterRequestsPage() {
                     <SelectValue placeholder="Zgjidh rolin" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="tenant">Qiramarrës</SelectItem>
+                    <SelectItem value="tenant">Banorë</SelectItem>
                     <SelectItem value="property_manager">Menaxher Pronash</SelectItem>
                     <SelectItem value="admin">Administrator</SelectItem>
                   </SelectContent>

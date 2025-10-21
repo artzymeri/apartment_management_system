@@ -120,7 +120,7 @@ export function MonthlyReportsList({ propertyId, year }: MonthlyReportsListProps
                     <CardTitle className="text-base md:text-lg">{getMonthName(report.report_month)}</CardTitle>
                     <CardDescription className="flex items-center gap-2 text-xs text-muted-foreground">
                       <TrendingUp className="h-3 w-3" />
-                      <span>{report.paid_tenants} nga {report.total_tenants} qiramarrës kanë paguar ({collectionRate(report)}%)</span>
+                      <span>{report.paid_tenants} nga {report.total_tenants} banorë kanë paguar ({collectionRate(report)}%)</span>
                     </CardDescription>
                   </div>
                   {report.property && (

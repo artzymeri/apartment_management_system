@@ -74,8 +74,8 @@ export default function CreateTenantPage() {
 
     // Validate property selection
     if (!formData.property_id) {
-      setError("Ju lutemi zgjidhni një pronë për këtë qiramarrës");
-      toast.error("Ju lutemi zgjidhni një pronë për këtë qiramarrës");
+      setError("Ju lutemi zgjidhni një pronë për këtë banorë");
+      toast.error("Ju lutemi zgjidhni një pronë për këtë banorë");
       setIsSubmitting(false);
       return;
     }
@@ -97,16 +97,16 @@ export default function CreateTenantPage() {
       const result = await createMutation.mutateAsync(userData);
 
       if (result.success) {
-        toast.success("Qiramarrësi u krijua me sukses! Duke ridrejtuar...");
+        toast.success("Banori u krijua me sukses! Duke ridrejtuar...");
         setTimeout(() => {
           router.push("/property_manager/tenants");
         }, 1500);
       } else {
-        setError(result.message || "Dështoi krijimi i qiramarrësit");
-        toast.error(result.message || "Dështoi krijimi i qiramarrësit");
+        setError(result.message || "Dështoi krijimi i banorit");
+        toast.error(result.message || "Dështoi krijimi i banorit");
       }
     } catch (err: any) {
-      const errorMessage = err?.message || "Dështoi krijimi i qiramarrësit";
+      const errorMessage = err?.message || "Dështoi krijimi i banorit";
       setError(errorMessage);
       toast.error(errorMessage);
       console.error("Create tenant error:", err);
@@ -117,7 +117,7 @@ export default function CreateTenantPage() {
 
   return (
     <ProtectedRoute allowedRoles={["property_manager"]}>
-      <PropertyManagerLayout title="Shto Qiramarrës të Ri">
+      <PropertyManagerLayout title="Shto Banorë të Ri">
         <div className="max-w-2xl space-y-6">
           {/* Back Button */}
           <div className="flex items-center gap-4">
@@ -129,7 +129,7 @@ export default function CreateTenantPage() {
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <p className="text-slate-600">
-              Krijo një llogari të re qiramarrësi
+              Krijo një llogari të re banori
             </p>
           </div>
 
@@ -137,9 +137,9 @@ export default function CreateTenantPage() {
           <form onSubmit={handleSubmit}>
             <Card>
               <CardHeader>
-                <CardTitle>Informacioni i Qiramarrësit</CardTitle>
+                <CardTitle>Informacioni i banorit</CardTitle>
                 <CardDescription>
-                  Plotësoni detajet për të krijuar një llogari të re qiramarrësi
+                  Plotësoni detajet për të krijuar një llogari të re banori
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -274,7 +274,7 @@ export default function CreateTenantPage() {
                     ))}
                   </select>
                   <p className="text-sm text-slate-500">
-                    Caktoni qiramarrësin në një kat specifik (opsionale)
+                    Caktoni banorin në një kat specifik (opsionale)
                   </p>
                 </div>
 
@@ -298,7 +298,7 @@ export default function CreateTenantPage() {
                     </span>
                   </div>
                   <p className="text-sm text-slate-500">
-                    Vendosni qiranë mujore për qiramarrësin (opsionale)
+                    Vendosni qiranë mujore për banorin (opsionale)
                   </p>
                 </div>
 
@@ -321,7 +321,7 @@ export default function CreateTenantPage() {
                     ) : (
                       <>
                         <Save className="mr-2 h-4 w-4" />
-                        Krijo Qiramarrësin
+                        Krijo Banorin
                       </>
                     )}
                   </Button>

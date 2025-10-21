@@ -427,8 +427,8 @@ export default function PaymentTracker({
           <DialogHeader>
             <DialogTitle className="text-base md:text-lg">Shto Të Dhëna Pagesash të Ardhshme</DialogTitle>
             <DialogDescription className="text-xs md:text-sm">
-              Gjeneroni të dhëna pagesash paraprakisht për këtë qiramarrës. Kjo është e dobishme
-              kur një qiramarrës paguan për disa muaj përpara.
+              Gjeneroni të dhëna pagesash paraprakisht për këtë banorë. Kjo është e dobishme
+              kur një banorë paguan për disa muaj përpara.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">

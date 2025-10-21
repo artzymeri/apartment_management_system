@@ -158,7 +158,7 @@ export default function PropertyManagerReportsPage() {
                 <div>
                   <CardTitle className="text-base md:text-lg">Pamja e Raporteve</CardTitle>
                   <CardDescription className="text-xs md:text-sm">
-                    Menaxhoni dhe përgjigjuni raporteve të problemeve të qiramarrësve
+                    Menaxhoni dhe përgjigjuni raporteve të problemeve të banorëve
                   </CardDescription>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2">
@@ -219,7 +219,7 @@ export default function PropertyManagerReportsPage() {
                         <TableRow>
                           <TableHead>ID</TableHead>
                           <TableHead>Prona</TableHead>
-                          <TableHead>Qiramarrësi</TableHead>
+                          <TableHead>Banori</TableHead>
                           <TableHead>Problemi</TableHead>
                           <TableHead>Kati</TableHead>
                           <TableHead>Statusi</TableHead>
@@ -389,7 +389,7 @@ export default function PropertyManagerReportsPage() {
                   </div>
 
                   <div>
-                    <div className="text-xs text-slate-500 uppercase">Qiramarrësi</div>
+                    <div className="text-xs text-slate-500 uppercase">Banori</div>
                     <div className="font-medium text-sm md:text-base">
                       {selectedReport.tenant?.name} {selectedReport.tenant?.surname}
                     </div>

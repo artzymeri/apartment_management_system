@@ -329,7 +329,7 @@ export default function PropertyManagerComplaintsPage() {
                         <TableRow>
                           <TableHead>Titulli</TableHead>
                           <TableHead>Prona</TableHead>
-                          <TableHead>Qiramarrësi</TableHead>
+                          <TableHead>Banori</TableHead>
                           <TableHead>Kati</TableHead>
                           <TableHead>Statusi</TableHead>
                           <TableHead>Data</TableHead>
@@ -495,7 +495,7 @@ export default function PropertyManagerComplaintsPage() {
                     )}
                     <div><strong>Prona:</strong> {selectedComplaint.property.name}</div>
                     <div>
-                      <strong>Qiramarrësi:</strong> {selectedComplaint.tenant.name} {selectedComplaint.tenant.surname}
+                      <strong>Banori:</strong> {selectedComplaint.tenant.name} {selectedComplaint.tenant.surname}
                     </div>
                   </div>
                 </div>

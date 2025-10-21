@@ -181,7 +181,7 @@ export default function PropertyManagerDashboard() {
             {/* Tenants Card */}
             <Card className="border-amber-200 bg-gradient-to-br from-amber-50 to-white hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-slate-700">Qiramarrësit Aktivë</CardTitle>
+                <CardTitle className="text-sm font-medium text-slate-700">Banorët Aktivë</CardTitle>
                 <Users className="h-4 w-4 md:h-5 md:w-5 text-amber-600" />
               </CardHeader>
               <CardContent>
@@ -194,7 +194,7 @@ export default function PropertyManagerDashboard() {
                 <div className="mt-3">
                   <Link href="/property_manager/tenants">
                     <Button variant="ghost" size="sm" className="text-amber-600 hover:text-amber-700 px-0 h-8">
-                      Menaxho qiramarrësit <ArrowRight className="ml-1 h-3 w-3" />
+                      Menaxho banorët <ArrowRight className="ml-1 h-3 w-3" />
                     </Button>
                   </Link>
                 </div>
@@ -334,7 +334,7 @@ export default function PropertyManagerDashboard() {
                           </div>
                           <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2">
                             <p className="text-lg md:text-xl font-bold text-red-600">€{payment.amount.toLocaleString()}</p>
-                            <Button size="sm" className="text-xs md:text-sm h-8">Kontakto Qiramarrësin</Button>
+                            <Button size="sm" className="text-xs md:text-sm h-8">Kontakto Banorin</Button>
                           </div>
                         </div>
                       ))}
@@ -428,7 +428,7 @@ export default function PropertyManagerDashboard() {
                             </p>
                           </div>
                           <div>
-                            <p className="text-slate-500">Qiramarrësit</p>
+                            <p className="text-slate-500">Banorët</p>
                             <p className="font-medium text-slate-900">{property.tenantCount || 0}</p>
                           </div>
                         </div>
@@ -598,7 +598,7 @@ export default function PropertyManagerDashboard() {
               <Card>
                 <CardHeader>
                   <CardTitle className="text-base md:text-lg">Ankesat e Fundit</CardTitle>
-                  <CardDescription className="text-xs md:text-sm">Ankesat më të fundit të qiramarrësve</CardDescription>
+                  <CardDescription className="text-xs md:text-sm">Ankesat më të fundit të banorëve</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {data.complaints.recent.length > 0 ? (

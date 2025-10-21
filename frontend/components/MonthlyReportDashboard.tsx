@@ -265,7 +265,7 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
       <Alert>
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
-          Nuk ka të dhëna të disponueshme për periudhën e zgjedhur. Ju lutem sigurohuni që qiramarrësit kanë regjistrime pagese për këtë muaj.
+          Nuk ka të dhëna të disponueshme për periudhën e zgjedhur. Ju lutem sigurohuni që banorët kanë regjistrime pagese për këtë muaj.
         </AlertDescription>
       </Alert>
     );
@@ -287,7 +287,7 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
           <CardContent>
             <div className="text-xl md:text-2xl font-bold">€{parseFloat(preview.total_budget).toFixed(2)}</div>
             <p className="text-xs text-muted-foreground">
-              Nga {preview.paid_tenants} qiramarrës të paguar
+              Nga {preview.paid_tenants} banorë të paguar
             </p>
           </CardContent>
         </Card>
@@ -300,7 +300,7 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
           <CardContent>
             <div className="text-xl md:text-2xl font-bold">{collectionRate.toFixed(1)}%</div>
             <p className="text-xs text-muted-foreground">
-              {preview.paid_tenants} nga {preview.total_tenants} qiramarrës
+              {preview.paid_tenants} nga {preview.total_tenants} banorë
             </p>
           </CardContent>
         </Card>
@@ -313,7 +313,7 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
           <CardContent>
             <div className="text-xl md:text-2xl font-bold text-orange-600">€{parseFloat(preview.pending_amount).toFixed(2)}</div>
             <p className="text-xs text-muted-foreground">
-              {preview.total_tenants - preview.paid_tenants} qiramarrës të papaguar
+              {preview.total_tenants - preview.paid_tenants} banorë të papaguar
             </p>
           </CardContent>
         </Card>
@@ -589,7 +589,7 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
       <Card className="w-full">
         <CardHeader>
           <CardTitle className="text-base md:text-lg">Detajet e Pagesës</CardTitle>
-          <CardDescription className="text-xs md:text-sm">Ndarja e pagesave të qiramarrësve për këtë periudhë</CardDescription>
+          <CardDescription className="text-xs md:text-sm">Ndarja e pagesave të banorëve për këtë periudhë</CardDescription>
         </CardHeader>
         <CardContent>
           {/* Desktop Table */}
@@ -597,7 +597,7 @@ export function MonthlyReportDashboard({ propertyId, month, year, onSuccess }: M
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead style={{ width: '18%' }}>Qiramarrësi</TableHead>
+                  <TableHead style={{ width: '18%' }}>Banori</TableHead>
                   <TableHead style={{ width: '24%' }}>Email</TableHead>
                   <TableHead style={{ width: '10%' }}>Kati</TableHead>
                   <TableHead style={{ width: '14%' }}>Shuma</TableHead>

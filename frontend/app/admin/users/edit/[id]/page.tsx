@@ -291,7 +291,7 @@ export default function EditUserPage() {
                       <SelectValue placeholder="Zgjidh një rol" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="tenant">Qiramarrës</SelectItem>
+                      <SelectItem value="tenant">Banorë</SelectItem>
                       <SelectItem value="property_manager">Menaxher Pronash</SelectItem>
                       <SelectItem value="admin">Administrator</SelectItem>
                     </SelectContent>

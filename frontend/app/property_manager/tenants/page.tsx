@@ -173,14 +173,14 @@ export default function PropertyManagerTenantsPage() {
   const handleDeleteTenant = (tenantId: number) => {
     deleteMutation.mutate(tenantId, {
       onSuccess: () => {
-        toast.success("Qiramarrësi u fshi me sukses");
+        toast.success("Banori u fshi me sukses");
         setTenantToDelete(null);
         // Refetch tenants after deletion
         setAppliedFilters((prev) => ({ ...prev, page: 1 }));
         setCurrentPage(1);
       },
       onError: () => {
-        toast.error("Dështoi fshirja e qiramarrësit");
+        toast.error("Dështoi fshirja e banorit");
       },
     });
   };
@@ -200,7 +200,7 @@ export default function PropertyManagerTenantsPage() {
                   <div className="flex-1">
                     <CardTitle className="text-base md:text-lg flex items-center gap-2">
                       <Search className="h-4 w-4 md:h-5 md:w-5" />
-                      Filtro Qiramarrësit
+                      Filtro Banorët
                     </CardTitle>
                     <CardDescription className="text-xs md:text-sm mt-1">
                       Kërko sipas emrit, email-it, numrit të telefonit ose filtro sipas pronës, katit dhe normës mujore
@@ -227,7 +227,7 @@ export default function PropertyManagerTenantsPage() {
                       className="bg-indigo-600 hover:bg-indigo-700 gap-2 text-xs md:text-sm h-8 md:h-9"
                     >
                       <Plus className="h-4 w-4" />
-                      Shto Qiramarrës
+                      Shto Banorë
                     </Button>
                   </div>
                 </div>
@@ -321,17 +321,17 @@ export default function PropertyManagerTenantsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Users className="h-5 w-5" />
-                Lista e Qiramarrësve
+                Lista e Banorëve
               </CardTitle>
               <CardDescription className="text-sm">
-                {tenants.length} {(selectedProperty !== "all" || selectedFloor !== "all" || monthlyRateFilter || searchTerm) ? "të filtruar" : "gjithsej"} qiramarrës
+                {tenants.length} {(selectedProperty !== "all" || selectedFloor !== "all" || monthlyRateFilter || searchTerm) ? "të filtruar" : "gjithsej"} banorë
               </CardDescription>
             </CardHeader>
             <CardContent>
               {error && (
                 <Alert variant="destructive" className="mb-4">
                   <AlertDescription className="text-sm">
-                    Gabim në ngarkimin e qiramarrësve. Ju lutemi provoni përsëri.
+                    Gabim në ngarkimin e banorëve. Ju lutemi provoni përsëri.
                   </AlertDescription>
                 </Alert>
               )}
@@ -343,8 +343,8 @@ export default function PropertyManagerTenantsPage() {
               ) : tenants.length === 0 ? (
                 <div className="text-center py-8 text-slate-500 text-sm">
                   {(selectedProperty !== "all" || selectedFloor !== "all" || monthlyRateFilter || searchTerm)
-                    ? "Asnjë qiramarrës nuk u gjet që përputhet me filtrat e zgjedhur."
-                    : "Asnjë qiramarrës nuk u gjet."}
+                    ? "Asnjë banorë nuk u gjet që përputhet me filtrat e zgjedhur."
+                    : "Asnjë banorë nuk u gjet."}
                 </div>
               ) : (
                 <>
@@ -456,10 +456,10 @@ export default function PropertyManagerTenantsPage() {
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <Users className="h-4 w-4" />
-                  Lista e Qiramarrësve
+                  Lista e Banorëve
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  {tenants.length} {(selectedProperty !== "all" || selectedFloor !== "all" || monthlyRateFilter || searchTerm) ? "të filtruar" : "gjithsej"} qiramarrës
+                  {tenants.length} {(selectedProperty !== "all" || selectedFloor !== "all" || monthlyRateFilter || searchTerm) ? "të filtruar" : "gjithsej"} banorë
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -467,7 +467,7 @@ export default function PropertyManagerTenantsPage() {
             {error && (
               <Alert variant="destructive">
                 <AlertDescription className="text-xs md:text-sm">
-                  Gabim në ngarkimin e qiramarrësve. Ju lutemi provoni përsëri.
+                  Gabim në ngarkimin e banorëve. Ju lutemi provoni përsëri.
                 </AlertDescription>
               </Alert>
             )}
@@ -485,8 +485,8 @@ export default function PropertyManagerTenantsPage() {
                 <CardContent className="py-12">
                   <div className="text-center text-slate-500 text-xs md:text-sm">
                     {(selectedProperty !== "all" || selectedFloor !== "all" || monthlyRateFilter || searchTerm)
-                      ? "Asnjë qiramarrës nuk u gjet që përputhet me filtrat e zgjedhur."
-                      : "Asnjë qiramarrës nuk u gjet."}
+                      ? "Asnjë banorë nuk u gjet që përputhet me filtrat e zgjedhur."
+                      : "Asnjë banorë nuk u gjet."}
                   </div>
                 </CardContent>
               </Card>
@@ -621,7 +621,7 @@ export default function PropertyManagerTenantsPage() {
             <AlertDialogHeader>
               <AlertDialogTitle className="text-base md:text-lg">Jeni i sigurt?</AlertDialogTitle>
               <AlertDialogDescription className="text-xs md:text-sm">
-                Kjo do të fshijë përgjithmonë qiramarrësin <strong>{tenantToDelete?.name}</strong>.
+                Kjo do të fshijë përgjithmonë banorin <strong>{tenantToDelete?.name}</strong>.
                 Ky veprim nuk mund të zhbëhet.
               </AlertDialogDescription>
             </AlertDialogHeader>

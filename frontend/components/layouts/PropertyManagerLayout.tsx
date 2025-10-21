@@ -39,7 +39,7 @@ import { usePropertyManagerSidebarCounts } from "@/hooks/usePropertyManagerSideb
 const propertyManagerNavItems = [
   { href: "/property_manager", icon: ClipboardList, label: "Paneli" },
   { href: "/property_manager/properties", icon: Building2, label: "Pronat" },
-  { href: "/property_manager/tenants", icon: Users, label: "Qiramarrësit" },
+  { href: "/property_manager/tenants", icon: Users, label: "Banorët" },
   { href: "/property_manager/payments", icon: Euro, label: "Pagesat" },
   { href: "/property_manager/monthly-reports", icon: BarChart3, label: "Raportet Mujore" },
   { href: "/property_manager/reports", icon: FileText, label: "Raportet" },
@@ -55,7 +55,7 @@ const getPageTitle = (pathname: string) => {
 
   // For nested routes
   if (pathname.startsWith("/property_manager/properties")) return "Pronat";
-  if (pathname.startsWith("/property_manager/tenants")) return "Qiramarrësit";
+  if (pathname.startsWith("/property_manager/tenants")) return "Banorët";
   if (pathname.startsWith("/property_manager/payments")) return "Pagesat";
   if (pathname.startsWith("/property_manager/monthly-reports")) return "Raportet Mujore";
   if (pathname.startsWith("/property_manager/reports")) return "Raportet";

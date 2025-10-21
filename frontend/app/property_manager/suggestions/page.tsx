@@ -276,7 +276,7 @@ export default function PropertyManagerSuggestionsPage() {
                 <div>
                   <CardTitle>Pamja e Sugjerimeve</CardTitle>
                   <CardDescription>
-                    Shqyrtoni sugjerimet e qiramarrësve për pronat tuaja
+                    Shqyrtoni sugjerimet e banorëve për pronat tuaja
                   </CardDescription>
                 </div>
                 <div className="flex flex-col gap-2">
@@ -329,7 +329,7 @@ export default function PropertyManagerSuggestionsPage() {
                         <TableRow>
                           <TableHead>Titulli</TableHead>
                           <TableHead>Prona</TableHead>
-                          <TableHead>Qiramarrësi</TableHead>
+                          <TableHead>Banori</TableHead>
                           <TableHead>Kati</TableHead>
                           <TableHead>Statusi</TableHead>
                           <TableHead>Data</TableHead>
@@ -496,7 +496,7 @@ export default function PropertyManagerSuggestionsPage() {
                     )}
                     <div><strong>Prona:</strong> {selectedSuggestion.property.name}</div>
                     <div>
-                      <strong>Qiramarrësi:</strong> {selectedSuggestion.tenant.name} {selectedSuggestion.tenant.surname}
+                      <strong>Banori:</strong> {selectedSuggestion.tenant.name} {selectedSuggestion.tenant.surname}
                     </div>
                   </div>
                 </div>

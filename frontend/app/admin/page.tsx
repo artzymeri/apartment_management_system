@@ -38,7 +38,7 @@ export default function AdminDashboard() {
   const formatRole = (role: string) => {
     if (role === 'property_manager') return 'Menaxher Pronash';
     if (role === 'admin') return 'Administrator';
-    if (role === 'tenant') return 'Qiramarrës';
+    if (role === 'tenant') return 'Banorë';
     return role.charAt(0).toUpperCase() + role.slice(1);
   };
 
@@ -180,10 +180,10 @@ export default function AdminDashboard() {
                 </div>
                 <div className="flex items-center justify-between p-4 border border-slate-200 rounded-lg bg-slate-50/50">
                   <div>
-                    <p className="text-sm font-medium text-slate-600">Qiramarrës</p>
+                    <p className="text-sm font-medium text-slate-600">Banorë</p>
                     <p className="text-2xl font-bold text-slate-900">{isLoading ? "..." : stats.tenantCount}</p>
                   </div>
-                  <Badge variant="secondary" className="bg-green-100 text-green-700">Qiramarrës</Badge>
+                  <Badge variant="secondary" className="bg-green-100 text-green-700">Banorë</Badge>
                 </div>
               </div>
             </CardContent>

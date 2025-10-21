@@ -119,7 +119,7 @@ export default function UsersPage() {
   const capitalizeRole = (role: string) => {
     if (role === "property_manager") return "Menaxher Pronash";
     if (role === "admin") return "Administrator";
-    if (role === "tenant") return "Qiramarrës";
+    if (role === "tenant") return "Banorë";
     return role.charAt(0).toUpperCase() + role.slice(1);
   };
 
@@ -242,7 +242,7 @@ export default function UsersPage() {
                         htmlFor="role-tenant"
                         className="text-sm font-normal cursor-pointer"
                       >
-                        Qiramarrës
+                        Banorë
                       </Label>
                     </div>
                   </div>
