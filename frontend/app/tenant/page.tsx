@@ -431,8 +431,7 @@ export default function TenantDashboard() {
                             {complaint.status === 'in_progress' ? 'Në Proces' :
                              complaint.status === 'resolved' ? 'E Zgjidhur' :
                              complaint.status === 'rejected' ? 'E Refuzuar' :
-                             complaint.status === 'pending' ? 'Në Pritje' :
-                             complaint.status.charAt(0).toUpperCase() + complaint.status.slice(1)}
+                             'Në Pritje'}
                           </Badge>
                         </div>
                         <p className="text-xs sm:text-sm text-slate-600">{formatDate(complaint.created_at)}</p>
@@ -485,8 +484,7 @@ export default function TenantDashboard() {
                             {suggestion.status === 'under_review' ? 'Në Shqyrtim' :
                              suggestion.status === 'approved' ? 'E Miratuar' :
                              suggestion.status === 'rejected' ? 'E Refuzuar' :
-                             suggestion.status === 'pending' ? 'Në Pritje' :
-                             suggestion.status.charAt(0).toUpperCase() + suggestion.status.slice(1)}
+                             'Në Pritje'}
                           </Badge>
                         </div>
                         <p className="text-xs sm:text-sm text-slate-600">{formatDate(suggestion.created_at)}</p>
