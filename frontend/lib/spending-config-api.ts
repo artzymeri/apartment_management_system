@@ -71,4 +71,35 @@ export const spendingConfigAPI = {
       throw new Error(error.message || 'Failed to delete spending config');
     }
   },
+
+  // Get spending configs for a specific property
+  async getPropertySpendingConfigs(propertyId: number): Promise<SpendingConfig[]> {
+    const response = await apiFetch(`/api/spending-configs/property/${propertyId}`);
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to fetch property spending configs');
+    }
+
+    return response.json();
+  },
+
+  // Assign spending configs to a property
+  async assignSpendingConfigsToProperty(
+    propertyId: number,
+    data: { spendingConfigIds: number[] }
+  ): Promise<void> {
+    const response = await apiFetch(
+      `/api/spending-configs/property/${propertyId}/assign`,
+      {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to assign spending configs');
+    }
+  },
 };
