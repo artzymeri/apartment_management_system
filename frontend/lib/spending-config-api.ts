@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+import { apiFetch } from './api-client';
 
 export interface SpendingConfig {
   id: number;
@@ -17,9 +17,7 @@ export interface SpendingConfig {
 export const spendingConfigAPI = {
   // Get all spending configs created by the current user
   async getMySpendingConfigs(): Promise<SpendingConfig[]> {
-    const response = await fetch(`${API_BASE_URL}/api/spending-configs`, {
-      credentials: 'include',
-    });
+    const response = await apiFetch('/api/spending-configs');
 
     if (!response.ok) {
       const error = await response.json();
@@ -31,12 +29,8 @@ export const spendingConfigAPI = {
 
   // Create a new spending config
   async createSpendingConfig(data: { title: string; description?: string }): Promise<SpendingConfig> {
-    const response = await fetch(`${API_BASE_URL}/api/spending-configs`, {
+    const response = await apiFetch('/api/spending-configs', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
       body: JSON.stringify(data),
     });
 
@@ -53,12 +47,8 @@ export const spendingConfigAPI = {
     id: number,
     data: { title: string; description?: string }
   ): Promise<SpendingConfig> {
-    const response = await fetch(`${API_BASE_URL}/api/spending-configs/${id}`, {
+    const response = await apiFetch(`/api/spending-configs/${id}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
       body: JSON.stringify(data),
     });
 
@@ -72,9 +62,8 @@ export const spendingConfigAPI = {
 
   // Delete a spending config
   async deleteSpendingConfig(id: number): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/api/spending-configs/${id}`, {
+    const response = await apiFetch(`/api/spending-configs/${id}`, {
       method: 'DELETE',
-      credentials: 'include',
     });
 
     if (!response.ok) {
@@ -82,45 +71,4 @@ export const spendingConfigAPI = {
       throw new Error(error.message || 'Failed to delete spending config');
     }
   },
-
-  // Get spending configs for a specific property
-  async getPropertySpendingConfigs(propertyId: number): Promise<SpendingConfig[]> {
-    const response = await fetch(
-      `${API_BASE_URL}/api/spending-configs/property/${propertyId}`,
-      {
-        credentials: 'include',
-      }
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Failed to fetch property spending configs');
-    }
-
-    return response.json();
-  },
-
-  // Assign spending configs to a property
-  async assignSpendingConfigsToProperty(
-    propertyId: number,
-    data: { spendingConfigIds: number[] }
-  ): Promise<void> {
-    const response = await fetch(
-      `${API_BASE_URL}/api/spending-configs/property/${propertyId}/assign`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify(data),
-      }
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Failed to assign spending configs');
-    }
-  },
 };
-

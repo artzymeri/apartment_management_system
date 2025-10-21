@@ -1,6 +1,5 @@
 import { authAPI } from './auth-api';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+import { apiFetch, API_BASE_URL } from './api-client';
 
 // Global handler for API responses
 async function handleApiResponse(response: Response) {
@@ -56,14 +55,6 @@ export interface PropertyFilters {
 }
 
 class PropertyAPI {
-  private getAuthHeaders() {
-    const token = authAPI.getToken();
-    return {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    };
-  }
-
   async getAllProperties(filters?: PropertyFilters) {
     const queryParams = new URLSearchParams();
     if (filters?.search) queryParams.append('search', filters.search);
@@ -73,12 +64,10 @@ class PropertyAPI {
     if (filters?.page) queryParams.append('page', filters.page.toString());
     if (filters?.limit) queryParams.append('limit', filters.limit.toString());
 
-    const response = await fetch(
-      `${API_BASE_URL}/api/properties?${queryParams.toString()}`,
+    const response = await apiFetch(
+      `/api/properties?${queryParams.toString()}`,
       {
         method: 'GET',
-        headers: this.getAuthHeaders(),
-        credentials: 'include',
       }
     );
     await handleApiResponse(response);
@@ -92,10 +81,8 @@ class PropertyAPI {
   }
 
   async getPropertyById(id: number) {
-    const response = await fetch(`${API_BASE_URL}/api/properties/${id}`, {
+    const response = await apiFetch(`/api/properties/${id}`, {
       method: 'GET',
-      headers: this.getAuthHeaders(),
-      credentials: 'include',
     });
     await handleApiResponse(response);
     return response.json();
@@ -111,10 +98,8 @@ class PropertyAPI {
     floors_to?: number | null;
     manager_ids?: number[];
   }) {
-    const response = await fetch(`${API_BASE_URL}/api/properties`, {
+    const response = await apiFetch('/api/properties', {
       method: 'POST',
-      headers: this.getAuthHeaders(),
-      credentials: 'include',
       body: JSON.stringify(data),
     });
     await handleApiResponse(response);
@@ -131,10 +116,8 @@ class PropertyAPI {
     floors_to?: number | null;
     manager_ids?: number[];
   }) {
-    const response = await fetch(`${API_BASE_URL}/api/properties/${id}`, {
+    const response = await apiFetch(`/api/properties/${id}`, {
       method: 'PUT',
-      headers: this.getAuthHeaders(),
-      credentials: 'include',
       body: JSON.stringify(data),
     });
     await handleApiResponse(response);
@@ -142,20 +125,16 @@ class PropertyAPI {
   }
 
   async deleteProperty(id: number) {
-    const response = await fetch(`${API_BASE_URL}/api/properties/${id}`, {
+    const response = await apiFetch(`/api/properties/${id}`, {
       method: 'DELETE',
-      headers: this.getAuthHeaders(),
-      credentials: 'include',
     });
     await handleApiResponse(response);
     return response.json();
   }
 
   async getManagers() {
-    const response = await fetch(`${API_BASE_URL}/api/properties/managers/list`, {
+    const response = await apiFetch('/api/properties/managers/list', {
       method: 'GET',
-      headers: this.getAuthHeaders(),
-      credentials: 'include',
     });
     await handleApiResponse(response);
     return response.json();

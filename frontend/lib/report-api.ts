@@ -1,6 +1,5 @@
 import { authAPI } from './auth-api';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+import { apiFetch, API_BASE_URL } from './api-client';
 
 // Global handler for API responses
 async function handleApiResponse(response: Response) {
@@ -68,16 +67,10 @@ export const getPropertyManagerReports = async (params?: GetPropertyManagerRepor
   }
 
   const queryString = queryParams.toString();
-  const url = `${API_BASE_URL}/api/reports/manager${queryString ? `?${queryString}` : ''}`;
+  const url = `/api/reports/manager${queryString ? `?${queryString}` : ''}`;
 
-  const token = authAPI.getToken();
-  const response = await fetch(url, {
+  const response = await apiFetch(url, {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
-    credentials: 'include',
   });
 
   await handleApiResponse(response);
@@ -92,14 +85,8 @@ export const getPropertyManagerReports = async (params?: GetPropertyManagerRepor
 
 // Update report status
 export const updateReportStatus = async (id: number, data: UpdateReportStatusData): Promise<{ message: string; report: Report }> => {
-  const token = authAPI.getToken();
-  const response = await fetch(`${API_BASE_URL}/api/reports/${id}/status`, {
+  const response = await apiFetch(`/api/reports/${id}/status`, {
     method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
-    credentials: 'include',
     body: JSON.stringify(data),
   });
 

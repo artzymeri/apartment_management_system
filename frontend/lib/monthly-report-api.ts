@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+import { apiFetch } from './api-client';
 
 export interface MonthlyReport {
   id: number;
@@ -80,9 +80,7 @@ export const getMonthlyReportPreview = async (params: {
     year: params.year.toString(),
   });
 
-  const response = await fetch(`${API_BASE_URL}/api/monthly-reports/preview?${queryParams}`, {
-    credentials: 'include',
-  });
+  const response = await apiFetch(`/api/monthly-reports/preview?${queryParams}`);
 
   if (!response.ok) {
     const error = await response.json();
@@ -98,12 +96,8 @@ export const generateMonthlyReport = async (data: GenerateMonthlyReportData): Pr
   message: string;
   report: MonthlyReport;
 }> => {
-  const response = await fetch(`${API_BASE_URL}/api/monthly-reports/generate`, {
+  const response = await apiFetch('/api/monthly-reports/generate', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
     body: JSON.stringify(data),
   });
 
@@ -121,9 +115,7 @@ export const getAllMyReports = async (params?: {
 }): Promise<{ success: boolean; reports: MonthlyReport[] }> => {
   const queryParams = params?.year ? `?year=${params.year}` : '';
 
-  const response = await fetch(`${API_BASE_URL}/api/monthly-reports/all${queryParams}`, {
-    credentials: 'include',
-  });
+  const response = await apiFetch(`/api/monthly-reports/all${queryParams}`);
 
   if (!response.ok) {
     const error = await response.json();
@@ -140,9 +132,7 @@ export const getPropertyReports = async (
 ): Promise<{ success: boolean; reports: MonthlyReport[] }> => {
   const queryParams = params?.year ? `?year=${params.year}` : '';
 
-  const response = await fetch(`${API_BASE_URL}/api/monthly-reports/property/${propertyId}${queryParams}`, {
-    credentials: 'include',
-  });
+  const response = await apiFetch(`/api/monthly-reports/property/${propertyId}${queryParams}`);
 
   if (!response.ok) {
     const error = await response.json();
@@ -160,9 +150,7 @@ export const getMonthlyReportDetail = async (
   report: MonthlyReport;
   payments: Array<any>;
 }> => {
-  const response = await fetch(`${API_BASE_URL}/api/monthly-reports/${reportId}`, {
-    credentials: 'include',
-  });
+  const response = await apiFetch(`/api/monthly-reports/${reportId}`);
 
   if (!response.ok) {
     const error = await response.json();
@@ -177,9 +165,8 @@ export const deleteMonthlyReport = async (reportId: number): Promise<{
   success: boolean;
   message: string;
 }> => {
-  const response = await fetch(`${API_BASE_URL}/api/monthly-reports/${reportId}`, {
+  const response = await apiFetch(`/api/monthly-reports/${reportId}`, {
     method: 'DELETE',
-    credentials: 'include',
   });
 
   if (!response.ok) {
@@ -202,12 +189,8 @@ export const updateMonthlyReport = async (
   message: string;
   report: MonthlyReport;
 }> => {
-  const response = await fetch(`${API_BASE_URL}/api/monthly-reports/${reportId}`, {
+  const response = await apiFetch(`/api/monthly-reports/${reportId}`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
     body: JSON.stringify(data),
   });
 
@@ -225,9 +208,7 @@ export const getTenantPropertyReports = async (params?: {
 }): Promise<{ success: boolean; reports: MonthlyReport[] }> => {
   const queryParams = params?.year ? `?year=${params.year}` : '';
 
-  const response = await fetch(`${API_BASE_URL}/api/monthly-reports/tenant/my-reports${queryParams}`, {
-    credentials: 'include',
-  });
+  const response = await apiFetch(`/api/monthly-reports/tenant/my-reports${queryParams}`);
 
   if (!response.ok) {
     const error = await response.json();

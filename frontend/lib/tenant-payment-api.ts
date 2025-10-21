@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+import { apiFetch, API_BASE_URL } from './api-client';
 
 export interface TenantPayment {
   id: number;
@@ -58,11 +58,8 @@ export async function getTenantPayments(
   if (filters?.year) params.append('year', filters.year.toString());
   if (filters?.month) params.append('month', filters.month.toString());
 
-  const response = await fetch(
-    `${API_BASE_URL}/api/tenant-payments/tenant/${tenantId}?${params.toString()}`,
-    {
-      credentials: 'include',
-    }
+  const response = await apiFetch(
+    `/api/tenant-payments/tenant/${tenantId}?${params.toString()}`
   );
 
   if (!response.ok) {
@@ -97,11 +94,8 @@ export async function getPropertyManagerPayments(filters?: {
     }
   }
 
-  const response = await fetch(
-    `${API_BASE_URL}/api/tenant-payments/property-manager?${params.toString()}`,
-    {
-      credentials: 'include',
-    }
+  const response = await apiFetch(
+    `/api/tenant-payments/property-manager?${params.toString()}`
   );
 
   if (!response.ok) {
@@ -122,11 +116,8 @@ export async function getPaymentStatistics(filters?: {
   if (filters?.property_id) params.append('property_id', filters.property_id.toString());
   if (filters?.year) params.append('year', filters.year.toString());
 
-  const response = await fetch(
-    `${API_BASE_URL}/api/tenant-payments/statistics?${params.toString()}`,
-    {
-      credentials: 'include',
-    }
+  const response = await apiFetch(
+    `/api/tenant-payments/statistics?${params.toString()}`
   );
 
   if (!response.ok) {
@@ -144,12 +135,8 @@ export async function updatePaymentStatus(
   status: 'pending' | 'paid' | 'overdue',
   notes?: string
 ): Promise<TenantPayment> {
-  const response = await fetch(`${API_BASE_URL}/api/tenant-payments/${paymentId}`, {
+  const response = await apiFetch(`/api/tenant-payments/${paymentId}`, {
     method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
     body: JSON.stringify({ status, notes }),
   });
 
@@ -168,12 +155,8 @@ export async function bulkUpdatePayments(
   status: 'pending' | 'paid' | 'overdue',
   notes?: string
 ): Promise<void> {
-  const response = await fetch(`${API_BASE_URL}/api/tenant-payments`, {
+  const response = await apiFetch('/api/tenant-payments', {
     method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
     body: JSON.stringify({ payment_ids: paymentIds, status, notes }),
   });
 
@@ -189,12 +172,8 @@ export async function generateFuturePayments(
   propertyId: number,
   monthsAhead: number
 ): Promise<TenantPayment[]> {
-  const response = await fetch(`${API_BASE_URL}/api/tenant-payments/generate-future`, {
+  const response = await apiFetch('/api/tenant-payments/generate-future', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
     body: JSON.stringify({
       tenant_id: tenantId,
       property_id: propertyId,
@@ -218,12 +197,8 @@ export async function ensurePaymentRecords(
   year: number,
   month: number | number[] // Support both single and multiple months
 ): Promise<EnsurePaymentRecordsResult> {
-  const response = await fetch(`${API_BASE_URL}/api/tenant-payments/ensure-records`, {
+  const response = await apiFetch('/api/tenant-payments/ensure-records', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
     body: JSON.stringify({
       tenant_ids: tenantIds,
       property_id: propertyId,
@@ -246,12 +221,8 @@ export async function updatePaymentDate(
   paymentId: number,
   paymentDate: string
 ): Promise<TenantPayment> {
-  const response = await fetch(`${API_BASE_URL}/api/tenant-payments/${paymentId}/payment-date`, {
+  const response = await apiFetch(`/api/tenant-payments/${paymentId}/payment-date`, {
     method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
     body: JSON.stringify({ payment_date: paymentDate }),
   });
 

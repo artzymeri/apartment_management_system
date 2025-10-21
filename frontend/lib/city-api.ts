@@ -1,7 +1,5 @@
 import { authAPI } from './auth-api';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-const API_BASE_URL = `${API_URL}/api`;
+import { apiFetch } from './api-client';
 
 // Global handler for API responses
 async function handleApiResponse(response: Response) {
@@ -27,21 +25,15 @@ export interface City {
 export const cityApi = {
   // Get all cities
   getAllCities: async (): Promise<{ success: boolean; data: City[] }> => {
-    const response = await fetch(`${API_BASE_URL}/cities`, {
-      credentials: 'include',
-    });
+    const response = await apiFetch('/api/cities');
     await handleApiResponse(response);
     return response.json();
   },
 
   // Create a new city (admin only)
   createCity: async (name: string): Promise<{ success: boolean; message: string; data?: City }> => {
-    const response = await fetch(`${API_BASE_URL}/cities`, {
+    const response = await apiFetch('/api/cities', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
       body: JSON.stringify({ name }),
     });
     await handleApiResponse(response);
@@ -50,9 +42,8 @@ export const cityApi = {
 
   // Delete a city (admin only)
   deleteCity: async (id: number): Promise<{ success: boolean; message: string }> => {
-    const response = await fetch(`${API_BASE_URL}/cities/${id}`, {
+    const response = await apiFetch(`/api/cities/${id}`, {
       method: 'DELETE',
-      credentials: 'include',
     });
     await handleApiResponse(response);
     return response.json();
@@ -60,12 +51,8 @@ export const cityApi = {
 
   // Update a city (admin only)
   updateCity: async (id: number, name: string): Promise<{ success: boolean; message: string; data?: City }> => {
-    const response = await fetch(`${API_BASE_URL}/cities/${id}`, {
+    const response = await apiFetch(`/api/cities/${id}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
       body: JSON.stringify({ name }),
     });
     await handleApiResponse(response);

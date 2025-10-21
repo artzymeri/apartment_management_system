@@ -1,6 +1,5 @@
 import { authAPI } from './auth-api';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+import { apiFetch } from './api-client';
 
 // Global handler for API responses
 async function handleApiResponse(response: Response) {
@@ -47,9 +46,7 @@ export interface AssignProblemOptionsDto {
 export const problemOptionAPI = {
   // Get all problem options created by the property manager
   async getMyProblemOptions(): Promise<ProblemOption[]> {
-    const response = await fetch(`${API_BASE_URL}/api/problem-options`, {
-      credentials: 'include',
-    });
+    const response = await apiFetch('/api/problem-options');
 
     await handleApiResponse(response);
 
@@ -62,12 +59,8 @@ export const problemOptionAPI = {
 
   // Create a new problem option
   async createProblemOption(data: CreateProblemOptionDto): Promise<ProblemOption> {
-    const response = await fetch(`${API_BASE_URL}/api/problem-options`, {
+    const response = await apiFetch('/api/problem-options', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
       body: JSON.stringify(data),
     });
 
@@ -83,12 +76,8 @@ export const problemOptionAPI = {
 
   // Update a problem option
   async updateProblemOption(id: number, data: UpdateProblemOptionDto): Promise<ProblemOption> {
-    const response = await fetch(`${API_BASE_URL}/api/problem-options/${id}`, {
+    const response = await apiFetch(`/api/problem-options/${id}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
       body: JSON.stringify(data),
     });
 
@@ -104,9 +93,8 @@ export const problemOptionAPI = {
 
   // Delete a problem option
   async deleteProblemOption(id: number): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/api/problem-options/${id}`, {
+    const response = await apiFetch(`/api/problem-options/${id}`, {
       method: 'DELETE',
-      credentials: 'include',
     });
 
     await handleApiResponse(response);
@@ -119,9 +107,7 @@ export const problemOptionAPI = {
 
   // Get problem options for a specific property
   async getPropertyProblemOptions(propertyId: number): Promise<ProblemOption[]> {
-    const response = await fetch(`${API_BASE_URL}/api/problem-options/property/${propertyId}`, {
-      credentials: 'include',
-    });
+    const response = await apiFetch(`/api/problem-options/property/${propertyId}`);
 
     await handleApiResponse(response);
 
@@ -137,14 +123,10 @@ export const problemOptionAPI = {
     propertyId: number,
     data: AssignProblemOptionsDto
   ): Promise<void> {
-    const response = await fetch(
-      `${API_BASE_URL}/api/problem-options/property/${propertyId}/assign`,
+    const response = await apiFetch(
+      `/api/problem-options/property/${propertyId}/assign`,
       {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
         body: JSON.stringify(data),
       }
     );
@@ -157,4 +139,3 @@ export const problemOptionAPI = {
     }
   },
 };
-

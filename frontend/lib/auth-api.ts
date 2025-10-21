@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+import { apiFetch } from './api-client';
 
 class AuthAPI {
   // Register new user
@@ -9,11 +9,8 @@ class AuthAPI {
     password: string;
     number?: string;
   }) {
-    const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+    const response = await apiFetch('/api/auth/register', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify(data),
     });
     return response.json();
@@ -21,12 +18,8 @@ class AuthAPI {
 
   // Login user
   async login(identifier: string, password: string, method: 'email' | 'phone' = 'email') {
-    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+    const response = await apiFetch('/api/auth/login', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include', // Send cookies
       body: JSON.stringify({
         identifier,
         password,
@@ -38,14 +31,8 @@ class AuthAPI {
 
   // Logout user
   async logout() {
-    const token = this.getToken();
-    const response = await fetch(`${API_BASE_URL}/api/auth/logout`, {
+    const response = await apiFetch('/api/auth/logout', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      credentials: 'include',
     });
     this.removeToken();
     return response.json();
@@ -56,13 +43,8 @@ class AuthAPI {
     const token = this.getToken();
     if (!token) return null;
 
-    const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+    const response = await apiFetch('/api/auth/me', {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      credentials: 'include',
     });
 
     if (!response.ok) {
@@ -79,12 +61,8 @@ class AuthAPI {
     if (!token) return false;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+      const response = await apiFetch('/api/auth/me', {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
       });
 
       if (!response.ok) {

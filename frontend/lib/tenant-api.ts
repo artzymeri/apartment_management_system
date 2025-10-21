@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+import { apiFetch, API_BASE_URL } from './api-client';
 
 export interface Complaint {
   id: number;
@@ -84,11 +84,9 @@ export async function getTenantDashboardData(params?: { year?: number; month?: n
   if (params?.year) queryParams.append('year', params.year.toString());
   if (params?.month) queryParams.append('month', params.month.toString());
 
-  const url = `${API_BASE_URL}/api/tenant-dashboard${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+  const url = `/api/tenant-dashboard${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
 
-  const response = await fetch(url, {
-    credentials: 'include',
-  });
+  const response = await apiFetch(url);
 
   if (!response.ok) {
     const error = await response.json();
@@ -101,9 +99,7 @@ export async function getTenantDashboardData(params?: { year?: number; month?: n
 
 // Get tenant's complaints
 export async function getTenantComplaints(): Promise<Complaint[]> {
-  const response = await fetch(`${API_BASE_URL}/api/complaints/tenant`, {
-    credentials: 'include',
-  });
+  const response = await apiFetch('/api/complaints/tenant');
 
   if (!response.ok) {
     const error = await response.json();
@@ -116,9 +112,7 @@ export async function getTenantComplaints(): Promise<Complaint[]> {
 
 // Get tenant's suggestions
 export async function getTenantSuggestions(): Promise<Suggestion[]> {
-  const response = await fetch(`${API_BASE_URL}/api/suggestions/tenant`, {
-    credentials: 'include',
-  });
+  const response = await apiFetch('/api/suggestions/tenant');
 
   if (!response.ok) {
     const error = await response.json();

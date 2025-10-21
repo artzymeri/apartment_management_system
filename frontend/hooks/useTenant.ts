@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getTenantComplaints, getTenantSuggestions, getTenantDashboardData } from '@/lib/tenant-api';
 import { getTenantPayments } from '@/lib/tenant-payment-api';
+import { apiFetch } from '@/lib/api-client';
 
 // Hook to get all tenant dashboard data in one call
 export function useTenantDashboard(params?: { year?: number; month?: number }) {
@@ -45,9 +46,7 @@ export function useTenantReports() {
   return useQuery({
     queryKey: ['tenant-reports'],
     queryFn: async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/reports/my-reports`, {
-        credentials: 'include',
-      });
+      const response = await apiFetch('/api/reports/my-reports');
 
       if (!response.ok) {
         const error = await response.json();

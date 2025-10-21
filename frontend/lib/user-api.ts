@@ -1,6 +1,5 @@
 import { authAPI } from './auth-api';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+import { apiFetch, API_BASE_URL } from './api-client';
 
 // Global handler for API responses
 async function handleApiResponse(response: Response) {
@@ -39,14 +38,6 @@ export interface UserFilters {
 }
 
 class UserAPI {
-  private getAuthHeaders() {
-    const token = authAPI.getToken();
-    return {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    };
-  }
-
   async getAllUsers(filters?: UserFilters) {
     const queryParams = new URLSearchParams();
     if (filters?.search) queryParams.append('search', filters.search);
@@ -54,12 +45,10 @@ class UserAPI {
     if (filters?.page) queryParams.append('page', filters.page.toString());
     if (filters?.limit) queryParams.append('limit', filters.limit.toString());
 
-    const response = await fetch(
-      `${API_BASE_URL}/api/users?${queryParams.toString()}`,
+    const response = await apiFetch(
+      `/api/users?${queryParams.toString()}`,
       {
         method: 'GET',
-        headers: this.getAuthHeaders(),
-        credentials: 'include',
       }
     );
     await handleApiResponse(response);
@@ -67,10 +56,8 @@ class UserAPI {
   }
 
   async getUserById(id: number) {
-    const response = await fetch(`${API_BASE_URL}/api/users/${id}`, {
+    const response = await apiFetch(`/api/users/${id}`, {
       method: 'GET',
-      headers: this.getAuthHeaders(),
-      credentials: 'include',
     });
     await handleApiResponse(response);
     return response.json();
@@ -88,10 +75,8 @@ class UserAPI {
     expiry_date?: string | null;
     monthly_rate?: number | null;
   }) {
-    const response = await fetch(`${API_BASE_URL}/api/users/${id}`, {
+    const response = await apiFetch(`/api/users/${id}`, {
       method: 'PUT',
-      headers: this.getAuthHeaders(),
-      credentials: 'include',
       body: JSON.stringify(data),
     });
     await handleApiResponse(response);
@@ -99,10 +84,8 @@ class UserAPI {
   }
 
   async deleteUser(id: number) {
-    const response = await fetch(`${API_BASE_URL}/api/users/${id}`, {
+    const response = await apiFetch(`/api/users/${id}`, {
       method: 'DELETE',
-      headers: this.getAuthHeaders(),
-      credentials: 'include',
     });
     await handleApiResponse(response);
     return response.json();
@@ -116,10 +99,8 @@ class UserAPI {
     currentPassword?: string;
     number?: string | null;
   }) {
-    const response = await fetch(`${API_BASE_URL}/api/users/profile/me`, {
+    const response = await apiFetch('/api/users/profile/me', {
       method: 'PUT',
-      headers: this.getAuthHeaders(),
-      credentials: 'include',
       body: JSON.stringify(data),
     });
 
@@ -145,10 +126,8 @@ class UserAPI {
     expiry_date?: string | null;
     monthly_rate?: number | null;
   }) {
-    const response = await fetch(`${API_BASE_URL}/api/users`, {
+    const response = await apiFetch('/api/users', {
       method: 'POST',
-      headers: this.getAuthHeaders(),
-      credentials: 'include',
       body: JSON.stringify(data),
     });
     await handleApiResponse(response);
@@ -161,12 +140,10 @@ class UserAPI {
     if (filters?.page) queryParams.append('page', filters.page.toString());
     if (filters?.limit) queryParams.append('limit', filters.limit.toString());
 
-    const response = await fetch(
-      `${API_BASE_URL}/api/users/tenants?${queryParams.toString()}`,
+    const response = await apiFetch(
+      `/api/users/tenants?${queryParams.toString()}`,
       {
         method: 'GET',
-        headers: this.getAuthHeaders(),
-        credentials: 'include',
       }
     );
     await handleApiResponse(response);
@@ -174,10 +151,8 @@ class UserAPI {
   }
 
   async getTenantById(id: number) {
-    const response = await fetch(`${API_BASE_URL}/api/users/tenants/${id}`, {
+    const response = await apiFetch(`/api/users/tenants/${id}`, {
       method: 'GET',
-      headers: this.getAuthHeaders(),
-      credentials: 'include',
     });
     await handleApiResponse(response);
     return response.json();
@@ -193,10 +168,8 @@ class UserAPI {
     floor_assigned?: number | null;
     monthly_rate?: number | null;
   }) {
-    const response = await fetch(`${API_BASE_URL}/api/users/tenants/${id}`, {
+    const response = await apiFetch(`/api/users/tenants/${id}`, {
       method: 'PUT',
-      headers: this.getAuthHeaders(),
-      credentials: 'include',
       body: JSON.stringify(data),
     });
     await handleApiResponse(response);
@@ -204,10 +177,8 @@ class UserAPI {
   }
 
   async deleteTenant(id: number) {
-    const response = await fetch(`${API_BASE_URL}/api/users/tenants/${id}`, {
+    const response = await apiFetch(`/api/users/tenants/${id}`, {
       method: 'DELETE',
-      headers: this.getAuthHeaders(),
-      credentials: 'include',
     });
     await handleApiResponse(response);
     return response.json();
