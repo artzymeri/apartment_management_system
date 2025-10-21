@@ -125,3 +125,14 @@
 .rdp-weekdays {
   display: none !important;
 }
+
+.rdp-day_button {
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+}
+
+.rdp-selected {
+  background: var(--secondary-foreground);
+  color: var(--secondary);
+}

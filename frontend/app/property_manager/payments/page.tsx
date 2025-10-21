@@ -59,7 +59,8 @@ import {
 import { useProperties } from "@/hooks/useProperties";
 import { Calendar as CalendarIcon, Euro, AlertCircle, CheckCircle, Clock, Plus, Users, Edit } from "lucide-react";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import { sq } from "date-fns/locale";
+import { cn, formatShortDate } from "@/lib/utils";
 
 export default function PaymentsPage() {
   const [payments, setPayments] = useState<TenantPayment[]>([]);
@@ -439,6 +440,12 @@ export default function PaymentsPage() {
       years.push(currentYear - i);
     }
     return years;
+  };
+
+  // Helper function for date picker display
+  const formatDateForDisplay = (date: Date | undefined) => {
+    if (!date) return "Zgjidhni datën";
+    return format(date, "PPP", { locale: sq });
   };
 
   return (
@@ -976,7 +983,7 @@ export default function PaymentsPage() {
                                                                         variant="outline"
                                                                         className={cn("w-full justify-start text-left h-9 md:h-10 text-xs md:text-sm", !editPaymentDate && "text-muted")}
                                                                     >
-                                                                      {editPaymentDate ? format(editPaymentDate, "PPP") : "Zgjidhni datën"}
+                                                                      {editPaymentDate ? format(editPaymentDate, "PPP", { locale: sq }) : "Zgjidhni datën"}
                                                                       <CalendarIcon className="w-4 h-4 ml-auto" />
                                                                     </Button>
                                                                   </PopoverTrigger>
@@ -1133,7 +1140,7 @@ export default function PaymentsPage() {
                                                                             variant="outline"
                                                                             className={cn("w-full justify-start text-left h-9 md:h-10 text-xs md:text-sm", !editPaymentDate && "text-muted")}
                                                                         >
-                                                                          {editPaymentDate ? format(editPaymentDate, "PPP") : "Zgjidhni datën"}
+                                                                          {editPaymentDate ? format(editPaymentDate, "PPP", { locale: sq }) : "Zgjidhni datën"}
                                                                           <CalendarIcon className="w-4 h-4 ml-auto" />
                                                                         </Button>
                                                                       </PopoverTrigger>

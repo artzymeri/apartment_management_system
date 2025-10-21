@@ -22,6 +22,7 @@ import { UserCog, Calendar as CalendarIcon } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { sq } from "date-fns/locale";
 
 export default function EditUserPage() {
   const router = useRouter();
@@ -315,7 +316,7 @@ export default function EditUserPage() {
                           )}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
-                          {expiryDate ? format(expiryDate, "PPP") : "Zgjidh një datë"}
+                          {expiryDate ? format(expiryDate, "PPP", { locale: sq }) : "Zgjidh një datë"}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">

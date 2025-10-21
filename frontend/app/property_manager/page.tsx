@@ -342,7 +342,7 @@ export default function PropertyManagerDashboard() {
                     {data.payments.overdue.length > 5 && (
                       <div className="mt-4 text-center">
                         <Link href="/property_manager/payments">
-                          <Button variant="outline" size="sm" className="text-xs md:text-sm">Shiko Të Gjitha Pagesat e Vonuara</Button>
+                          <Button variant="outline" size="sm" className="text-xs md:text-sm bg-indigo-600 hover:bg-indigo-700">Shiko Të Gjitha Pagesat e Vonuara</Button>
                         </Link>
                       </div>
                     )}
@@ -496,7 +496,7 @@ export default function PropertyManagerDashboard() {
                       <p className="text-xl md:text-2xl font-bold text-green-700">€{data.payments.currentMonth.revenue.toLocaleString()}</p>
                     </div>
                     <Link href="/property_manager/payments">
-                      <Button className="w-full text-xs md:text-sm h-9 md:h-10">Shiko Të Gjitha Pagesat</Button>
+                      <Button className="w-full text-xs md:text-sm h-9 md:h-10 bg-indigo-600 hover:bg-indigo-700">Shiko Të Gjitha Pagesat</Button>
                     </Link>
                   </div>
                 </CardContent>
