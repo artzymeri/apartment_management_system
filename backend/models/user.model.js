@@ -77,6 +77,11 @@ const User = sequelize.define('User', {
       min: 0
     }
   },
+  apartment_label: {
+    type: DataTypes.STRING(50),
+    allowNull: true,
+    field: 'apartment_label'
+  },
   created_at: {
     type: DataTypes.DATE,
     allowNull: false,

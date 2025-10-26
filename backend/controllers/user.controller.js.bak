@@ -200,8 +200,8 @@ exports.getUserById = async (req, res) => {
 // Update user
 exports.updateUser = async (req, res) => {
   try {
-    const { id } = req.params;
     const { name, surname, email, password, number, role, property_ids, expiry_date, floor_assigned, monthly_rate, apartment_label } = req.body;
+    const { name, surname, email, password, number, role, property_ids, expiry_date, floor_assigned, monthly_rate } = req.body;
 
     const user = await db.User.findByPk(id);
 
@@ -272,16 +272,14 @@ exports.updateUser = async (req, res) => {
       updateData.expiry_date = null;
     }
 
-    // Handle floor_assigned, monthly_rate, and apartment_label - only for tenant users
+    // Handle floor_assigned - only for tenant users
     if (role === 'tenant' || (user.role === 'tenant' && !role)) {
       updateData.floor_assigned = floor_assigned !== undefined ? floor_assigned : user.floor_assigned;
       updateData.monthly_rate = monthly_rate !== undefined ? monthly_rate : user.monthly_rate;
-      updateData.apartment_label = apartment_label !== undefined ? apartment_label : user.apartment_label;
     } else {
-      // Clear floor_assigned, monthly_rate, and apartment_label if user is not tenant
+      // Clear floor_assigned if user is not tenant
       updateData.floor_assigned = null;
       updateData.monthly_rate = null;
-      updateData.apartment_label = null;
     }
 
     // Hash password if provided
@@ -683,7 +681,7 @@ exports.updateTenantForPropertyManager = async (req, res) => {
   try {
     const propertyManagerId = req.user.id;
     const tenantId = parseInt(req.params.id);
-    const { name, surname, email, password, number, property_ids, floor_assigned, monthly_rate, apartment_label } = req.body;
+    const { name, surname, email, password, number, property_ids, floor_assigned, monthly_rate } = req.body;
 
     // Check if user is property manager
     const propertyManager = await db.User.findByPk(propertyManagerId);
@@ -798,8 +796,7 @@ exports.updateTenantForPropertyManager = async (req, res) => {
       number: number !== undefined ? number : tenant.number,
       property_ids: property_ids !== undefined ? property_ids : tenant.property_ids,
       floor_assigned: floor_assigned !== undefined ? floor_assigned : tenant.floor_assigned,
-      monthly_rate: monthly_rate !== undefined ? monthly_rate : tenant.monthly_rate,
-      apartment_label: apartment_label !== undefined ? apartment_label : tenant.apartment_label
+      monthly_rate: monthly_rate !== undefined ? monthly_rate : tenant.monthly_rate
     };
 
     // Hash password if provided

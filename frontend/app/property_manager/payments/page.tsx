@@ -874,153 +874,124 @@ export default function PaymentsPage() {
                                     <AccordionContent>
                                       {hasPayments ? (
                                           <div className="px-2 md:px-4 pb-4">
-                                            {/* Mobile Card Layout */}
-                                            <div className="md:hidden space-y-3">
+                                            {/* Mobile List View - New compact list design */}
+                                            <div className="md:hidden space-y-0 divide-y">
                                               {monthPayments.map((payment) => (
-                                                  <Card key={payment.id} className="border-l-4 border-l-indigo-500">
-                                                    <CardContent className="p-4 space-y-3">
-                                                      <div className="flex justify-between items-start">
-                                                        <div className="flex-1">
-                                                          {payment.tenant && (
-                                                              <div className="mb-2">
-                                                                <div className="font-medium text-sm">
-                                                                  {payment.tenant.name} {payment.tenant.surname}
-                                                                </div>
-                                                                <div className="text-xs text-muted-foreground">
-                                                                  {payment.tenant.email}
-                                                                </div>
-                                                              </div>
-                                                          )}
-                                                          {payment.property && (
-                                                              <div className="text-xs text-muted-foreground">
-                                                                <div>{payment.property.name}</div>
-                                                                <div>{payment.property.address}</div>
-                                                              </div>
-                                                          )}
-                                                        </div>
-                                                        <div className="text-right">
-                                                          <div className="text-lg font-bold text-indigo-600">
-                                                            {formatAmount(payment.amount)}
+                                                  <Dialog key={payment.id}>
+                                                    <DialogTrigger asChild>
+                                                      <div className="flex items-center justify-between py-3 px-2 hover:bg-muted/50 cursor-pointer transition-colors">
+                                                        <div className="flex-1 min-w-0">
+                                                          <div className="font-medium text-sm truncate">
+                                                            {payment.tenant?.name} {payment.tenant?.surname}
                                                           </div>
-                                                          <div className="mt-1">
+                                                          <div className="text-xs text-muted-foreground truncate">
+                                                            {payment.tenant?.apartment_label || "N/A"}
+                                                          </div>
+                                                        </div>
+                                                        <div className="flex items-center gap-2 ml-3">
+                                                          <Badge
+                                                              className={
+                                                                payment.status === "paid"
+                                                                    ? "bg-green-500 hover:bg-green-600"
+                                                                    : payment.status === "pending"
+                                                                        ? "bg-yellow-500 hover:bg-yellow-600"
+                                                                        : "bg-red-500 hover:bg-red-600"
+                                                              }
+                                                          >
+                                                            {payment.status === "paid" && <CheckCircle className="w-3 h-3 mr-1" />}
+                                                            {payment.status === "pending" && <Clock className="w-3 h-3 mr-1" />}
+                                                            {payment.status === "overdue" && <AlertCircle className="w-3 h-3 mr-1" />}
+                                                            {payment.status === "paid" ? "Paguar" : payment.status === "pending" ? "Në pritje" : "Vonuar"}
+                                                          </Badge>
+                                                        </div>
+                                                      </div>
+                                                    </DialogTrigger>
+                                                    <DialogContent className="w-[95vw] max-w-md">
+                                                      <DialogHeader>
+                                                        <DialogTitle className="text-base">Menaxho Pagesën</DialogTitle>
+                                                        <DialogDescription className="text-xs">
+                                                          {payment.tenant?.name} {payment.tenant?.surname} - {payment.tenant?.apartment_label || "N/A"}
+                                                        </DialogDescription>
+                                                      </DialogHeader>
+                                                      
+                                                      <div className="space-y-4 py-4">
+                                                        {/* Payment Details */}
+                                                        <div className="space-y-2">
+                                                          <div className="flex justify-between text-sm">
+                                                            <span className="text-muted-foreground">Shuma:</span>
+                                                            <span className="font-bold text-indigo-600">{formatAmount(payment.amount)}</span>
+                                                          </div>
+                                                          <div className="flex justify-between text-sm">
+                                                            <span className="text-muted-foreground">Statusi:</span>
                                                             <Badge
                                                                 className={
                                                                   payment.status === "paid"
-                                                                      ? "bg-green-500 hover:bg-green-600"
+                                                                      ? "bg-green-500"
                                                                       : payment.status === "pending"
-                                                                          ? "bg-yellow-500 hover:bg-yellow-600"
-                                                                          : "bg-red-500 hover:bg-red-600"
+                                                                          ? "bg-yellow-500"
+                                                                          : "bg-red-500"
                                                                 }
                                                             >
-                                                              {payment.status === "paid" && <CheckCircle className="w-3 h-3 mr-1" />}
-                                                              {payment.status === "pending" && <Clock className="w-3 h-3 mr-1" />}
-                                                              {payment.status === "overdue" && <AlertCircle className="w-3 h-3 mr-1" />}
                                                               {payment.status === "paid" ? "Paguar" : payment.status === "pending" ? "Në pritje" : "Vonuar"}
                                                             </Badge>
                                                           </div>
-                                                        </div>
-                                                      </div>
-
-                                                      <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
-                                                        <div>
-                                                          <span className="font-medium">Data e Pagesës:</span>{" "}
-                                                          {payment.payment_date
-                                                              ? new Date(payment.payment_date).toLocaleDateString()
-                                                              : "Nuk është paguar"}
-                                                        </div>
-                                                      </div>
-
-                                                      <div className="flex flex-col gap-2 pt-2">
-                                                        {payment.status !== "paid" && (
-                                                            <Button
-                                                                size="sm"
-                                                                variant="outline"
-                                                                className="text-xs h-8 w-full"
-                                                                onClick={() => handleQuickStatusUpdate(payment.id, "paid")}
-                                                            >
-                                                              Shëno si të Paguar
-                                                            </Button>
-                                                        )}
-                                                        {payment.status === "paid" && (
-                                                            <Button
-                                                                size="sm"
-                                                                variant="outline"
-                                                                className="text-xs h-8 w-full"
-                                                                onClick={() => handleQuickStatusUpdate(payment.id, "pending")}
-                                                            >
-                                                              Shëno si Në pritje
-                                                            </Button>
-                                                        )}
-                                                        <Dialog>
-                                                          <DialogTrigger asChild>
-                                                            <Button
-                                                                size="sm"
-                                                                variant="outline"
-                                                                className="text-xs h-8 w-full"
-                                                                onClick={() => {
-                                                                  setSelectedPaymentForEdit(payment);
-                                                                  setEditPaymentDate(payment.payment_date ? new Date(payment.payment_date) : undefined);
-                                                                  setIsEditDateDialogOpen(true);
-                                                                }}
-                                                            >
-                                                              <Edit className="w-3 h-3 mr-1" />
-                                                              Ndrysho Datën e Pagesës
-                                                            </Button>
-                                                          </DialogTrigger>
-                                                          <DialogContent className="w-[95vw] max-w-md">
-                                                            <DialogHeader>
-                                                              <DialogTitle className="text-base md:text-lg">Ndrysho Datën e Pagesës</DialogTitle>
-                                                              <DialogDescription className="text-xs md:text-sm">
-                                                                Përditëso datën e pagesës për {payment.tenant?.name} {payment.tenant?.surname}
-                                                              </DialogDescription>
-                                                            </DialogHeader>
-                                                            <div className="space-y-4">
-                                                              <div>
-                                                                <Label className="text-xs md:text-sm">Data e Pagesës</Label>
-                                                                <Popover>
-                                                                  <PopoverTrigger asChild>
-                                                                    <Button
-                                                                        variant="outline"
-                                                                        className={cn("w-full justify-start text-left h-9 md:h-10 text-xs md:text-sm", !editPaymentDate && "text-muted")}
-                                                                    >
-                                                                      {editPaymentDate ? format(editPaymentDate, "PPP", { locale: sq }) : "Zgjidhni datën"}
-                                                                      <CalendarIcon className="w-4 h-4 ml-auto" />
-                                                                    </Button>
-                                                                  </PopoverTrigger>
-                                                                  <PopoverContent className="w-auto p-0">
-                                                                    <Calendar
-                                                                        mode="single"
-                                                                        selected={editPaymentDate}
-                                                                        onSelect={setEditPaymentDate}
-                                                                        initialFocus
-                                                                        className="rounded-b-lg"
-                                                                    />
-                                                                  </PopoverContent>
-                                                                </Popover>
+                                                          <div className="flex justify-between text-sm">
+                                                            <span className="text-muted-foreground">Data e Pagesës:</span>
+                                                            <span>{payment.payment_date ? new Date(payment.payment_date).toLocaleDateString() : "N/A"}</span>
+                                                          </div>
+                                                          {payment.property && (
+                                                              <div className="flex justify-between text-sm">
+                                                                <span className="text-muted-foreground">Prona:</span>
+                                                                <span className="text-right text-xs">{payment.property.name}</span>
                                                               </div>
-                                                            </div>
-                                                            <DialogFooter className="flex-col sm:flex-row gap-2">
+                                                          )}
+                                                        </div>
+                                                        
+                                                        {/* Action Buttons */}
+                                                        <div className="space-y-2 pt-2 border-t">
+                                                          {payment.status !== "paid" && (
                                                               <Button
+                                                                  size="sm"
                                                                   variant="outline"
-                                                                  onClick={() => setIsEditDateDialogOpen(false)}
-                                                                  disabled={editDateLoading}
-                                                                  className="h-9 text-xs md:text-sm"
+                                                                  className="w-full text-xs h-9 bg-green-50 hover:bg-green-100"
+                                                                  onClick={() => {
+                                                                    handleQuickStatusUpdate(payment.id, "paid");
+                                                                  }}
                                                               >
-                                                                Anulo
+                                                                <CheckCircle className="w-4 h-4 mr-2" />
+                                                                Shëno si të Paguar
                                                               </Button>
+                                                          )}
+                                                          {payment.status === "paid" && (
                                                               <Button
-                                                                  onClick={handleEditPaymentDate}
-                                                                  disabled={editDateLoading}
-                                                                  className="bg-green-600 hover:bg-green-700 h-9 text-xs md:text-sm"
+                                                                  size="sm"
+                                                                  variant="outline"
+                                                                  className="w-full text-xs h-9"
+                                                                  onClick={() => {
+                                                                    handleQuickStatusUpdate(payment.id, "pending");
+                                                                  }}
                                                               >
-                                                                {editDateLoading ? "Duke përditësuar..." : "Përditëso Datën"}
+                                                                <Clock className="w-4 h-4 mr-2" />
+                                                                Shëno si Në pritje
                                                               </Button>
-                                                            </DialogFooter>
-                                                          </DialogContent>
-                                                        </Dialog>
+                                                          )}
+                                                          <Button
+                                                              size="sm"
+                                                              variant="outline"
+                                                              className="w-full text-xs h-9"
+                                                              onClick={() => {
+                                                                setSelectedPaymentForEdit(payment);
+                                                                setEditPaymentDate(payment.payment_date ? new Date(payment.payment_date) : undefined);
+                                                                setIsEditDateDialogOpen(true);
+                                                              }}
+                                                          >
+                                                            <Edit className="w-4 h-4 mr-2" />
+                                                            Ndrysho Datën e Pagesës
+                                                          </Button>
+                                                        </div>
                                                       </div>
-                                                    </CardContent>
-                                                  </Card>
+                                                    </DialogContent>
+                                                  </Dialog>
                                               ))}
                                             </div>
 

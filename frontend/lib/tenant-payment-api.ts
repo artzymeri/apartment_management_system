@@ -16,6 +16,7 @@ export interface TenantPayment {
     name: string;
     surname: string;
     email: string;
+    apartment_label?: string; // <-- Added field
   };
   property?: {
     id: number;

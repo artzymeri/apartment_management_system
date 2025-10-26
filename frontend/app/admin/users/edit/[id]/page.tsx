@@ -40,6 +40,7 @@ export default function EditUserPage() {
     confirmPassword: "",
     number: "",
     role: "tenant" as "admin" | "property_manager" | "tenant",
+    apartment_label: "",
   });
   const [expiryDate, setExpiryDate] = useState<Date | undefined>(undefined);
 
@@ -56,6 +57,7 @@ export default function EditUserPage() {
         confirmPassword: "",
         number: user.number || "",
         role: user.role,
+        apartment_label: user.apartment_label || "",
       });
 
       // Set expiry date if exists
@@ -96,6 +98,7 @@ export default function EditUserPage() {
         email: formData.email,
         number: formData.number || null,
         role: formData.role,
+        apartment_label: formData.apartment_label || null,
       };
 
       // Only include password if it's being changed
@@ -301,6 +304,24 @@ export default function EditUserPage() {
                     Roli nuk mund të ndryshohet pas krijimit të përdoruesit
                   </p>
                 </div>
+
+                {/* Apartment Label for Tenant Users */}
+                {formData.role === 'tenant' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="apartment_label">Shenja e Apartamentit</Label>
+                    <Input
+                      id="apartment_label"
+                      value={formData.apartment_label}
+                      onChange={(e) =>
+                        setFormData({ ...formData, apartment_label: e.target.value })
+                      }
+                      placeholder="P.sh., A1, B2, etj."
+                    />
+                    <p className="text-sm text-slate-500">
+                      Caktoni një shenjë për apartamentin (opsionale)
+                    </p>
+                  </div>
+                )}
 
                 {/* Expiry Date for Property Manager Users */}
                 {formData.role === 'property_manager' && (

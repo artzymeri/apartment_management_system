@@ -24,6 +24,7 @@ export type CreateUserData = {
   floor_assigned?: number | null;
   expiry_date?: string | null;
   monthly_rate?: number | null;
+  apartment_label?: string | null;
 };
 
 // Type for updating a user
@@ -38,6 +39,7 @@ export type UpdateUserData = {
   floor_assigned?: number | null;
   expiry_date?: string | null;
   monthly_rate?: number | null;
+  apartment_label?: string | null;
 };
 
 // Get all users with filters (admin only)

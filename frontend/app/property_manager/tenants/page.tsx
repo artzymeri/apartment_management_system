@@ -354,6 +354,7 @@ export default function PropertyManagerTenantsPage() {
                         <TableHead>Emri</TableHead>
                         <TableHead>Email</TableHead>
                         <TableHead>Telefoni</TableHead>
+                        <TableHead>Apartamenti</TableHead>
                         <TableHead>Kati</TableHead>
                         <TableHead>Prona</TableHead>
                         <TableHead>Norma Mujore</TableHead>
@@ -368,6 +369,15 @@ export default function PropertyManagerTenantsPage() {
                           </TableCell>
                           <TableCell>{tenant.email}</TableCell>
                           <TableCell>{tenant.number || "N/A"}</TableCell>
+                          <TableCell>
+                            {tenant.apartment_label ? (
+                              <Badge variant="secondary" className="gap-1">
+                                {tenant.apartment_label}
+                              </Badge>
+                            ) : (
+                              <span className="text-slate-400">N/A</span>
+                            )}
+                          </TableCell>
                           <TableCell>
                             {tenant.floor_assigned !== null && tenant.floor_assigned !== undefined ? (
                               <Badge variant="outline" className="gap-1">
@@ -526,6 +536,18 @@ export default function PropertyManagerTenantsPage() {
                               </p>
                             </div>
                             <div>
+                              <p className="text-xs text-slate-500">Apartamenti</p>
+                              <p className="text-sm font-medium text-slate-900 mt-0.5">
+                                {tenant.apartment_label ? (
+                                  <Badge variant="secondary" className="gap-1 text-xs h-6">
+                                    {tenant.apartment_label}
+                                  </Badge>
+                                ) : (
+                                  <span className="text-slate-400">N/A</span>
+                                )}
+                              </p>
+                            </div>
+                            <div>
                               <p className="text-xs text-slate-500">Kati</p>
                               <p className="text-sm font-medium text-slate-900 mt-0.5">
                                 {tenant.floor_assigned !== null && tenant.floor_assigned !== undefined ? (
@@ -538,14 +560,12 @@ export default function PropertyManagerTenantsPage() {
                                 )}
                               </p>
                             </div>
-                          </div>
-
-                          {/* Property */}
-                          <div className="pt-2 border-t">
-                            <p className="text-xs text-slate-500">Prona</p>
-                            <p className="text-sm font-medium text-slate-900 mt-0.5">
-                              {getPropertyName(tenant.property_ids)}
-                            </p>
+                            <div>
+                              <p className="text-xs text-slate-500">Prona</p>
+                              <p className="text-sm font-medium text-slate-900 mt-0.5 truncate">
+                                {getPropertyName(tenant.property_ids)}
+                              </p>
+                            </div>
                           </div>
 
                           {/* Actions */}

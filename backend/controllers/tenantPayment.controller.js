@@ -169,7 +169,7 @@ exports.getPropertyManagerPayments = async (req, res) => {
         {
           model: db.User,
           as: 'tenant',
-          attributes: ['id', 'name', 'surname', 'email']
+          attributes: ['id', 'name', 'surname', 'email', 'apartment_label']
         },
         {
           model: db.Property,
@@ -376,7 +376,7 @@ exports.updatePaymentStatus = async (req, res) => {
         {
           model: db.User,
           as: 'tenant',
-          attributes: ['id', 'name', 'surname', 'email']
+          attributes: ['id', 'name', 'surname', 'email', 'apartment_label']
         },
         {
           model: db.Property,
@@ -448,7 +448,7 @@ exports.bulkUpdatePayments = async (req, res) => {
         {
           model: db.User,
           as: 'tenant',
-          attributes: ['id', 'name', 'surname', 'email']
+          attributes: ['id', 'name', 'surname', 'email', 'apartment_label']
         }
       ]
     });
@@ -857,7 +857,7 @@ exports.updatePaymentDate = async (req, res) => {
         {
           model: db.User,
           as: 'tenant',
-          attributes: ['id', 'name', 'surname', 'email']
+          attributes: ['id', 'name', 'surname', 'email', 'apartment_label']
         },
         {
           model: db.Property,

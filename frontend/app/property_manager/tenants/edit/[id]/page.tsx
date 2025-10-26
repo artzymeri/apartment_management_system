@@ -40,6 +40,7 @@ export default function EditTenantPage() {
     property_id: "",
     floor_assigned: "" as string,
     monthly_rate: "" as string,
+    apartment_label: "",
   });
   const [error, setError] = useState("");
   const [isRefetching, setIsRefetching] = useState(true);
@@ -102,6 +103,7 @@ export default function EditTenantPage() {
         monthly_rate: tenant.monthly_rate !== null && tenant.monthly_rate !== undefined
           ? tenant.monthly_rate.toString()
           : "",
+        apartment_label: tenant.apartment_label || "",
       });
     }
   }, [tenantData, propertiesData, isRefetching]);
@@ -126,6 +128,7 @@ export default function EditTenantPage() {
         property_ids: [parseInt(formData.property_id)],
         floor_assigned: formData.floor_assigned ? parseInt(formData.floor_assigned) : null,
         monthly_rate: formData.monthly_rate ? parseFloat(formData.monthly_rate) : null,
+        apartment_label: formData.apartment_label || null,
       };
 
       // Only include password if it's been changed
@@ -373,6 +376,22 @@ export default function EditTenantPage() {
                   </div>
                   <p className="text-xs text-slate-500">
                     Vendosni qiranë mujore për banorin
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="apartment_label" className="text-xs md:text-sm">Shenja e Apartamentit</Label>
+                  <Input
+                    id="apartment_label"
+                    value={formData.apartment_label}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, apartment_label: e.target.value }))
+                    }
+                    placeholder="P.sh., A1, B2, etj."
+                    className="text-sm md:text-base h-9 md:h-10"
+                  />
+                  <p className="text-xs text-slate-500">
+                    Caktoni një shenjë për apartamentin (opsionale)
                   </p>
                 </div>
 

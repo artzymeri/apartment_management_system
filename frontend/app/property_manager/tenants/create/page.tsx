@@ -33,6 +33,7 @@ export default function CreateTenantPage() {
     property_id: "",
     floor_assigned: "" as string,
     monthly_rate: "" as string,
+    apartment_label: "",
   });
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -92,6 +93,7 @@ export default function CreateTenantPage() {
         floor_assigned: formData.floor_assigned ? parseInt(formData.floor_assigned) : null,
         expiry_date: null,
         monthly_rate: formData.monthly_rate ? parseFloat(formData.monthly_rate) : null,
+        apartment_label: formData.apartment_label || null,
       } as CreateUserData;
 
       const result = await createMutation.mutateAsync(userData);
@@ -243,6 +245,23 @@ export default function CreateTenantPage() {
                       )}
                     </SelectContent>
                   </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="apartment_label">Etiketa e Apartamentit *</Label>
+                  <Input
+                    id="apartment_label"
+                    value={formData.apartment_label}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, apartment_label: e.target.value }))
+                    }
+                    required
+                    placeholder="p.sh., A1, B23, Kat 3-Nr 5"
+                    maxLength={50}
+                  />
+                  <p className="text-sm text-slate-500">
+                    Vendosni etiketën ose numrin e apartamentit të banorit
+                  </p>
                 </div>
 
                 <div className="space-y-2">
