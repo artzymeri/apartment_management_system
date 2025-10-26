@@ -1018,7 +1018,7 @@ export default function PaymentsPage() {
                                                                   {payment.tenant.name} {payment.tenant.surname}
                                                                 </div>
                                                                 <div className="text-xs text-muted-foreground">
-                                                                  {payment.tenant.email}
+                                                                  {payment.tenant.apartment_label || "N/A"}
                                                                 </div>
                                                               </div>
                                                           )}
