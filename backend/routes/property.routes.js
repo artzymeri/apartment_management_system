@@ -21,7 +21,7 @@ router.post('/', isAdminOrPropertyManager, propertyController.createProperty);
 // Update property (admin only)
 router.put('/:id', isAdmin, propertyController.updateProperty);
 
-// Delete property (admin only)
-router.delete('/:id', isAdmin, propertyController.deleteProperty);
+// Delete property (admin or assigned property_manager)
+router.delete('/:id', isAdminOrPropertyManager, propertyController.deleteProperty);
 
 module.exports = router;

@@ -388,13 +388,32 @@ exports.deleteProperty = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const property = await db.Property.findByPk(id);
+    const property = await db.Property.findByPk(id, {
+      include: [{
+        model: db.User,
+        as: 'managers',
+        attributes: ['id'],
+        through: { attributes: [] }
+      }]
+    });
 
     if (!property) {
       return res.status(404).json({
         success: false,
         message: 'Property not found'
       });
+    }
+
+    // If user is a property_manager, verify they're assigned to this property
+    if (req.user.role === 'property_manager') {
+      const isAssigned = property.managers.some(manager => manager.id === req.user.id);
+      
+      if (!isAssigned) {
+        return res.status(403).json({
+          success: false,
+          message: 'Access denied. You can only delete properties you manage.'
+        });
+      }
     }
 
     await property.destroy();

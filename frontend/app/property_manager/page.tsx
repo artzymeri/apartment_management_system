@@ -394,7 +394,7 @@ export default function PropertyManagerDashboard() {
                   <CardContent className="pt-6">
                     <div className="text-center py-4">
                       <CheckCircle2 className="h-10 w-10 md:h-12 md:w-12 text-green-600 mx-auto mb-3" />
-                      <p className="text-base md:text-lg font-medium text-green-900">Jeni të gjithë në rregull!</p>
+                      <p className="text-base md:text-lg font-medium text-green-900">Gjithçka në rregull!</p>
                       <p className="text-xs md:text-sm text-green-700">Asnjë çështje urgjente që kërkon vëmendje të menjëhershme.</p>
                     </div>
                   </CardContent>
