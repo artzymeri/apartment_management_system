@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { authAPI } from '@/lib/auth-api';
 
@@ -30,10 +30,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const isLoginInProgress = useRef(false);
 
   const isAuthenticated = !!user;
 
   const checkAuth = useCallback(async (): Promise<boolean> => {
+    // Skip check if login is in progress
+    if (isLoginInProgress.current) {
+      return true;
+    }
+
     try {
       const isValid = await authAPI.verifyToken();
 
@@ -67,14 +73,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(async (identifier: string, password: string, method: 'email' | 'phone' = 'email') => {
     try {
+      isLoginInProgress.current = true;
       const response = await authAPI.login(identifier, password, method);
 
       if (response.success && response.token) {
         // Store token
         authAPI.setToken(response.token);
 
-        // Set user
+        // Set user immediately - this prevents the checkAuth from running
         setUser(response.data);
+        setIsLoading(false);
+
+        // Give Safari iOS a moment to persist localStorage
+        await new Promise(resolve => setTimeout(resolve, 100));
 
         // Redirect based on role
         const roleRoutes = {
@@ -84,10 +95,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         };
 
         const redirectPath = roleRoutes[response.data.role as keyof typeof roleRoutes] || '/';
-        router.push(redirectPath);
+        
+        // Use setTimeout to ensure state updates complete before navigation
+        setTimeout(() => {
+          isLoginInProgress.current = false;
+          router.push(redirectPath);
+        }, 50);
 
         return { success: true };
       } else {
+        isLoginInProgress.current = false;
         return {
           success: false,
           message: response.message || 'Login failed'
@@ -95,6 +112,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (error) {
       console.error('Login error:', error);
+      isLoginInProgress.current = false;
       return {
         success: false,
         message: 'Failed to connect to server'

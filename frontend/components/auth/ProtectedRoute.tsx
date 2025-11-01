@@ -22,8 +22,11 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
 
       // Not authenticated - redirect to login immediately
       if (!isAuthenticated || !user) {
-        setIsRedirecting(true);
-        router.replace('/login');
+        // Add a small delay to prevent race condition on Safari iOS
+        setTimeout(() => {
+          setIsRedirecting(true);
+          router.replace('/login');
+        }, 50);
         return;
       }
 
